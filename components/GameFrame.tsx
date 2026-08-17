@@ -6,9 +6,8 @@ import { useAuth } from "./AuthProvider";
 import { getSupabase } from "@/lib/supabase";
 import { isAdminUsername } from "@/lib/admin-client";
 
-function toProxySrc(src: string): string {
-  return src;
-}
+function toProxySrc(src: string): string { return "/games-arcade" + src;
+ }
 
 export default function GameFrame({ src, title, slug }: { src: string; title: string; slug?: string }) {
   const [reloadKey, setReloadKey] = useState(0);
