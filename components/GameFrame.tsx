@@ -7,8 +7,7 @@ import { getSupabase } from "@/lib/supabase";
 import { isAdminUsername } from "@/lib/admin-client";
 
 function toProxySrc(src: string): string {
-  const m = src.match(/^https:\/\/html5\.gamemonetize\.co\/([a-z0-9]+)\/?$/i);
-  return m ? `/api/game-proxy/${m[1]}` : src;
+  return src;
 }
 
 export default function GameFrame({ src, title, slug }: { src: string; title: string; slug?: string }) {

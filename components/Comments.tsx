@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { getSupabase } from "@/lib/supabase";
 
 interface Comment {
   id: string;
@@ -41,11 +42,20 @@ export default function Comments({ slug }: { slug: string }) {
 
   useEffect(() => {
     let cancelled = false;
-    fetch(`/api/games/${encodeURIComponent(slug)}/comments`)
-      .then((res) => (res.ok ? res.json() : { comments: [] }))
-      .then((data) => {
+    const supabase = getSupabase();
+    if (!supabase) {
+      setLoading(false);
+      return;
+    }
+    supabase
+      .from("comments")
+      .select("id, name, content, created_at")
+      .eq("game_slug", slug)
+      .order("created_at", { ascending: false })
+      .limit(50)
+      .then(({ data }) => {
         if (cancelled) return;
-        setComments(data.comments ?? []);
+        setComments((data ?? []) as Comment[]);
         setLoading(false);
       })
       .catch(() => {
@@ -66,17 +76,23 @@ export default function Comments({ slug }: { slug: string }) {
     }
     setPosting(true);
     try {
-      const res = await fetch(`/api/games/${encodeURIComponent(slug)}/comments`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, content }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error ?? "Could not post your comment.");
+      const supabase = getSupabase();
+      if (!supabase) {
+        setError("Comments are not available.");
         return;
       }
-      setComments((prev) => [data.comment, ...prev]);
+      const cleanName = (name.trim() || "Guest").slice(0, 50);
+      const cleanContent = content.trim().slice(0, 1000);
+      const { data, error: insertErr } = await supabase
+        .from("comments")
+        .insert({ game_slug: slug, name: cleanName, content: cleanContent })
+        .select("id, name, content, created_at")
+        .single();
+      if (insertErr) {
+        setError(insertErr.message ?? "Could not post your comment.");
+        return;
+      }
+      setComments((prev) => [data as Comment, ...prev]);
       setContent("");
       setSent("Thanks! Your comment has been posted.");
     } catch {

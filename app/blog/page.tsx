@@ -12,8 +12,6 @@ export function generateMetadata(): Metadata {
   };
 }
 
-export const revalidate = 300;
-
 export default function BlogIndexPage() {
   const posts = getAllPosts();
 

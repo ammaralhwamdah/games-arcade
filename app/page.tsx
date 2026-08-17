@@ -14,8 +14,6 @@ export function generateMetadata(): Metadata {
   };
 }
 
-export const revalidate = 300;
-
 export default function Home() {
   const featured = getFeaturedGames(24);
   const popular = getPopularGames(12);

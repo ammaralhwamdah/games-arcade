@@ -4,7 +4,10 @@ import { useCallback, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { useAuth } from "./AuthProvider";
+import { getSupabase } from "@/lib/supabase";
 import { formatPoints, getLevel } from "@/lib/points";
+
+const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL || "";
 
 interface StatsData {
   players: {
@@ -50,15 +53,72 @@ export default function AdminDashboard({
     if (!session) return;
     setStatsStatus("loading");
     setError(null);
-    const res = await fetch("/api/admin/stats", {
-      headers: { Authorization: `Bearer ${session.access_token}` },
-    });
-    if (!res.ok) {
+    const supabase = getSupabase();
+    if (!supabase) {
       setStatsStatus("error");
-      setError((await res.json().catch(() => ({ error: "failed" }))).error ?? "failed");
+      setError("Supabase not configured");
       return;
     }
-    const data = (await res.json()) as StatsData;
+
+    const adminUsernames = (process.env.NEXT_PUBLIC_ADMIN_USERNAME || "")
+      .split(",")
+      .map((s) => s.trim().toLowerCase())
+      .filter(Boolean);
+    if (ADMIN_EMAIL) adminUsernames.push(ADMIN_EMAIL.split("@")[0].toLowerCase());
+
+    const [playersRes, eventsRes] = await Promise.all([
+      supabase.from("player_profiles").select("username, points, stars, level_name, updated_at").limit(10000),
+      supabase.from("play_events").select("game_slug, game_title, username, played_at").order("played_at", { ascending: false }).limit(10000),
+    ]);
+
+    if (playersRes.error || eventsRes.error) {
+      setStatsStatus("error");
+      setError(playersRes.error?.message ?? eventsRes.error?.message ?? "failed");
+      return;
+    }
+
+    const players = (playersRes.data ?? []).filter(
+      (p) => !adminUsernames.includes((p.username ?? "").toLowerCase())
+    );
+    const events = (eventsRes.data ?? []).filter(
+      (e) => !adminUsernames.includes((e.username ?? "").toLowerCase())
+    );
+
+    const totalPoints = players.reduce((s, p) => s + (p.points ?? 0), 0);
+    const totalStars = players.reduce((s, p) => s + (p.stars ?? 0), 0);
+    const levelDist = players.reduce<Record<string, number>>((acc, p) => {
+      const lvl = p.level_name ?? "Rookie";
+      acc[lvl] = (acc[lvl] ?? 0) + 1;
+      return acc;
+    }, {});
+    const topPlayers = [...players]
+      .sort((a, b) => (b.points ?? 0) - (a.points ?? 0))
+      .slice(0, 10);
+
+    const byGame = new Map<string, { slug: string; title: string; count: number }>();
+    for (const e of events) {
+      const cur = byGame.get(e.game_slug) ?? { slug: e.game_slug, title: e.game_title ?? e.game_slug, count: 0 };
+      cur.count += 1;
+      byGame.set(e.game_slug, cur);
+    }
+    const mostPlayed = [...byGame.values()].sort((a, b) => b.count - a.count).slice(0, 10);
+
+    const data: StatsData = {
+      players: {
+        total: players.length,
+        totalPoints,
+        totalStars,
+        avgPoints: players.length ? Math.round(totalPoints / players.length) : 0,
+        levelDist,
+      },
+      topPlayers,
+      plays: {
+        totalEvents: events.length,
+        mostPlayed,
+        recent: events.slice(0, 25),
+      },
+    };
+
     const hasAny =
       data.players.total > 0 ||
       data.plays.totalEvents > 0 ||
@@ -70,13 +130,14 @@ export default function AdminDashboard({
 
   const loadComments = useCallback(async () => {
     if (!session) return;
-    const res = await fetch("/api/admin/comments", {
-      headers: { Authorization: `Bearer ${session.access_token}` },
-    });
-    if (res.ok) {
-      const data = await res.json();
-      setComments(data.comments ?? []);
-    }
+    const supabase = getSupabase();
+    if (!supabase) return;
+    const { data } = await supabase
+      .from("comments")
+      .select("id, game_slug, name, content, created_at")
+      .order("created_at", { ascending: false })
+      .limit(100);
+    setComments((data ?? []) as GameCommentRow[]);
   }, [session]);
 
   const removeComment = async (id: string) => {
@@ -84,15 +145,16 @@ export default function AdminDashboard({
     setDeletingId(id);
     setCommentError(null);
     try {
-      const res = await fetch(`/api/admin/comments?id=${encodeURIComponent(id)}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${session.access_token}` },
-      });
-      if (res.ok) {
-        setComments((prev) => (prev ?? []).filter((c) => c.id !== id));
+      const supabase = getSupabase();
+      if (!supabase) {
+        setCommentError("Supabase not configured.");
+        return;
+      }
+      const { error: delErr } = await supabase.from("comments").delete().eq("id", id);
+      if (delErr) {
+        setCommentError(delErr.message ?? "Could not delete comment.");
       } else {
-        const data = await res.json().catch(() => ({ error: "Could not delete comment." }));
-        setCommentError(data.error ?? "Could not delete comment.");
+        setComments((prev) => (prev ?? []).filter((c) => c.id !== id));
       }
     } catch {
       setCommentError("Network error while deleting.");
@@ -107,23 +169,13 @@ export default function AdminDashboard({
       setAdmin(false);
       return;
     }
-    let cancelled = false;
-    fetch("/api/admin/check", { headers: { Authorization: `Bearer ${session.access_token}` } })
-      .then((r) => r.json())
-      .then((d) => {
-        if (cancelled) return;
-        setAdmin(Boolean(d.admin));
-        if (d.admin) {
-          loadStats();
-          loadComments();
-        }
-      })
-      .catch(() => {
-        if (!cancelled) setAdmin(false);
-      });
-    return () => {
-      cancelled = true;
-    };
+    const userEmail = session.user?.email?.toLowerCase() ?? "";
+    const isAdmin = ADMIN_EMAIL ? userEmail === ADMIN_EMAIL.toLowerCase() : false;
+    setAdmin(isAdmin);
+    if (isAdmin) {
+      loadStats();
+      loadComments();
+    }
   }, [session, loading, loadStats, loadComments]);
 
   if (loading) {

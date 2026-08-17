@@ -1,0 +1,33 @@
+# Category redirects
+/category/platformer /category/arcade 301
+/category/shooter /category/shooting 301
+/category/fighting /category/action 301
+/category/rpg /category/adventure 301
+/category/simulation /category/hypercasual 301
+/category/mario /category/arcade 301
+/category/sonic /category/action 301
+/category/pokemon /category/adventure 301
+/category/minecraft /category/adventure 301
+/category/zelda /category/adventure 301
+
+# Game rename redirects (play)
+/play/forest-dash /play/emberwood-dash 301
+/play/the-last-adventure /play/veyras-legacy 301
+/play/subway-runner /play/underground-sprint 301
+/play/snake /play/nano-serpent 301
+/play/andromeda-invaders /play/aphelion-assault 301
+/play/neon-vanguard /play/nova-corsair 301
+/play/day-and-night-duel /play/clash-of-orbs 301
+/play/epoch-defense /play/nebula-bastion 301
+/play/2048 /play/2048-fusion 301
+
+# Game rename redirects (files)
+/games/forest-dash/* /games/emberwood-dash/:splat 301
+/games/the-last-adventure/* /games/veyras-legacy/:splat 301
+/games/subway-runner/* /games/underground-sprint/:splat 301
+/games/snake/* /games/nano-serpent/:splat 301
+/games/andromeda-invaders/* /games/aphelion-assault/:splat 301
+/games/neon-vanguard/* /games/nova-corsair/:splat 301
+/games/day-and-night-duel/* /games/clash-of-orbs/:splat 301
+/games/epoch-defense/* /games/nebula-bastion/:splat 301
+/games/2048/* /games/2048-fusion/:splat 301

@@ -1,0 +1,27 @@
+# Global security headers
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), battery=(), magnetometer=(), gyroscope=(), accelerometer=(), browsing-topics()
+
+# Data files - noindex
+/data/*
+  Cache-Control: public, max-age=0, must-revalidate
+  X-Robots-Tag: noindex, nofollow
+  X-Permitted-Cross-Domain-Policies: none
+
+# Game pages
+/play/*
+  Cache-Control: no-cache, must-revalidate
+  X-Permitted-Cross-Domain-Policies: none
+
+# Game HTML files - noindex
+/games/*
+  Cache-Control: public, max-age=0, must-revalidate
+  X-Robots-Tag: noindex, nofollow
+  X-Permitted-Cross-Domain-Policies: none
+
+# Next.js static assets - immutable cache
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable

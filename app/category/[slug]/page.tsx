@@ -16,8 +16,6 @@ export async function generateStaticParams() {
 
 export const dynamicParams = false;
 
-export const revalidate = 300;
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const category = getCategory(slug);
