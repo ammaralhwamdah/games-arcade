@@ -93,11 +93,14 @@ function catMap(): Map<string, Game[]> {
 }
 
 export function getSimilarGames(game: Game, limit = 12): Game[] {
-  const sameCat = (catMap().get(game.category) ?? []).filter((g) => g.slug !== game.slug);
+  const gameCats = new Set(game.categories ?? [game.category]);
+  const sameCat = getCatalog().games
+    .filter((g) => g.slug !== game.slug && (g.categories ?? [g.category]).some((c) => gameCats.has(c)))
+    .sort((a, b) => b.plays - a.plays);
   if (sameCat.length >= limit) return sameCat.slice(0, limit);
-  const bySlug = new Set(sameCat.map((g) => g.slug));
+  const bySlug = new Set([...sameCat.map((g) => g.slug), game.slug]);
   const extras = getCatalog().games
-    .filter((g) => g.slug !== game.slug && !bySlug.has(g.slug) && !(g.categories ?? []).includes(game.category))
+    .filter((g) => !bySlug.has(g.slug))
     .sort((a, b) => b.plays - a.plays)
     .slice(0, limit - sameCat.length);
   return [...sameCat, ...extras];
