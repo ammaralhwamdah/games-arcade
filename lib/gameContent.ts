@@ -575,6 +575,314 @@ const content: Record<string, GameContent> = {
   },
 };
 
+  "style-salon": {
+    tips: [
+      "Match the colour palette before chasing rare pieces. Two items that share the same shade family always score higher than two flashy pieces that clash, so scan the colour wheel first and build from there.",
+      "Rotate the mannequin after every swap. Some accessories sit at angles that look great from the front and terrible from the side — a quick spin catches mismatches before you lock the outfit in.",
+      "Stack multipliers by chaining complementary items. A top and bottom from the same set, paired with a matching accessory, triggers the combo bonus that pushes your score into the next tier.",
+      "Unlock new pieces by playing, not by paying. Every round you complete adds fresh items to the wardrobe, so the fastest way to a bigger wardrobe is one more round, not one more purchase.",
+      "Watch the score preview before confirming. The game shows you a rough point estimate as you build — if the number feels low, swap one piece and the whole outfit can shift from mediocre to stunning.",
+    ],
+    faq: [
+      {
+        q: "Is Style Salon free to play?",
+        a: "Yes. Style Salon is completely free, runs in your browser and shows no ads inside the game. There is nothing to download, install or pay for — just open the wardrobe and start styling.",
+      },
+      {
+        q: "How do I play on mobile?",
+        a: "Tap a category tab to browse items, tap a piece to equip it on the mannequin, and tap confirm when you are happy with the look. Swipe or drag to rotate the mannequin and check the outfit from every angle.",
+      },
+      {
+        q: "What do style points unlock?",
+        a: "Style points raise your level, and each new level adds fresh hairstyles, tops, bottoms and accessories to the wardrobe. The higher your score per round, the faster new pieces appear.",
+      },
+      {
+        q: "Does the game save my wardrobe?",
+        a: "Yes, your unlocked items and best score are saved in your browser automatically, so you can close the tab and come back to a wardrobe that remembers everything.",
+      },
+    ],
+  },
+  "mech-mayhem": {
+    tips: [
+      "Pick up power-ups the moment they drop. Every scrap robot scatters one, and the spread-shot or shield boost can turn a losing wave into a clean clear — do not let them sit on the field while you are busy dodging.",
+      "Focus fire on the closest threats first. A drone that is already firing at you is more dangerous than three sitting at the back of the arena, so prioritise the shots that are about to hit.",
+      "Save the shield power-up for the boss. Regular waves are survivable without it, but a boss that fills the screen with projectiles is where the extra hit point makes the difference between a clear and a crash.",
+      "Strafe in short bursts, not long sweeps. Moving one direction for too long puts you on a predictable line that the AI learns to target — short, sharp direction changes keep you alive longer.",
+      "Watch the wave counter, not just the score. Every fifth wave is a boss, and knowing it is coming means you can save your charged power-up and position yourself in the centre before the arena fills.",
+    ],
+    faq: [
+      {
+        q: "Is Mech Mayhem free to play?",
+        a: "Yes. Mech Mayhem is completely free, runs in your browser and shows no ads inside the game. There is nothing to download, install or pay for — just press play and start shooting.",
+      },
+      {
+        q: "How do I move and shoot on mobile?",
+        a: "Touch the left side of the screen to move left, the right side to move right, and tap the centre to fire. The controls are tuned to feel responsive on touch screens.",
+      },
+      {
+        q: "What do the power-ups do?",
+        a: "Power-ups drop from every destroyed enemy and include spread-shot (fires multiple projectiles at once), rapid fire (increases your fire rate), shield (absorbs one extra hit), and repair (restores a portion of health).",
+      },
+      {
+        q: "How many waves are there?",
+        a: "The waves loop indefinitely, each one spawning more and tougher enemies. Every fifth wave is a boss fight, and the challenge escalates with each cycle until your reflexes give out.",
+      },
+      {
+        q: "Does the game save my best score?",
+        a: "Yes, your high score is saved in your browser automatically, so you can always chase a new personal best on every run.",
+      },
+    ],
+  },
+  "kitchen-rush": {
+    tips: [
+      "Read the recipe before you tap. One quick glance at the ingredient order saves you a wrong tap, and a wrong tap kills the combo — accuracy always beats speed in the early rounds.",
+      "Chain perfect orders for the multiplier. Three consecutive correct dishes without a mistake triggers the combo bonus, and the multiplier applies to every dish that follows until you slip.",
+      "Prioritise the fastest recipes when the queue is long. Simple dishes like salad and sushi finish quicker than complex ones, so clearing them first keeps the timer from catching up.",
+      "Watch the timer colour, not just the number. The bar shifts from green to yellow to red as time runs out — a quick colour glance tells you how much pressure you are under without reading the digits.",
+      "Do not rush the ingredient order to save a tenth of a second. A correct dish at the last moment still earns full points, but a wrong dish earns nothing and resets the streak.",
+    ],
+    faq: [
+      {
+        q: "Is Kitchen Rush free to play?",
+        a: "Yes. Kitchen Rush is completely free, runs in your browser and shows no ads inside the game. There is nothing to download, install or pay for — just tap the ingredients and start cooking.",
+      },
+      {
+        q: "How do I play on mobile?",
+        a: "On mobile the ingredient buttons are arranged in a row at the bottom of the screen. Tap them in the order shown at the top to build the dish, and serve before the timer runs out.",
+      },
+      {
+        q: "What happens when the timer runs out?",
+        a: "The round ends and your score is locked in. Your best score is saved, so you can always jump back in and chase a higher combo on your next session.",
+      },
+      {
+        q: "What do combo multipliers do?",
+        a: "Every consecutive correct dish without a mistake adds to your combo multiplier. The higher the multiplier, the more points each dish is worth — so a clean streak is worth far more than a messy batch.",
+      },
+      {
+        q: "Does the game save my progress?",
+        a: "Yes, your best score and current level are saved in your browser, so you can close the tab and come back to a new target to chase.",
+      },
+    ],
+  },
+  "stick-dash": {
+    tips: [
+      "Double-jump is your lifeline. A second tap at the peak of the first jump lifts you over obstacles that a single jump cannot clear — learn the height difference and use it for the tall barriers.",
+      "Slide under anything that looks low. The slide keeps your hitbox small and fast, and it recovers quicker than a failed jump, so when in doubt, go low.",
+      "Coins usually line up with the safe path. Following the coin trail is a decent shortcut to the easiest route through the next cluster, but always glance ahead before committing.",
+      "The retry button is one tap away. Use it. Every death teaches you the rhythm of the next obstacle cluster, and the fastest way to learn is to start again immediately.",
+      "Watch the ground colour. The track shifts from dark to bright as the speed climbs, which tells you how fast the next obstacle is approaching without needing to read a speed indicator.",
+    ],
+    faq: [
+      {
+        q: "Is Stick Dash free to play?",
+        a: "Yes. Stick Dash is completely free, runs in your browser and shows no ads inside the game. There is nothing to download, install or pay for — just press play and start running.",
+      },
+      {
+        q: "How do I jump and slide on mobile?",
+        a: "Tap anywhere on the screen to jump, and swipe down to slide. You can double-tap for a second jump at the peak of the first one.",
+      },
+      {
+        q: "What happens when I hit an obstacle?",
+        a: "The run ends immediately and your distance and coin count are locked in. Your best run is saved, so you always have a target to chase on your next attempt.",
+      },
+      {
+        q: "Does the game get faster?",
+        a: "Yes, the track speed increases gradually as your distance grows, so obstacles arrive faster and the gaps between them tighten the longer you survive.",
+      },
+      {
+        q: "Is my progress saved?",
+        a: "Yes, your best distance and total coins are saved in your browser automatically, so you can close the tab and come back to a new personal best to beat.",
+      },
+    ],
+  },
+  "penalty-pro": {
+    tips: [
+      "Never aim at the same zone twice in a row. The keeper learns your habits quickly, and the moment you repeat a corner it starts diving there early — unpredictable placement is the whole game.",
+      "Aim for the corners when the keeper is central. A shot down the middle is the easiest save, so spread the ball wide and trust the angle to do the work.",
+      "After a miss or a save, take a breath before the next kick. The streak multiplier resets, so the next goal starts a fresh chain — rushing a nervous kick only adds a second blank to the run.",
+      "Watch the keeper's pre-dive movement. A slight lean in one direction before the kick often reveals where it is heading, giving you a split second to switch zones.",
+      "Score ten in a row and the multiplier maxes out. Reaching that streak means every subsequent goal is worth the peak value, so protecting the streak is worth more than any single fancy placement.",
+    ],
+    faq: [
+      {
+        q: "Is Penalty Pro free to play?",
+        a: "Yes. Penalty Pro is completely free, runs in your browser and shows no ads inside the game. There is nothing to download, install or pay for — just step up to the spot and start shooting.",
+      },
+      {
+        q: "How do I aim my shot?",
+        a: "Click or tap one of the nine zones on the goal face. The ball automatically shoots toward that zone while the keeper dives in a direction determined by its own logic.",
+      },
+      {
+        q: "What does the streak multiplier do?",
+        a: "Every consecutive goal without a miss or save increases the multiplier. The higher the multiplier, the more each subsequent goal is worth — so a long streak turns ordinary goals into big points.",
+      },
+      {
+        q: "How many kicks do I get?",
+        a: "You get ten kicks per round. Your score after ten kicks is your final result, and your best score is saved so you can always try for a cleaner run.",
+      },
+      {
+        q: "Does the keeper get harder?",
+        a: "Yes, the keeper adapts to your patterns. The more you repeat the same zones, the more accurately it dives — keep your placement unpredictable to stay ahead.",
+      },
+    ],
+  },
+  "blorb-bonanza": {
+    tips: [
+      "Auto-tappers are the foundation. Buy them early and let the idle income build while you figure out the rest of the shop — a steady stream of Blorb Bits is worth more than a bigger single click.",
+      "Click power multiplies the auto income too. Every click upgrade you buy doubles both your manual taps and the passive flow, so it is never wasted even if you stop clicking.",
+      "Watch for the milestone toasts. They mark real jumps in the Blorb's evolution — new colours, bigger animations and higher income tiers — so save toward the next milestone instead of buying small upgrades randomly.",
+      "Confetti and colour shifts are not just cosmetic. Each visual change signals a new tier of income, so if the Blorb looks the same, you are not growing fast enough.",
+      "The shop handle pulls up with one tap. Do not let the shop sit closed when you have enough Bits to buy — every second the shop is closed is a second of missed upgrades.",
+    ],
+    faq: [
+      {
+        q: "Is Blorb Bonanza free to play?",
+        a: "Yes. Blorb Bonanza is completely free, runs in your browser and shows no ads inside the game. There is nothing to download, install or pay for — just tap the blob and start earning.",
+      },
+      {
+        q: "How do I open the shop?",
+        a: "Tap the pull-up handle at the bottom of the screen to slide the shop panel open. Browse the upgrades, tap the one you want to buy, and pull the handle down to close it.",
+      },
+      {
+        q: "What do the upgrades do?",
+        a: "Upgrades include click power (increases bits per tap), auto-tappers (earn bits passively each second), income multipliers (boost the auto-tapper output), and visual evolutions (change the Blorb's appearance).",
+      },
+      {
+        q: "Does the game save my progress?",
+        a: "Yes, your Blorb Bits, upgrades and best haul are saved in your browser automatically, so you can close the tab and come back to a bigger Blorb waiting for you.",
+      },
+      {
+        q: "What are milestones?",
+        a: "Milestones are big targets that trigger a toast notification and unlock new Blorb tiers. Each tier changes the Blorb's colour and shape and adds a new layer of income potential.",
+      },
+    ],
+  },
+  "voxel-voyage": {
+    tips: [
+      "Steer in small, deliberate taps. Holding a direction too long drifts you into the wall — short corrections keep you centred and leave room to dodge the next obstacle.",
+      "Energy orbs sit in the safe gaps. Following the orb trail is a good default path, but always glance ahead before committing — an orb near a barrier is a trap.",
+      "Speed is the real danger, not distance. The corridor tightens and the walls rush past faster every second, so a clean dodge at high speed is worth ten cautious metres at low speed.",
+      "The speed bar at the bottom is your early warning. When it fills toward red, the next obstacle is closer than it looks — start your correction early.",
+      "Your best distance sits at the top of the screen. Use it as a pacing target — if you are ahead of it, play safe; if you are behind, push a little harder but not recklessly.",
+    ],
+    faq: [
+      {
+        q: "Is Voxel Voyage free to play?",
+        a: "Yes. Voxel Voyage is completely free, runs in your browser and shows no ads inside the game. There is nothing to download, install or pay for — just press play and start flying.",
+      },
+      {
+        q: "How do I control the ship on mobile?",
+        a: "Swipe left or right to steer the ship. The controls are tuned to feel responsive on touch screens, and small swipes give you finer control than big ones.",
+      },
+      {
+        q: "What do the energy orbs do?",
+        a: "Energy orbs add to your score and help guide you toward the safe gaps between obstacles. They are not required to survive, but collecting them raises your final tally.",
+      },
+      {
+        q: "Does the game get harder?",
+        a: "Yes, the speed increases steadily and the obstacles spawn closer together the longer you fly. The corridor itself does not narrow, but the pace makes every gap feel tighter.",
+      },
+      {
+        q: "Is my best distance saved?",
+        a: "Yes, your best distance is saved in your browser automatically, so you can always come back and try to fly further than before.",
+      },
+    ],
+  },
+  "gemfall-depths": {
+    tips: [
+      "Clear every room on a floor before heading for the stairs. Skipping rooms means missing gems, gold and health potions that you will need two floors down, and there is no going back.",
+      "Attack the moment an enemy enters your range. Waiting for them to get closer only gives them a free hit — the sword's reach is longer than most enemy attacks, so swing early.",
+      "Spend gold at the shop between floors. Hoarding gold is tempting, but an upgraded sword or extra health potion is worth more than a pile of coins you never use.",
+      "Watch the floor counter, not just your health. Knowing you are on floor fifteen of twenty tells you how much danger to expect — the deeper you go, the tougher every room becomes.",
+      "Health potions stack. Do not use a potion at full health hoping it will heal you later — pick them up and use them when you actually need the heal, not before.",
+    ],
+    faq: [
+      {
+        q: "Is Gemfall Depths free to play?",
+        a: "Yes. Gemfall Depths is completely free, runs in your browser and shows no ads inside the game. There is nothing to download, install or pay for — just enter the dungeon and start crawling.",
+      },
+      {
+        q: "How do I play on mobile?",
+        a: "On mobile, drag anywhere on the screen to move your character and tap anywhere to attack. The controls are tuned for touch and respond to small, deliberate inputs.",
+      },
+      {
+        q: "What is the goal?",
+        a: "Descend through twenty procedurally generated floors, defeat the enemies on each one, collect gems and gold, and reach the bottom alive. Every floor is a fresh layout, so memorisation is not an option.",
+      },
+      {
+        q: "How do I upgrade my character?",
+        a: "Gold earned from defeating enemies can be spent at shops that appear between floors. Buy sword upgrades to deal more damage, health potions to survive longer, or both.",
+      },
+      {
+        q: "Is the dungeon the same every run?",
+        a: "No. The dungeon is procedurally generated, so every run produces different room layouts, enemy placements and item locations. The only constant is the challenge.",
+      },
+    ],
+  },
+  "turbo-tarmac": {
+    tips: [
+      "Brake into the corner, accelerate out. A fast exit onto the straight is worth more than a fast entry into the apex, so scrub speed early and floor it as soon as the car straightens.",
+      "Drift is a tool, not a style. Holding Space or S through the corner slides the rear and bends the car faster than clean steering, but drifting too long bleeds speed — use it for tight corners only.",
+      "Watch the position indicator, not just the timer. Knowing whether you are in first, second or third tells you how aggressive to drive — second place on the final lap calls for a risky pass, not a cautious line.",
+      "The AI takes predictable lines. Learn the circuit's tight corners and position yourself on the inside before the AI turns in — a clean inside line beats a desperate late brake every time.",
+      "Three laps is short enough to learn the circuit. Use the first lap to read the layout, the second to push your pace, and the third to seal the position — rushing lap one usually ends in a crash.",
+    ],
+    faq: [
+      {
+        q: "Is Turbo Tarmac free to play?",
+        a: "Yes. Turbo Tarmac is completely free, runs in your browser and shows no ads inside the game. There is nothing to download, install or pay for — just hit the track and start racing.",
+      },
+      {
+        q: "How do I drift?",
+        a: "Hold Space or S while turning to initiate a drift. The car slides through the corner and straightens as you release the brake. Drifting too long bleeds speed, so use it only on tight bends.",
+      },
+      {
+        q: "How many laps and opponents are there?",
+        a: "Each race is three laps around a dynamically generated circuit, with three AI opponents. Finishing first requires clean lines, well-timed drifts and the nerve to pass on the inside.",
+      },
+      {
+        q: "How do I control the car on mobile?",
+        a: "On mobile, tap and hold the left or right side of the screen to steer, and the top or bottom half to brake or accelerate. The touch zones are large enough to feel intuitive without looking.",
+      },
+      {
+        q: "Is my best time saved?",
+        a: "Yes, your best race time and best lap time are saved in your browser, so you can always come back and try to beat your own record.",
+      },
+    ],
+  },
+  "racket-rumble": {
+    tips: [
+      "Move the racket early, not at the last moment. Anticipating where the ball will land and positioning the racket there before it arrives beats chasing it with a desperate lunge every time.",
+      "Use the power smash sparingly. The double-tap smash is faster and heavier than a normal return, but it leaves your court open if the AI gets a racket on it — save it for a ball the AI is slow to reach.",
+      "Aim for the corners, not the centre. A return that lands near the baseline or the sideline forces the AI to move further and gives you more time to reposition for the next shot.",
+      "Watch the AI's position, not just the ball. If the AI is deep in its court, a short lob over its head can catch it off guard. If it is at the net, a hard drive past it is the play.",
+      "Hold your nerve in the tiebreak. The last few points of a tight set are where most people rush their shots — slow down, aim carefully, and trust the racket to do the work.",
+    ],
+    faq: [
+      {
+        q: "Is Racket Rumble free to play?",
+        a: "Yes. Racket Rumble is completely free, runs in your browser and shows no ads inside the game. There is nothing to download, install or pay for — just pick up the racket and start swinging.",
+      },
+      {
+        q: "How do I play on mobile?",
+        a: "Touch and drag to move the racket. Double-tap the screen to unleash a power smash. The racket follows your finger closely, so small, deliberate drags give you the most control.",
+      },
+      {
+        q: "How do I win a set?",
+        a: "First to seven points wins a set, and the match is best-of-three sets. A power smash can change the momentum of a rally, but it leaves your court open if the AI returns it.",
+      },
+      {
+        q: "What is the power smash?",
+        a: "Double-tap the screen or the mouse to hit a power smash — a faster, heavier shot that gives the AI less time to react. Mistiming it leaves the court exposed, so use it when you are confident the AI is out of position.",
+      },
+      {
+        q: "Does the game save my results?",
+        a: "Yes, your match wins and best performances are saved in your browser automatically, so you can always come back and try to improve your record.",
+      },
+    ],
+  },
+};
+
 export function getGameContent(slug: string): GameContent | undefined {
   return content[slug];
 }
