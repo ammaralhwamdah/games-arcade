@@ -1,16 +1,13 @@
-import type { Metadata } from "next";
+"use client";
+
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import AuthPanel from "@/components/AuthPanel";
 import { SITE_NAME } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "Register — Create Your Free Account",
-  description: `Create a free account on ${SITE_NAME} to earn points and stars and see your name on the global leaderboard.`,
-  alternates: { canonical: "/register" },
-};
-
-export default async function RegisterPage({ searchParams }: { searchParams: Promise<{ confirmed?: string }> }) {
-  const params = await searchParams;
-  const confirmed = params.confirmed === "1";
+function RegisterContent() {
+  const searchParams = useSearchParams();
+  const confirmed = searchParams.get("confirmed") === "1";
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-14 sm:px-6">
@@ -30,5 +27,13 @@ export default async function RegisterPage({ searchParams }: { searchParams: Pro
         <AuthPanel initialMode="signup" />
       </div>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense>
+      <RegisterContent />
+    </Suspense>
   );
 }
