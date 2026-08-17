@@ -47,20 +47,22 @@ export default function Comments({ slug }: { slug: string }) {
       setLoading(false);
       return;
     }
-    supabase
-      .from("comments")
-      .select("id, name, content, created_at")
-      .eq("game_slug", slug)
-      .order("created_at", { ascending: false })
-      .limit(50)
-      .then(({ data }) => {
+    (async () => {
+      try {
+        const { data } = await supabase
+          .from("comments")
+          .select("id, name, content, created_at")
+          .eq("game_slug", slug)
+          .order("created_at", { ascending: false })
+          .limit(50);
         if (cancelled) return;
         setComments((data ?? []) as Comment[]);
-        setLoading(false);
-      })
-      .catch(() => {
+      } catch {
+        // ignore
+      } finally {
         if (!cancelled) setLoading(false);
-      });
+      }
+    })();
     return () => {
       cancelled = true;
     };
