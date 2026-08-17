@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Nebula Grinder</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; background: #060914; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; color: #e2e8f0; }
+  body { display: flex; align-items: center; justify-content: center; }
+  #wrap { position: relative; display: flex; flex-direction: column; gap: 10px; width: min(96vmin, 660px); height: min(96vh, 820px); }
+  #top { position: relative; flex: 1; min-height: 0; }
+  #hud { position: absolute; top: 10px; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 0 14px; font-size: 15px; font-weight: 700; z-index: 4; pointer-events: none; }
+  #hud .left { display: flex; gap: 12px; align-items: baseline; }
+  #hud .dust { font-size: 22px; color: #fbbf24; text-shadow: 0 0 12px rgba(251,191,36,.55); }
+  #hud .ps { font-size: 13px; color: #94a3b8; }
+  #hud .best { color: #22d3ee; text-shadow: 0 1px 6px rgba(0,0,0,.6); }
+  #soundBtn { pointer-events: auto; background: rgba(255,255,255,.1); border: 0; border-radius: 10px; width: 30px; height: 30px; font-size: 15px; cursor: pointer; color: #fff; -webkit-user-select: none; user-select: none; touch-action: manipulation; }
+  #stage { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 18px; background: radial-gradient(circle at 50% 38%, #131c3a 0%, #0a1128 55%, #060914 100%); box-shadow: 0 10px 40px rgba(0,0,0,.6); touch-action: none; cursor: pointer; overflow: hidden; }
+  #floatdust { position: absolute; left: 0; right: 0; bottom: 14px; text-align: center; font-size: 13px; color: #a5b4fc; z-index: 3; pointer-events: none; opacity: .9; text-shadow: 0 1px 4px rgba(0,0,0,.7); }
+  #shop { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  #shop .item { background: rgba(15,23,42,.92); border: 1px solid rgba(255,255,255,.12); border-radius: 13px; padding: 9px 10px; cursor: pointer; text-align: left; transition: transform .08s, border-color .1s; -webkit-user-select: none; user-select: none; touch-action: manipulation; }
+  #shop .item:active { transform: scale(.96); }
+  #shop .item.afford { border-color: #22d3ee; box-shadow: 0 0 12px rgba(34,211,238,.25); }
+  #shop .item.disabled { opacity: .42; cursor: default; }
+  #shop .item .n { font-size: 13px; font-weight: 800; color: #f8fafc; }
+  #shop .item .n b { color: #4ade80; font-size: 11px; margin-left: 5px; }
+  #shop .item .c { font-size: 12px; font-weight: 700; color: #fbbf24; margin-top: 2px; }
+  #shop .item .d { font-size: 10.5px; color: #94a3b8; margin-top: 1px; line-height: 1.25; }
+  #shop .item .k { float: right; font-size: 10px; color: #64748b; font-weight: 700; }
+  #toast { position: absolute; top: 64px; left: 50%; transform: translateX(-50%); background: rgba(8,15,32,.92); border: 1px solid #fbbf24; color: #fbbf24; font-weight: 800; font-size: 14px; padding: 8px 18px; border-radius: 999px; z-index: 5; opacity: 0; pointer-events: none; transition: opacity .3s; text-shadow: 0 1px 4px rgba(0,0,0,.7); white-space: nowrap; }
+  #overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; background: rgba(6,9,20,.84); border-radius: 18px; text-align: center; padding: 22px; z-index: 6; backdrop-filter: blur(3px); }
+  #overlay.hidden { display: none; }
+  #overlay h1 { font-size: 40px; letter-spacing: 2px; color: #fff; }
+  #overlay h1 span { color: #22d3ee; }
+  #overlay .sub { font-size: 14.5px; color: #94a3b8; max-width: 320px; line-height: 1.55; }
+  #overlay .final { font-size: 17px; color: #fbbf24; font-weight: 700; display: none; }
+  #overlay .btn { background: #22d3ee; color: #082f36; border: 0; border-radius: 12px; padding: 13px 34px; font-size: 17px; font-weight: 800; cursor: pointer; transition: transform .1s, filter .1s; }
+  #overlay .btn:hover { filter: brightness(1.1); }
+  #overlay .btn:active { transform: scale(.96); }
+  @media (max-width: 520px) { #shop { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 600px) {
+    #wrap { width: 100vw; height: 100vh; height: 100dvh; gap: 0; border-radius: 0; }
+    #stage { border-radius: 0; }
+    #overlay { border-radius: 0; }
+    #overlay h1 { font-size: 28px; }
+    #overlay .sub { font-size: 13px; }
+    #hud { font-size: 13px; padding: 0 8px; }
+    #hud .dust { font-size: 18px; }
+    #hud .ps { font-size: 11px; }
+    #shop .item .n { font-size: 12px; }
+    #shop .item .d { font-size: 10px; }
+    #floatdust { font-size: 12px; bottom: 8px; }
+  }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="top">
+    <div id="hud"><span class="left"><span class="dust" id="dustEl">0</span><span class="ps" id="psEl">0/s</span><span class="best" id="bestEl">BEST 0</span></span><button id="soundBtn" title="Sound: on" aria-label="Toggle sound">🔊</button></div>
+    <div id="toast"></div>
+    <canvas id="stage"></canvas>
+    <div id="floatdust"></div>
+    <div id="overlay">
+      <h1>NEBULA<span> GRINDER</span></h1>
+      <div class="sub">Click the core asteroid to grind it into stardust. Spend dust on auto-grinders, plasma drills and drone swarms. Press 1-5 to buy from the shop. How big can your hoard grow?</div>
+      <div class="final" id="finalMsg"></div>
+      <button class="btn" id="playBtn">PLAY</button>
+    </div>
+  </div>
+  <div id="shop"></div>
+</div>
+<script>
+(function () {
+  "use strict";
+  const canvas = document.getElementById("stage");
+  const ctx = canvas.getContext("2d");
+  const overlay = document.getElementById("overlay");
+  const playBtn = document.getElementById("playBtn");
+  const finalMsg = document.getElementById("finalMsg");
+  const dustEl = document.getElementById("dustEl");
+  const psEl = document.getElementById("psEl");
+  const bestEl = document.getElementById("bestEl");
+  const shopEl = document.getElementById("shop");
+  const floatEl = document.getElementById("floatdust");
+  const toastEl = document.getElementById("toast");
+
+  const DPR = Math.min(window.devicePixelRatio || 1, 2);
+  let W, H, cx, cy;
+
+  let dust = 0, total = 0, best = parseInt(localStorage.getItem("ng.best") || "0", 10);
+  let clickPower = 1, autoPerSec = 0, running = false, goldenTimer = null;
+  let golden = null;
+
+  const UPGRADES = [
+    { id: "pick", name: "Plasma Pick", icon: "⛏️", base: 15, desc: "x2 click power", cost: 15, owned: 0, apply: () => { clickPower *= 2; }, buyOnce: false },
+    { id: "grinder", name: "Auto-Grinder", icon: "⚙️", base: 25, desc: "+1 dust/s each", cost: 25, owned: 0, auto: 1, apply: () => { autoPerSec += 1; } },
+    { id: "drone", name: "Drone Swarm", icon: "🛸", base: 180, desc: "+6 dust/s each", cost: 180, owned: 0, auto: 6, apply: () => { autoPerSec += 6; } },
+    { id: "core", name: "Core Forge", icon: "🔥", base: 1200, desc: "+25 dust/s each", cost: 1200, owned: 0, auto: 25, apply: () => { autoPerSec += 25; } },
+    { id: "collector", name: "Warp Collector", icon: "🌀", base: 6000, desc: "x3 dust/s each", cost: 6000, owned: 0, apply: () => { autoPerSec = autoPerSec * 3 - (autoPerSec / 3); } },
+    { id: "gold", name: "Golden Asteroid", icon: "✨", base: 400, desc: "spawns a golden asteroid", cost: 400, owned: 0, apply: () => { spawnGolden(); } },
+  ];
+
+  function fmt(n) {
+    n = Math.floor(n);
+    if (n >= 1e9) return (n / 1e9).toFixed(2) + "B";
+    if (n >= 1e6) return (n / 1e6).toFixed(2) + "M";
+    if (n >= 1e4) return (n / 1e3).toFixed(1) + "K";
+    return String(n);
+  }
+  function costOf(u) {
+    if (u.buyOnce) return u.base;
+    return Math.round(u.base * Math.pow(1.15, u.owned));
+  }
+
+  function resize() {
+    const r = canvas.getBoundingClientRect();
+    W = canvas.width = Math.round(r.width * DPR);
+    H = canvas.height = Math.round(r.height * DPR);
+    cx = W / 2; cy = H / 2;
+    buildStars();
+    if (coreR === 0 && W > 0) resetScene();
+    draw();
+  }
+
+  // ---------- starfield ----------
+  let stars = [];
+  function buildStars() {
+    stars = [];
+    const n = Math.floor((W * H) / 9000);
+    for (let i = 0; i < n; i++) {
+      stars.push({ x: Math.random() * W, y: Math.random() * H, r: Math.random() * 1.6 + 0.3, s: 0.2 + Math.random() * 0.8 });
+    }
+  }
+
+  // ---------- core asteroid ----------
+  function makeRock(seg) {
+    const pts = [];
+    const base = 0.78 + Math.random() * 0.44;
+    for (let i = 0; i < seg; i++) {
+      const a = (i / seg) * Math.PI * 2;
+      const rr = base + (Math.random() * 0.5 - 0.25);
+      pts.push([Math.cos(a) * rr, Math.sin(a) * rr]);
+    }
+    return pts;
+  }
+  const corePts = makeRock(11);
+  let coreR = 0, coreRot = 0;
+  const orbiters = [];
+
+  function resetScene() {
+    const isMobile = (screen.width || window.innerWidth) < 600;
+    const coreScale = isMobile ? 0.85 : 0.21;
+    coreR = Math.min(W, H) * coreScale;
+    coreRot = 0;
+    golden = null;
+    orbiters.length = 0;
+    for (let i = 0; i < 6; i++) {
+      orbiters.push({
+        pts: makeRock(7 + Math.floor(Math.random() * 3)),
+        r: Math.min(W, H) * (0.03 + Math.random() * 0.045),
+        a: Math.random() * Math.PI * 2,
+        sp: (0.12 + Math.random() * 0.2) * (Math.random() < 0.5 ? -1 : 1),
+        dist: Math.min(W, H) * (0.4 + Math.random() * 0.22),
+        rot: Math.random() * Math.PI * 2,
+        bonus: 5 + Math.floor(Math.random() * 15),
+      });
+    }
+  }
+
+  function drawRock(pts, r, rot, fill1, fill2, line) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(rot);
+    ctx.beginPath();
+    for (let i = 0; i < pts.length; i++) {
+      const x = pts[i][0] * r, y = pts[i][1] * r;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    const g = ctx.createRadialGradient(-r * 0.3, -r * 0.35, r * 0.1, 0, 0, r * 1.1);
+    g.addColorStop(0, fill1);
+    g.addColorStop(1, fill2);
+    ctx.fillStyle = g;
+    ctx.fill();
+    ctx.strokeStyle = line;
+    ctx.lineWidth = Math.max(2, r * 0.03);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawCrater(rx, ry, r, dark) {
+    ctx.beginPath();
+    ctx.arc(rx, ry, r, 0, Math.PI * 2);
+    ctx.fillStyle = dark;
+    ctx.globalAlpha = 0.35;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+
+  // ---------- particles ----------
+  const parts = [];
+  function burst(x, y, n, color) {
+    for (let i = 0; i < n; i++) {
+      const a = Math.random() * Math.PI * 2, sp = (1 + Math.random() * 3.5) * DPR;
+      parts.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 1, decay: 0.02 + Math.random() * 0.03, r: (1.5 + Math.random() * 3) * DPR, c: color });
+    }
+  }
+
+  const floats = [];
+  function floatUp(txt, x, y) {
+    floats.push({ txt, x, y: y - 20 * DPR, life: 1 });
+  }
+
+  function updateParticles() {
+    for (let i = parts.length - 1; i >= 0; i--) {
+      const p = parts[i];
+      p.x += p.vx; p.y += p.vy; p.vy += 0.06 * DPR; p.life -= p.decay;
+      if (p.life <= 0) parts.splice(i, 1);
+    }
+    for (let i = floats.length - 1; i >= 0; i--) {
+      const f = floats[i];
+      f.y -= 0.7 * DPR; f.life -= 0.018;
+      if (f.life <= 0) floats.splice(i, 1);
+    }
+  }
+
+  // ---------- game ----------
+  function startGame() {
+    ensureAudio();
+    if (soundOn) { musicOn = true; startMusic(); }
+    sfx.go();
+    dust = 0; total = 0; clickPower = 1; autoPerSec = 0;
+    UPGRADES.forEach((u) => { u.owned = 0; });
+    resetScene();
+    running = true;
+    overlay.classList.add("hidden");
+    renderShop();
+    draw();
+  }
+
+  function mine(x, y, power) {
+    dust += power;
+    total += power;
+    sfx.mine();
+    burst(x, y, 16, "#fbbf24");
+    floatUp("+" + fmt(power), x, y);
+    checkMilestone();
+    refresh();
+  }
+
+  const MILESTONES = [100, 1000, 10000, 100000, 1000000, 10000000, 100000000];
+  let mileIdx = 0;
+  function checkMilestone() {
+    while (mileIdx < MILESTONES.length && total >= MILESTONES[mileIdx]) {
+      sfx.mile();
+      toast("MILESTONE — " + fmt(MILESTONES[mileIdx]) + " DUST!");
+      mileIdx++;
+    }
+  }
+
+  function buy(u) {
+    const cost = costOf(u);
+    if (dust < cost) { sfx.deny(); return; }
+    dust -= cost;
+    u.owned++;
+    if (u.buyOnce) {
+      const it = shopEl.querySelector('[data-id="' + u.id + '"]');
+      if (it) it.classList.add("disabled");
+    }
+    u.apply();
+    sfx.buy();
+    renderShop();
+    refresh();
+  }
+
+  function renderShop() {
+    shopEl.innerHTML = "";
+    UPGRADES.forEach((u, i) => {
+      const cost = costOf(u);
+      const afford = dust >= cost;
+      const el = document.createElement("div");
+      el.className = "item" + (afford ? " afford" : "") + (u.buyOnce && u.owned ? " disabled" : "");
+      el.dataset.id = u.id;
+      el.innerHTML = '<span class="k">' + (i + 1) + "</span><div class=\"n\">" + u.icon + " " + u.name + (u.owned ? " <b>x" + u.owned + "</b>" : "") + "</div><div class=\"c\">◆ " + fmt(cost) + "</div><div class=\"d\">" + u.desc + "</div>";
+      el.addEventListener("click", () => buy(u));
+      shopEl.appendChild(el);
+    });
+  }
+
+  function refresh() {
+    dustEl.textContent = fmt(dust);
+    psEl.textContent = fmt(autoPerSec) + "/s";
+    if (total > best) {
+      best = total;
+      localStorage.setItem("ng.best", String(best));
+      bestEl.textContent = "BEST " + fmt(best);
+    }
+    const items = shopEl.querySelectorAll(".item");
+    UPGRADES.forEach((u, i) => {
+      if (i >= items.length) return;
+      const affordable = dust >= costOf(u);
+      items[i].classList.toggle("afford", affordable && !(u.buyOnce && u.owned));
+    });
+  }
+
+  let toastTimer = null;
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.style.opacity = "1";
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { toastEl.style.opacity = "0"; }, 2200);
+  }
+
+  function spawnGolden() {
+    golden = { x: cx, y: H * 0.3, r: Math.min(W, H) * 0.11, t: 0, worth: 200 + total * 0.25 };
+  }
+
+  // ---------- draw ----------
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    const now = Date.now();
+
+    for (const s of stars) {
+      const tw = 0.55 + 0.45 * Math.sin(now / 500 + s.x);
+      ctx.globalAlpha = tw * 0.8;
+      ctx.fillStyle = "#e2e8f0";
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r * DPR, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    // orbiters
+    for (const o of orbiters) {
+      o.rot += o.sp * 0.004;
+      const ox = cx + Math.cos(o.a) * o.dist, oy = cy + Math.sin(o.a) * o.dist;
+      ctx.save();
+      ctx.translate(ox, oy);
+      ctx.rotate(o.rot);
+      const g = ctx.createRadialGradient(-o.r * 0.3, -o.r * 0.35, o.r * 0.1, 0, 0, o.r);
+      g.addColorStop(0, "#3b475f");
+      g.addColorStop(1, "#161f36");
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      for (let i = 0; i < o.pts.length; i++) {
+        const x = o.pts[i][0] * o.r, y = o.pts[i][1] * o.r;
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // golden asteroid
+    if (golden) {
+      golden.t += 0.03;
+      const pulse = 1 + 0.08 * Math.sin(golden.t * 5);
+      const gr = golden.r * pulse;
+      ctx.save();
+      ctx.translate(golden.x, golden.y);
+      ctx.shadowColor = "#fde047";
+      ctx.shadowBlur = 34 * DPR;
+      const gg = ctx.createRadialGradient(-gr * 0.3, -gr * 0.35, gr * 0.1, 0, 0, gr);
+      gg.addColorStop(0, "#fef08a");
+      gg.addColorStop(1, "#ca8a04");
+      ctx.fillStyle = gg;
+      ctx.beginPath();
+      ctx.arc(0, 0, gr, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.restore();
+      ctx.fillStyle = "rgba(254,240,138,0.9)";
+      ctx.font = "bold " + Math.round(gr * 0.28) + "px system-ui";
+      ctx.textAlign = "center";
+      ctx.fillText("◆" + fmt(golden.worth), golden.x, golden.y + gr * 0.42);
+    }
+
+    // core asteroid
+    coreRot += 0.0008;
+    const cx0 = cx, cy0 = cy;
+    ctx.save();
+    ctx.shadowColor = "rgba(139,92,246,0.45)";
+    ctx.shadowBlur = 30 * DPR;
+    drawRock(corePts, coreR, coreRot, "#8b5cf6", "#3b0764", "#c4b5fd");
+    ctx.restore();
+    drawCrater(cx0 - coreR * 0.28, cy0 - coreR * 0.1, coreR * 0.2, "#1e1b4b");
+    drawCrater(cx0 + coreR * 0.2, cy0 + coreR * 0.25, coreR * 0.14, "#1e1b4b");
+    drawCrater(cx0 + coreR * 0.32, cy0 - coreR * 0.3, coreR * 0.09, "#1e1b4b");
+    // glowing core lines
+    ctx.strokeStyle = "rgba(196,181,253,0.5)";
+    ctx.lineWidth = 3 * DPR;
+    ctx.beginPath();
+    ctx.moveTo(cx0 - coreR * 0.4, cy0 + coreR * 0.1);
+    ctx.lineTo(cx0 + coreR * 0.42, cy0 - coreR * 0.12);
+    ctx.stroke();
+    // label
+    ctx.fillStyle = "rgba(226,232,240,0.95)";
+    ctx.font = "800 " + Math.round(coreR * 0.26) + "px system-ui";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.shadowColor = "rgba(0,0,0,0.8)";
+    ctx.shadowBlur = 6 * DPR;
+    ctx.fillText("CLICK TO GRIND", cx0, cy0);
+    ctx.shadowBlur = 0;
+
+    // particles
+    for (const p of parts) {
+      ctx.globalAlpha = Math.max(0, p.life);
+      ctx.fillStyle = p.c;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    for (const f of floats) {
+      ctx.globalAlpha = Math.max(0, f.life);
+      ctx.fillStyle = "#fbbf24";
+      ctx.font = "800 " + Math.round(18 * DPR) + "px system-ui";
+      ctx.textAlign = "center";
+      ctx.fillText(f.txt, f.x, f.y);
+    }
+    ctx.globalAlpha = 1;
+    ctx.textBaseline = "alphabetic";
+  }
+
+  // ---------- input ----------
+  function handleClick(e) {
+    if (!running) return;
+    const r = canvas.getBoundingClientRect();
+    const x = (e.clientX - r.left) * (W / r.width);
+    const y = (e.clientY - r.top) * (H / r.height);
+    const dCore = Math.hypot(x - cx, y - cy);
+    if (golden && Math.hypot(x - golden.x, y - golden.y) < golden.r * 1.6) {
+      mine(x, y, golden.worth);
+      sfx.gold();
+      burst(x, y, 34, "#fde047");
+      golden = null;
+      return;
+    }
+    if (dCore < coreR * 1.25) {
+      mine(x, y, clickPower);
+      return;
+    }
+    for (const o of orbiters) {
+      const ox = cx + Math.cos(o.a) * o.dist, oy = cy + Math.sin(o.a) * o.dist;
+      if (Math.hypot(x - ox, y - oy) < o.r * 1.6) {
+        mine(x, y, o.bonus * clickPower);
+        return;
+      }
+    }
+    mine(x, y, clickPower);
+  }
+
+  canvas.addEventListener("pointerdown", handleClick);
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key >= "1" && e.key <= "6") {
+      const i = parseInt(e.key, 10) - 1;
+      if (UPGRADES[i]) buy(UPGRADES[i]);
+    }
+    if (e.key === " " || e.key === "Enter") {
+      if (!running) { startGame(); return; }
+      e.preventDefault();
+      mine(cx + (Math.random() - 0.5) * coreR * 0.8, cy + (Math.random() - 0.5) * coreR * 0.8, clickPower);
+    }
+  });
+
+  playBtn.addEventListener("click", () => startGame());
+
+  // auto-grinding
+  setInterval(() => {
+    if (!running || autoPerSec <= 0) return;
+    dust += autoPerSec * 0.1;
+    total += autoPerSec * 0.1;
+    checkMilestone();
+    refresh();
+  }, 100);
+
+  // golden asteroid lifetime
+  setInterval(() => {
+    if (!running || !golden) return;
+    golden.worth *= 0.9;
+  }, 2000);
+
+  // ---------- sound ----------
+  let AC = null, master = null, soundOn = true, musicOn = false, musicTimer = null;
+  function ensureAudio() {
+    if (!AC) {
+      try {
+        AC = new (window.AudioContext || window.webkitAudioContext)();
+        master = AC.createGain();
+        master.gain.value = 0.5;
+        master.connect(AC.destination);
+      } catch (e) { AC = null; }
+    }
+    if (AC && AC.state === "suspended") AC.resume();
+  }
+  const soundBtn = document.getElementById("soundBtn");
+  soundBtn.addEventListener("click", () => {
+    ensureAudio();
+    soundOn = !soundOn;
+    soundBtn.textContent = soundOn ? "🔊" : "🔇";
+    soundBtn.title = soundOn ? "Sound: on" : "Sound: off";
+    if (soundOn) { musicOn = true; startMusic(); } else { musicOn = false; stopMusic(); }
+  });
+  function tone(freq, dur, type, vol, when) {
+    if (!AC || !master || !soundOn) return;
+    const t = AC.currentTime + (when || 0);
+    const o = AC.createOscillator(), g = AC.createGain();
+    o.type = type || "square";
+    o.frequency.setValueAtTime(freq, t);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol || 0.16, t + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(master);
+    o.start(t); o.stop(t + dur + 0.05);
+  }
+  const sfx = {
+    mine: function () { tone(140 + Math.random() * 60, 0.06, "square", 0.11); },
+    buy: function () { tone(660, 0.1, "square", 0.13); tone(880, 0.14, "square", 0.11, 0.08); },
+    deny: function () { tone(160, 0.1, "sawtooth", 0.1); },
+    gold: function () { [880, 1174, 1568, 2093].forEach((f, i) => tone(f, 0.12, "square", 0.11, i * 0.07)); },
+    mile: function () { [523, 659, 784, 1046].forEach((f, i) => tone(f, 0.16, "square", 0.12, i * 0.09)); },
+    go: function () { tone(523, 0.1, "square", 0.12); tone(784, 0.16, "square", 0.12, 0.12); },
+  };
+  function startMusic() {
+    if (!soundOn || !musicOn || !AC || !master) return;
+    stopMusic();
+    const notes = [196, 247, 294, 196, 294, 349, 294, 247];
+    let idx = 0, t = AC.currentTime + 0.1;
+    musicTimer = setInterval(function () {
+      if (!soundOn || !musicOn || !AC) { stopMusic(); return; }
+      tone(notes[idx % notes.length], 0.12, "triangle", 0.04, t - AC.currentTime);
+      idx++; t += 0.16;
+    }, 160);
+  }
+  function stopMusic() { if (musicTimer) { clearInterval(musicTimer); musicTimer = null; } }
+
+  const origStart = startGame;
+  startGame = function () {
+    ensureAudio();
+    if (soundOn) { musicOn = true; startMusic(); }
+    sfx.go();
+    origStart();
+  };
+
+  // idle anim
+  function idle() {
+    if (running) updateParticles();
+    draw();
+    requestAnimationFrame(idle);
+  }
+
+  window.addEventListener("resize", () => { resize(); });
+  bestEl.textContent = "BEST " + fmt(best);
+  renderShop();
+  resize();
+  idle();
+})();
+</script>
+</body>
+</html>

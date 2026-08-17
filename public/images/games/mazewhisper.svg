@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="384" viewBox="0 0 512 384">
+  <defs>
+    <linearGradient id="pwBG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b111e"/>
+      <stop offset="1" stop-color="#03050a"/>
+    </linearGradient>
+    <radialGradient id="pwBeam" cx="0.5" cy="1" r="1.35" fx="0.5" fy="1">
+      <stop offset="0" stop-color="#ffc878" stop-opacity="0.85"/>
+      <stop offset="0.5" stop-color="#ff9d5c" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#ff8a50" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="pwEyeGlow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ff4058" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#ff4058" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="pwTitle" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ff5d6e"/>
+      <stop offset="0.55" stop-color="#ff9d5c"/>
+      <stop offset="1" stop-color="#d2a8ff"/>
+    </linearGradient>
+    <linearGradient id="pwRock" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#161c2c"/>
+      <stop offset="1" stop-color="#0a0d16"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="512" height="384" fill="url(#pwBG)"/>
+  <g fill="url(#pwRock)">
+    <path d="M0 0 L0 46 L34 12 L58 40 L90 8 L120 42 L158 10 L186 40 L220 14 L252 44 L286 12 L316 40 L352 8 L386 42 L420 12 L446 38 L512 10 L512 0 Z"/>
+    <path d="M0 384 L0 330 L26 372 L54 336 L86 378 L118 340 L150 376 L184 338 L216 378 L250 340 L282 376 L316 338 L348 378 L382 340 L414 376 L448 338 L480 372 L512 342 L512 384 Z"/>
+  </g>
+  <ellipse cx="256" cy="300" rx="210" ry="52" fill="#ffc878" opacity="0.05"/>
+  <polygon points="256,334 96,52 416,52" fill="url(#pwBeam)"/>
+  <circle cx="182" cy="158" r="70" fill="url(#pwEyeGlow)"/>
+  <circle cx="330" cy="158" r="70" fill="url(#pwEyeGlow)"/>
+  <g>
+    <circle cx="182" cy="158" r="9" fill="#1a0508"/>
+    <circle cx="182" cy="158" r="5" fill="#ff2a3c"/>
+    <circle cx="182" cy="156" r="2" fill="#ffd0d6"/>
+    <circle cx="330" cy="158" r="9" fill="#1a0508"/>
+    <circle cx="330" cy="158" r="5" fill="#ff2a3c"/>
+    <circle cx="330" cy="156" r="2" fill="#ffd0d6"/>
+  </g>
+  <g stroke="#ff5d6e" stroke-width="3" stroke-linecap="round" opacity="0.5">
+    <path d="M214 196 L208 210"/>
+    <path d="M300 196 L306 210"/>
+  </g>
+  <g>
+    <ellipse cx="256" cy="268" rx="30" ry="24" fill="none" stroke="#8ef0c8" stroke-width="3" opacity="0.75"/>
+    <ellipse cx="256" cy="268" rx="17" ry="14" fill="none" stroke="#8ef0c8" stroke-width="2" opacity="0.5"/>
+    <polygon points="256,246 266,268 256,290 246,268" fill="#8ef0c8" opacity="0.85"/>
+  </g>
+  <polygon points="404,196 414,214 404,232 394,214" fill="#ffd76a"/>
+  <rect x="424" y="206" width="26" height="15" rx="2" fill="#ffd76a"/>
+  <rect x="442" y="210" width="6" height="7" fill="#ffd76a"/>
+  <rect x="429" y="209" width="10" height="9" fill="#ffefb8"/>
+  <rect x="0" y="0" width="512" height="42" fill="rgba(6,8,13,0.72)"/>
+  <text x="256" y="28" text-anchor="middle" fill="url(#pwTitle)" font-family="system-ui, sans-serif" font-size="25" font-weight="900" letter-spacing="2">MAZEWHISPER</text>
+  <g>
+    <rect x="398" y="6" width="106" height="18" rx="9" fill="#ffffff"/>
+    <text x="451" y="18.5" text-anchor="middle" fill="#0f172a" font-family="system-ui, sans-serif" font-size="10.5" font-weight="800">GAMEVERSE</text>
+  </g>
+</svg>

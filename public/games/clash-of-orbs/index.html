@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Clash of Orbs</title>
+<style>
+  html,body{margin:0;height:100%;background:#070b12;overflow:hidden;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+  #wrap{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  canvas{background:#070b12;touch-action:none;outline:none;border-radius:8px}
+  #hint{position:fixed;bottom:10px;left:0;right:0;text-align:center;color:#4b5a78;font:13px system-ui;pointer-events:none}
+</style>
+</head>
+<body>
+<div id="wrap"><canvas id="c" tabindex="0"></canvas></div>
+<div id="hint">Tap your side to launch an orb · first to 70% wins</div>
+<script>
+"use strict";
+/* Clash of Orbs - GameVerse Exclusive Edition. Original code. */
+(function () {
+  var canvas = document.getElementById("c");
+  var ctx = canvas.getContext("2d");
+  var W = 480, H = 620;
+  var DPR = Math.min(window.devicePixelRatio || 1, 2);
+
+  function resize() {
+    var scale = Math.min(window.innerWidth / W, window.innerHeight / H);
+    canvas.style.width = (W * scale) + "px";
+    canvas.style.height = (H * scale) + "px";
+    canvas.width = Math.round(W * scale * DPR);
+    canvas.height = Math.round(H * scale * DPR);
+    ctx.setTransform(scale * DPR, 0, 0, scale * DPR, 0, 0);
+  }
+  window.addEventListener("resize", resize);
+  resize();
+
+  var COLS = 16, ROWS = 20;
+  var CELL = W / COLS;
+  var P1 = "#38bdf8", P2 = "#f472b6";
+  var P1GLOW = "#0ea5e9", P2GLOW = "#db2777";
+  var cells = [];
+  var orbs = [];
+  var particles = [];
+  var mode = "start";
+  var winner = 0;
+  var aiT = 0, slowT = 0;
+  var p1c = 0, p2c = 0;
+  var touchX = null;
+
+  function initGrid() {
+    for (var x = 0; x < COLS; x++) {
+      cells[x] = [];
+      for (var y = 0; y < ROWS; y++) cells[x][y] = x < COLS / 2 ? 1 : 2;
+    }
+  }
+  initGrid(); countCells();
+
+  /* ------- audio ------- */
+  var AC = null;
+  function ac() { if (!AC) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } return AC; }
+  function tone(f0, f1, dur, type, vol) {
+    var a = ac(); if (!a) return;
+    var o = a.createOscillator(), g = a.createGain(), t = a.currentTime;
+    o.type = type || "square";
+    o.frequency.setValueAtTime(f0, t);
+    if (f1) o.frequency.exponentialRampToValueAtTime(f1, t + dur);
+    g.gain.setValueAtTime(vol || 0.04, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(a.destination);
+    o.start(t); o.stop(t + dur + 0.02);
+  }
+  function sPop() { tone(900, 500, 0.07, "triangle", 0.03); }
+  function sFlip() { tone(300, 700, 0.06, "square", 0.03); }
+  function sWin() { tone(440, 880, 0.4, "triangle", 0.06); tone(660, 1320, 0.4, "triangle", 0.05); }
+
+  /* ------- world ------- */
+  function reset() {
+    initGrid();
+    orbs = [];
+    particles = [];
+    winner = 0; aiT = 0.8; slowT = 0;
+    for (var i = 0; i < 3; i++) {
+      spawnOrb(COLS / 4 * CELL + Math.random() * 30, H / 2 + (i - 1) * 40, 1);
+      spawnOrb(COLS * 3 / 4 * CELL + Math.random() * 30, H / 2 + (i - 1) * 40, 2);
+    }
+  }
+
+  function spawnOrb(x, y, team) {
+    var ang = Math.random() * Math.PI * 2;
+    var sp = 44 + Math.random() * 30;
+    orbs.push({ x: x, y: y, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp, team: team, r: CELL * 0.42 });
+    sPop();
+  }
+
+  function burst(x, y, color, n) {
+    for (var i = 0; i < n; i++) {
+      var a = Math.random() * Math.PI * 2, sp = Math.random() * 90 + 20;
+      particles.push({ x: x, y: y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, l: 0.5 + Math.random() * 0.3, t: 0, c: color });
+    }
+  }
+
+  function countCells() {
+    p1c = 0; p2c = 0;
+    for (var x = 0; x < COLS; x++) for (var y = 0; y < ROWS; y++) { if (cells[x][y] === 1) p1c++; else p2c++; }
+  }
+
+  function update(dt) {
+    if (mode !== "play") {
+      for (var pi = particles.length - 1; pi >= 0; pi--) {
+        var q = particles[pi];
+        q.t += dt; q.x += q.vx * dt; q.y += q.vy * dt;
+        if (q.t > q.l) particles.splice(pi, 1);
+      }
+      return;
+    }
+
+    countCells();
+    var total = COLS * ROWS;
+    if (p1c >= total * 0.7) { winner = 1; mode = "over"; sWin(); return; }
+    if (p2c >= total * 0.7) { winner = 2; mode = "over"; sWin(); return; }
+
+    /* player deploy on tap */
+    if (touchX !== null) {
+      if (touchX < W / 2) spawnOrb(touchX, H - 10, 1);
+      touchX = null;
+    }
+
+    /* AI deploys */
+    aiT -= dt;
+    if (aiT <= 0) {
+      aiT = 1.2 + Math.random() * 1.2;
+      var ax = COLS * 3 / 4 * CELL + (Math.random() * 2 - 1) * 60;
+      var ay = Math.min(H - 8, Math.random() * H * 0.7 + 40);
+      spawnOrb(ax, ay, 2);
+    }
+
+    /* move orbs */
+    for (var i = orbs.length - 1; i >= 0; i--) {
+      var o = orbs[i];
+      o.x += o.vx * dt; o.y += o.vy * dt;
+      if (o.x < o.r) { o.x = o.r; o.vx = Math.abs(o.vx); }
+      if (o.x > W - o.r) { o.x = W - o.r; o.vx = -Math.abs(o.vx); }
+      if (o.y < o.r) { o.y = o.r; o.vy = Math.abs(o.vy); }
+      if (o.y > H - o.r) { o.y = H - o.r; o.vy = -Math.abs(o.vy); }
+
+      var flipped = false;
+      for (var a = 0; a < Math.PI * 2; a += Math.PI / 6) {
+        var cx = o.x + Math.cos(a) * o.r;
+        var cy = o.y + Math.sin(a) * o.r;
+        var gxx = Math.floor(cx / CELL), gyy = Math.floor(cy / CELL);
+        if (gxx < 0 || gxx >= COLS || gyy < 0 || gyy >= ROWS) continue;
+        if (cells[gxx][gyy] !== o.team) {
+          cells[gxx][gyy] = o.team;
+          burst(cx, cy, o.team === 1 ? P1GLOW : P2GLOW, 3);
+          flipped = true;
+          if (Math.cos(a) !== 0 && Math.abs(Math.cos(a)) > Math.abs(Math.sin(a))) o.vx = -o.vx;
+          else o.vy = -o.vy;
+          sFlip();
+        }
+      }
+      if (flipped) {
+        o.vx += (Math.random() * 2 - 1) * 6;
+        o.vy += (Math.random() * 2 - 1) * 6;
+        var spd = Math.sqrt(o.vx * o.vx + o.vy * o.vy);
+        if (spd > 104) { o.vx *= 104 / spd; o.vy *= 104 / spd; }
+        if (spd < 40) { o.vx *= 40 / spd; o.vy *= 40 / spd; }
+      }
+    }
+
+    /* particles */
+    for (var pj = particles.length - 1; pj >= 0; pj--) {
+      var p = particles[pj];
+      p.t += dt; p.x += p.vx * dt; p.y += p.vy * dt;
+      if (p.t > p.l) particles.splice(pj, 1);
+    }
+  }
+
+  /* ------- input ------- */
+  canvas.addEventListener("pointerdown", function (e) {
+    var r = canvas.getBoundingClientRect();
+    var x = (e.clientX - r.left) / (r.width / W);
+    if (mode === "start") { mode = "play"; reset(); }
+    else if (mode === "over") { mode = "play"; reset(); }
+    else if (mode === "play") {
+      if (x < W / 2) touchX = x;
+      else touchX = null;
+    }
+    canvas.focus();
+    e.preventDefault();
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      if (mode === "start" || mode === "over") { mode = "play"; reset(); }
+    }
+  });
+  canvas.focus();
+
+  /* ------- draw ------- */
+  function fillLines(t, x, y, lh) {
+    var lines = t.split("\n");
+    for (var i = 0; i < lines.length; i++) ctx.fillText(lines[i], x, y + i * lh);
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    /* grid */
+    for (var x = 0; x < COLS; x++) {
+      for (var y = 0; y < ROWS; y++) {
+        ctx.fillStyle = cells[x][y] === 1 ? P1 : P2;
+        ctx.globalAlpha = 0.75;
+        ctx.fillRect(x * CELL + 0.5, y * CELL + 0.5, CELL - 1, CELL - 1);
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    /* midline */
+    ctx.fillStyle = "rgba(255,255,255,0.25)";
+    ctx.fillRect(W / 2 - 1, 0, 2, H);
+
+    /* orbs */
+    for (var i = 0; i < orbs.length; i++) {
+      var o = orbs[i];
+      ctx.save();
+      ctx.shadowBlur = 14;
+      ctx.shadowColor = o.team === 1 ? P1GLOW : P2GLOW;
+      ctx.fillStyle = o.team === 1 ? "#e0f2fe" : "#fce7f3";
+      ctx.beginPath();
+      ctx.arc(o.x, o.y, o.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+      ctx.fillStyle = o.team === 1 ? P1 : P2;
+      ctx.beginPath();
+      ctx.arc(o.x, o.y, o.r * 0.62, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    /* particles */
+    for (i = 0; i < particles.length; i++) {
+      var p = particles[i];
+      ctx.globalAlpha = Math.max(0, 1 - p.t / p.l);
+      ctx.fillStyle = p.c;
+      ctx.fillRect(p.x - 2, p.y - 2, 4, 4);
+    }
+    ctx.globalAlpha = 1;
+
+    /* HUD */
+    ctx.font = "900 18px system-ui, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillStyle = P1;
+    ctx.fillText(p1c + " (" + Math.round(p1c / (COLS * ROWS) * 100) + "%)", W / 4, 24);
+    ctx.fillStyle = P2;
+    ctx.fillText(p2c + " (" + Math.round(p2c / (COLS * ROWS) * 100) + "%)", W * 3 / 4, 24);
+
+    if (mode === "start") {
+      ctx.fillStyle = "rgba(7,11,18,0.72)";
+      ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = "#e0f2fe";
+      ctx.font = "900 40px system-ui, sans-serif";
+      ctx.fillText("CLASH OF ORBS", W / 2, H / 2 - 60);
+      ctx.fillStyle = "#7c8db5";
+      ctx.font = "16px system-ui, sans-serif";
+      fillLines("Conquer the battlefield with your orbs.\n\nTap or press Enter to begin.\n\nFirst side to control 70% of the grid wins.", W / 2, H / 2 + 4, 24);
+    } else if (mode === "over") {
+      ctx.fillStyle = "rgba(7,11,18,0.72)";
+      ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = winner === 1 ? P1 : P2;
+      ctx.font = "900 36px system-ui, sans-serif";
+      ctx.fillText((winner === 1 ? "AZURE" : "CRIMSON") + " WINS!", W / 2, H / 2 - 20);
+      ctx.fillStyle = "#7c8db5";
+      ctx.font = "16px system-ui, sans-serif";
+      ctx.fillText("Tap or press Enter to play again", W / 2, H / 2 + 24);
+    }
+  }
+
+  /* ------- loop ------- */
+  var lastT = performance.now();
+  function loop(now) {
+    var dt = (now - lastT) / 1000;
+    if (dt > 0.05) dt = 0.05;
+    if (dt < 0) dt = 0.016;
+    lastT = now;
+    update(dt);
+    draw();
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+  window.__game = { getMode: function () { return mode; }, getP1: function () { return p1c; }, getP2: function () { return p2c; } };
+})();
+</script>
+</body>
+</html>

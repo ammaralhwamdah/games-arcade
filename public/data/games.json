@@ -1,0 +1,677 @@
+{
+  "generated": "2026-08-15T10:30:00.000Z",
+  "total": 19,
+  "categories": 20,
+  "categoriesMeta": [
+    {
+      "slug": "arcade",
+      "name": "Arcade",
+      "emoji": "🕹️",
+      "color": "#f43f5e",
+      "description": "Fast, frantic, high-score chasing classics."
+    },
+    {
+      "slug": "puzzle",
+      "name": "Puzzle",
+      "emoji": "🧩",
+      "color": "#8b5cf6",
+      "description": "Brain-teasers, logic puzzles and word games."
+    },
+    {
+      "slug": "action",
+      "name": "Action",
+      "emoji": "💥",
+      "color": "#ef4444",
+      "description": "High-octane thrills and non-stop excitement."
+    },
+    {
+      "slug": "adventure",
+      "name": "Adventure",
+      "emoji": "🗺️",
+      "color": "#f59e0b",
+      "description": "Explore worlds, solve quests and discover stories."
+    },
+    {
+      "slug": "hypercasual",
+      "name": "Hypercasual",
+      "emoji": "⚡",
+      "color": "#06b6d4",
+      "description": "Instant pick-up-and-play games with one-tap fun."
+    },
+    {
+      "slug": "girls",
+      "name": "Girls",
+      "emoji": "👗",
+      "color": "#ec4899",
+      "description": "Dress-up, makeover, decoration and story games."
+    },
+    {
+      "slug": "clicker",
+      "name": "Clicker",
+      "emoji": "🖱️",
+      "color": "#14b8a6",
+      "description": "Tap, click and idle games that keep growing."
+    },
+    {
+      "slug": "3d",
+      "name": "3D",
+      "emoji": "🧊",
+      "color": "#3b82f6",
+      "description": "Stunning 3D games rendered right in your browser."
+    },
+    {
+      "slug": "racing",
+      "name": "Racing",
+      "emoji": "🏎️",
+      "color": "#ef4444",
+      "description": "Speed, drift and overtake on tracks everywhere."
+    },
+    {
+      "slug": "shooting",
+      "name": "Shooting",
+      "emoji": "🎯",
+      "color": "#22c55e",
+      "description": "Target practice, gunfights and precision action."
+    },
+    {
+      "slug": "boys",
+      "name": "Boys",
+      "emoji": "🤖",
+      "color": "#0ea5e9",
+      "description": "Cars, robots, monsters and epic boy-power games."
+    },
+    {
+      "slug": "sports",
+      "name": "Sports",
+      "emoji": "🏅",
+      "color": "#10b981",
+      "description": "Play ball — sports simulations and skill games."
+    },
+    {
+      "slug": "2-player",
+      "name": "2 Player",
+      "emoji": "👥",
+      "color": "#a855f7",
+      "description": "Head-to-head games you can share with a friend."
+    },
+    {
+      "slug": "cooking",
+      "name": "Cooking",
+      "emoji": "🍳",
+      "color": "#fb923c",
+      "description": "Whisk, chop and serve in delicious cooking games."
+    },
+    {
+      "slug": "bejeweled",
+      "name": "Bejeweled",
+      "emoji": "💎",
+      "color": "#22c55e",
+      "description": "Match-3 and gem-matching puzzlers."
+    },
+    {
+      "slug": "stickman",
+      "name": "Stickman",
+      "emoji": "🥢",
+      "color": "#64748b",
+      "description": "Stickman fighters, runners and hilarious slapstick."
+    },
+    {
+      "slug": "soccer",
+      "name": "Soccer",
+      "emoji": "⚽",
+      "color": "#16a34a",
+      "description": "Kick off, dribble and score footballing glory."
+    },
+    {
+      "slug": "strategy",
+      "name": "Strategy",
+      "emoji": "🧠",
+      "color": "#3b82f6",
+      "description": "Plan, build and outsmart your opponents in strategic battles."
+    },
+    {
+      "slug": "horror",
+      "name": "Horror",
+      "emoji": "👻",
+      "color": "#7f1d1d",
+      "description": "Dark, atmospheric and spine-chilling experiences."
+    },
+    {
+      "slug": "card",
+      "name": "Card",
+      "emoji": "🃏",
+      "color": "#e0b15c",
+      "description": "Card classics, solitaire and tabletop strategy."
+    }
+  ],
+  "featured": [
+    "emberwood-dash",
+    "nebula-grinder",
+    "shardlume",
+    "veyras-legacy",
+    "astro-sabotage",
+    "underground-sprint",
+    "nano-serpent",
+    "aphelion-assault",
+    "nova-corsair",
+    "clash-of-orbs",
+    "nebula-bastion",
+    "pitch-battle",
+    "2048-fusion",
+    "dustveil-speedway",
+    "nexlume",
+    "kvaxor",
+    "mazewhisper",
+    "bishopspire",
+    "klondrake"
+  ],
+  "games": [
+    {
+      "id": "nebula-grinder",
+      "slug": "nebula-grinder",
+      "name": "Nebula Grinder",
+      "category": "clicker",
+      "categories": [
+        "clicker",
+        "hypercasual",
+        "arcade"
+      ],
+      "file": "games/nebula-grinder/index.html",
+      "src": "/games/nebula-grinder/index.html",
+      "image": "/images/games/nebula-grinder.svg",
+      "sizeKb": 25,
+      "rating": 4.8,
+      "plays": 0,
+      "year": 2026,
+      "tags": [
+        "exclusive",
+        "html5",
+        "clicker",
+        "idle",
+        "space",
+        "upgrades",
+        "single-player"
+      ],
+      "description": "Nebula Grinder is a clicker with a beating heart — the core asteroid drifts in, and you grind it into stardust one satisfying thunk at a time. Every tap feeds the machine: plasma picks that double your hit, auto-grinders that chew rock while you grab a coffee, drone swarms that stack the dust pouring in every second, and warp collectors that multiply the whole hoard. Watch for the golden asteroid — it fades fast and pays like a whole armada, so drop everything and grab it. Milestones chime, the shop keeps raising the stakes, and your best hoard stays saved forever. Original to Gameverse and built from scratch — no ads, no timers, just rock, dust and the climb."
+    },
+    {
+      "id": "shardlume",
+      "slug": "shardlume",
+      "name": "Shardlume",
+      "category": "bejeweled",
+      "categories": [
+        "bejeweled",
+        "puzzle",
+        "hypercasual"
+      ],
+      "file": "games/shardlume/index.html",
+      "src": "/games/shardlume/index.html",
+      "image": "/images/games/shardlume.svg",
+      "sizeKb": 28,
+      "rating": 4.8,
+      "plays": 0,
+      "year": 2026,
+      "tags": [
+        "exclusive",
+        "html5",
+        "match-3",
+        "puzzle",
+        "neon",
+        "single-player"
+      ],
+      "description": "Shardlume is a match-3 with a lightshow — sweep three or more glowing shards together and they shatter into a cascade that doubles the points every time it chains. Tap one shard, tap a neighbour to swap, and let the lumens fall where they may; the board reshuffles itself the moment no move is left, so the flow never dies. You get sixty seconds on the clock and a best score that never forgets a near-miss. Neon, fast and built from scratch for Gameverse — all that is missing is you."
+    },
+    {
+      "id": "emberwood-dash",
+      "slug": "emberwood-dash",
+      "name": "Emberwood Dash",
+      "category": "3d",
+      "categories": [
+        "3d"
+      ],
+      "file": "games/emberwood-dash/index.html",
+      "src": "/games/emberwood-dash/index.html",
+      "image": "/images/games/emberwood-dash.svg",
+      "sizeKb": 17,
+      "rating": 4.9,
+      "plays": 0,
+      "year": 2026,
+      "tags": [
+        "original",
+        "html5",
+        "runner",
+        "forest",
+        "jump",
+        "endless"
+      ],
+      "description": "Dash through the Whispering Forest as Rusty the fox - leap over mossy logs, slide beneath low-hanging vines and race across splashing streams while golden acorns scatter across the sunlit path. Catch a glowing golden leaf to turn into an acorn magnet, and chase your best distance as the forest speeds up and melts into dusk. A hand-tuned endless runner with coyote-time jumps, short hops and milestone chimes."
+    },
+    {
+      "id": "veyras-legacy",
+      "slug": "veyras-legacy",
+      "name": "Veyra's Legacy",
+      "category": "adventure",
+      "categories": [
+        "adventure"
+      ],
+      "file": "games/veyras-legacy/index.html",
+      "src": "/games/veyras-legacy/index.html",
+      "image": "/images/games/veyras-legacy.svg",
+      "sizeKb": 19,
+      "rating": 4.9,
+      "plays": 0,
+      "year": 2026,
+      "tags": [
+        "original",
+        "html5",
+        "adventure",
+        "platformer",
+        "puzzle",
+        "co-op"
+      ],
+      "description": "Explore the Temple of Veyra with Lena and Rafiq. Small Lena climbs onto tall Rafiq's shoulders to reach high ledges, collect golden keys to open the ancient gate, and gather emeralds in this cooperative puzzle-platformer."
+    },
+    {
+      "id": "astro-sabotage",
+      "slug": "astro-sabotage",
+      "name": "Astro Sabotage",
+      "category": "arcade",
+      "categories": [
+        "arcade"
+      ],
+      "file": "games/astro-sabotage/index.html",
+      "src": "/games/astro-sabotage/index.html",
+      "image": "/images/games/astro-sabotage.svg",
+      "sizeKb": 16,
+      "rating": 4.9,
+      "plays": 0,
+      "year": 2026,
+      "tags": [
+        "original",
+        "html5",
+        "deduction",
+        "mystery",
+        "space"
+      ],
+      "description": "An impostor hides among the crew, sabotaging the ship. Watch the rooms, read the event log, and call a meeting to accuse the right crewmate before oxygen runs out."
+    },
+    {
+      "id": "nano-serpent",
+      "slug": "nano-serpent",
+      "name": "Nano Serpent",
+      "category": "arcade",
+      "categories": [
+        "arcade"
+      ],
+      "file": "games/nano-serpent/index.html",
+      "src": "/games/nano-serpent/index.html",
+      "image": "/images/games/nano-serpent.svg",
+      "sizeKb": 12,
+      "rating": 4.8,
+      "plays": 0,
+      "year": 2026,
+      "tags": [
+        "original",
+        "html5",
+        "classic",
+        "snake"
+      ],
+      "description": "A classic Snake game built in-house — zero ads, no tracking, pure gameplay. Eat the food, grow longer and avoid crashing into the walls or yourself."
+    },
+    {
+      "id": "underground-sprint",
+      "slug": "underground-sprint",
+      "name": "Underground Sprint",
+      "category": "arcade",
+      "categories": [
+        "arcade"
+      ],
+      "file": "games/underground-sprint/index.html",
+      "src": "/games/underground-sprint/index.html",
+      "image": "/images/games/underground-sprint.svg",
+      "sizeKb": 16,
+      "rating": 4.7,
+      "plays": 0,
+      "year": 2026,
+      "tags": [
+        "original",
+        "html5",
+        "runner",
+        "endless",
+        "subway"
+      ],
+      "description": "An endless subway runner built in-house — zero ads, no tracking, pure gameplay. Switch lanes, jump over barriers, slide under signs and grab coins while the speed keeps rising."
+    },
+    {
+      "id": "aphelion-assault",
+      "slug": "aphelion-assault",
+      "name": "Aphelion Assault",
+      "category": "shooting",
+      "categories": [
+        "shooting",
+        "arcade",
+        "action"
+      ],
+      "file": "games/aphelion-assault/index.html",
+      "src": "/games/aphelion-assault/index.html",
+      "image": "/images/games/aphelion-assault.svg",
+      "sizeKb": 45,
+      "rating": 4.9,
+      "plays": 0,
+      "year": 2026,
+      "tags": [
+        "exclusive",
+        "html5",
+        "shooting",
+        "space",
+        "invaders",
+        "retro",
+        "arcade"
+      ],
+      "description": "Aphelion Assault drops you into a retro invasion that no one asked the galaxy about. Alien squadrons sweep down in tight formation, inching closer with every volley while you duck, weave and return fire from behind a patched-up shield. Clear one wave and the next comes back angrier, faster, twice as organised. Catch the mystery saucer for a fat bonus, stack your score, and hold the line until the sky is yours again."
+    },
+    {
+      "id": "nova-corsair",
+      "slug": "nova-corsair",
+      "name": "Nova Corsair",
+      "category": "arcade",
+      "categories": [
+        "arcade",
+        "shooting",
+        "action"
+      ],
+      "file": "games/nova-corsair/index.html",
+      "src": "/games/nova-corsair/index.html",
+      "image": "/images/games/nova-corsair.svg",
+      "sizeKb": 18,
+      "rating": 4.8,
+      "plays": 0,
+      "year": 2026,
+      "tags": [
+        "exclusive",
+        "html5",
+        "arcade",
+        "space",
+        "shooting",
+        "neon"
+      ],
+      "description": "Punch the throttle and take the Corsair into the neon frontier. Nova Corsair throws you through drifting asteroid fields and wave after wave of drone squadrons, every downed enemy bleeding power-ups you cannot afford to miss. Charge your cannon for a screen-clearing burst, then go toe-to-toe with a boss that arrives every fifth wave. Synthesised explosions, hot neon trails and a scoreboard that never forgets a comeback."
+    },
+    {
+      "id": "clash-of-orbs",
+      "slug": "clash-of-orbs",
+      "name": "Clash of Orbs",
+      "category": "hypercasual",
+      "categories": [
+        "hypercasual",
+        "arcade",
+        "action"
+      ],
+      "file": "games/clash-of-orbs/index.html",
+      "src": "/games/clash-of-orbs/index.html",
+      "image": "/images/games/clash-of-orbs.svg",
+      "sizeKb": 10,
+      "rating": 4.8,
+      "plays": 0,
+      "year": 2026,
+      "tags": [
+        "exclusive",
+        "html5",
+        "hypercasual",
+        "strategy",
+        "day-night",
+        "arcade"
+      ],
+      "description": "Two glowing sides fight for control of the same battlefield. Tap your half of the screen to launch an orb that rolls, bounces and flips every cell it touches to your colour — while the AI answers from the other side. It looks simple, it feels hypnotic, and it turns brutally competitive the second you glance at the percentage. First side to control 70% of the grid wins the clash."
+    },
+    {
+      "id": "nebula-bastion",
+      "slug": "nebula-bastion",
+      "name": "Nebula Bastion",
+      "category": "action",
+      "categories": [
+        "action",
+        "arcade"
+      ],
+      "file": "games/nebula-bastion/index.html",
+      "src": "/games/nebula-bastion/index.html",
+      "image": "/images/games/nebula-bastion.svg",
+      "sizeKb": 18,
+      "rating": 4.8,
+      "plays": 0,
+      "year": 2026,
+      "tags": [
+        "exclusive",
+        "html5",
+        "action",
+        "tower-defense",
+        "strategy",
+        "ages"
+      ],
+      "description": "A lone bastion floats at the edge of the nebula, and the swarm is coming. Nebula Bastion sends waves of invaders along a winding path while you build and upgrade three tower types to hold the line. Earn gold from every downed enemy, spend it on stronger weapons, and survive wave after wave as the horde gets bigger and meaner. Plan your towers, keep your lives safe, and prove the bastion was never meant to fall."
+    },
+    {
+      "id": "pitch-battle",
+      "slug": "pitch-battle",
+      "name": "Pitch Battle",
+      "category": "sports",
+      "categories": [
+        "sports",
+        "2-player",
+        "arcade"
+      ],
+      "file": "games/pitch-battle/index.html",
+      "src": "/games/pitch-battle/index.html",
+      "image": "/images/games/pitch-battle.svg",
+      "sizeKb": 18,
+      "rating": 4.8,
+      "plays": 0,
+      "year": 2026,
+      "tags": [
+        "exclusive",
+        "html5",
+        "sports",
+        "soccer",
+        "2-player",
+        "local-multiplayer",
+        "arcade"
+      ],
+      "description": "Two players, one pitch, zero mercy. Pitch Battle is a same-screen duel where you hold to dribble, release to shoot and crash into the carrier to tackle the ball away. Player 1 fights north with WASD while Player 2 defends south with the arrows — or drag your half of the screen on touch. First to five goals takes the match, and the net never forgets a trash-talker."
+    },
+    {
+      "id": "2048-fusion",
+      "slug": "2048-fusion",
+      "name": "2048 Fusion",
+      "category": "puzzle",
+      "categories": [
+        "puzzle",
+        "arcade",
+        "hypercasual"
+      ],
+      "file": "games/2048-fusion/index.html",
+      "src": "/games/2048-fusion/index.html",
+      "image": "/images/games/2048-fusion.svg",
+      "sizeKb": 14,
+      "rating": 4.7,
+      "plays": 0,
+      "year": 2026,
+      "tags": [
+        "exclusive",
+        "html5",
+        "puzzle",
+        "numbers",
+        "merging",
+        "math",
+        "logic",
+        "single-player"
+      ],
+      "description": "Slide, merge, repeat. 2048 is the classic number puzzle where every swipe shifts the whole board and matching tiles fuse into bigger ones. Chain merges to double your score, chase the legendary 2048 tile and keep going past it if you dare. Arrow keys or WASD on desktop, swipe anywhere on touch - one move at a time, no timer, no pressure."
+    },
+    {
+      "id": "dustveil-speedway",
+      "slug": "dustveil-speedway",
+      "name": "Dustveil Speedway",
+      "category": "racing",
+      "categories": [
+        "racing",
+        "arcade"
+      ],
+      "file": "games/dustveil-speedway/index.html",
+      "src": "/games/dustveil-speedway/index.html",
+      "image": "/images/games/dustveil-speedway.svg",
+      "sizeKb": 40,
+      "rating": 4.8,
+      "plays": 0,
+      "year": 2026,
+      "tags": [
+        "exclusive",
+        "html5",
+        "racing",
+        "cars",
+        "desert",
+        "arcade",
+        "single-player"
+      ],
+      "description": "Burn through the haze on a dust-choked desert circuit that never lets you rest. Thread three rivals through sweeping dunes, brake into the corners, hug the racing line and shave seconds off your lap as the sun sinks into the smog. Grip is everything here - kiss the sand and you bleed speed. Three laps, four cars, one rule: the dust settles for the fastest."
+    },
+    {
+      "id": "nexlume",
+      "slug": "nexlume",
+      "name": "Nexlume",
+      "category": "puzzle",
+      "categories": [
+        "puzzle",
+        "arcade",
+        "hypercasual"
+      ],
+      "file": "games/nexlume/index.html",
+      "src": "/games/nexlume/index.html",
+      "image": "/images/games/nexlume.svg",
+      "sizeKb": 17,
+      "rating": 4.8,
+      "plays": 0,
+      "year": 2026,
+      "tags": [
+        "exclusive",
+        "html5",
+        "puzzle",
+        "logic",
+        "matching",
+        "grid",
+        "single-player"
+      ],
+      "description": "Nexlume is a slow-burning mind puzzle where you rotate glowing rows and columns to link matching orbs into soft constellations. Pick a shard, nudge its row or column, and watch three or more of the same hue bloom into light — each cascade kindling the board a little brighter. There is no clock chasing you and no scoreboard shouting at you, just you, the hum of the grid, and the quiet satisfaction of order rescued from chaos."
+    },
+    {
+      "id": "kvaxor",
+      "slug": "kvaxor",
+      "name": "Kvaxor",
+      "category": "strategy",
+      "categories": [
+        "strategy",
+        "2-player",
+        "puzzle"
+      ],
+      "file": "games/kvaxor/index.html",
+      "src": "/games/kvaxor/index.html",
+      "image": "/images/games/kvaxor.svg",
+      "sizeKb": 20,
+      "rating": 4.8,
+      "plays": 0,
+      "year": 2026,
+      "tags": [
+        "exclusive",
+        "html5",
+        "strategy",
+        "board",
+        "tic-tac-toe",
+        "5x5",
+        "two-player",
+        "ai"
+      ],
+      "description": "Kvaxor is tic-tac-toe stripped of its training wheels. The old three-in-a-row tricks mean nothing on this 5×5 grid: now you need four marks in a straight line to win, and a full five crowns the round with triple the points. Poison your rival's lines, bait their blocks and fight the CPU on three temperaments — or pass the screen to a friend and settle it like it's 1990. No downloads, no ads, no mercy."
+    },
+    {
+      "id": "mazewhisper",
+      "slug": "mazewhisper",
+      "name": "Mazewhisper",
+      "category": "horror",
+      "categories": [
+        "horror",
+        "action"
+      ],
+      "file": "games/mazewhisper/index.html",
+      "src": "/games/mazewhisper/index.html",
+      "image": "/images/games/mazewhisper.svg",
+      "sizeKb": 45,
+      "rating": 4.8,
+      "plays": 0,
+      "year": 2026,
+      "tags": [
+        "exclusive",
+        "html5",
+        "horror",
+        "3d",
+        "survival",
+        "maze",
+        "first-person"
+      ],
+      "description": "Descend into the pitch-black depths with thirty rounds and the sound of something whispering your name. Mazewhisper is a first-person survival shooter through a procedurally generated maze where pale stalkers hunt you through the dark. Your lantern only lights the way — it does not scare them. Shoot to stagger them — every stalker falls to three rounds — and ration your ammo while you gather the three embers that wake the exit. Each ember you take calls another stalker down, and every run builds a different maze with its own layout, tunnels, and hiding places. First-aid kits patch you up and stray ammo boxes keep your revolver fed — you can take sixteen hits before you fall, but the deeper you go, the more of them hunt you through the dark. Real stereo dread: dripping stone, breathing tunnels, gunshots that echo off the walls, a heartbeat that quickens, and one very final scream. Choose your depth and try not to look away."
+    },
+    {
+      "id": "bishopspire",
+      "slug": "bishopspire",
+      "name": "Bishopspire",
+      "category": "strategy",
+      "categories": [
+        "strategy",
+        "board",
+        "2-player"
+      ],
+      "file": "games/bishopspire/index.html",
+      "src": "/games/bishopspire/index.html",
+      "image": "/images/games/bishopspire.svg",
+      "sizeKb": 39,
+      "rating": 4.8,
+      "plays": 0,
+      "year": 2026,
+      "tags": [
+        "exclusive",
+        "html5",
+        "strategy",
+        "board",
+        "chess",
+        "ai",
+        "two-player"
+      ],
+      "description": "Climb the royal tower of strategy. Bishopspire is full classical chess against an engine with a temper — castling, en passant, promotion and all — with three difficulty spirits that grow more savage the higher you climb. Casual plays loose and forgiving, Balanced thinks a little deeper, and Savage hunts you through your own moves. Sit on either colour, flip the board when the mood takes you, undo a blunder or two, and watch the captured pieces pile up on the scoreboard. When two humans want the same screen, Two Players mode settles it old-school. Promotion lets you choose your queen, rook, bishop or knight, and the game calls check, checkmate, stalemate, fifty-move draws, threefold repetition and insufficient material exactly when it should. Original and exclusive to Gameverse, with the spire that does not forgive the careless."
+    },
+    {
+      "id": "klondrake",
+      "slug": "klondrake",
+      "name": "Klondrake",
+      "category": "card",
+      "categories": [
+        "card",
+        "puzzle"
+      ],
+      "file": "games/klondrake/index.html",
+      "src": "/games/klondrake/index.html?v=10",
+      "image": "/images/games/klondrake.svg",
+      "sizeKb": 36,
+      "rating": 4.7,
+      "plays": 0,
+      "year": 2026,
+      "tags": [
+        "exclusive",
+        "html5",
+        "cards",
+        "solitaire",
+        "klondike",
+        "logic",
+        "single-player"
+      ],
+      "description": "Stack the drake's golden hoard. Klondrake is a full classical Klondike solitaire with a dragon's hoard of treasure piled on the table — build the four suits from Ace to King on the golden towers, untangle the seven tableaux in red-on-black descending order, and spend every draw from the lair's stockpile wisely. Casual mode draws one card at a time for a calm, winnable climb; Savage mode draws three and taxes your nerve with a redeal penalty. Click a card to pick it up, click a glowing spot to drop it, double-click to auto-play to the towers, and use the hint when the drake's eyes deceive you. Auto-place runs any eligible card home for you, undo forgives your mistakes, and the game scores every placement, reveal, and redeal before calling your hoard complete. Original and exclusive to Gameverse — with a lair that does not forgive a wasted hand."
+    }
+  ]
+}

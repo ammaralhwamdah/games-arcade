@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="384" viewBox="0 0 512 384">
+  <defs>
+    <linearGradient id="bspG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#131426"/>
+      <stop offset="1" stop-color="#080a12"/>
+    </linearGradient>
+    <linearGradient id="goldG" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffd76a"/>
+      <stop offset="0.5" stop-color="#ffb44d"/>
+      <stop offset="1" stop-color="#d8842a"/>
+    </linearGradient>
+    <linearGradient id="spireG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8f9bff"/>
+      <stop offset="1" stop-color="#39407a"/>
+    </linearGradient>
+    <linearGradient id="titleG" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffd76a"/>
+      <stop offset="0.5" stop-color="#ff9e5e"/>
+      <stop offset="1" stop-color="#d2a8ff"/>
+    </linearGradient>
+    <radialGradient id="glowG" cx="0.5" cy="0.42" r="0.55">
+      <stop offset="0" stop-color="rgba(255,215,106,0.28)"/>
+      <stop offset="1" stop-color="rgba(255,215,106,0)"/>
+    </radialGradient>
+  </defs>
+
+  <rect x="0" y="0" width="512" height="384" fill="url(#bspG)"/>
+
+  <g stroke="rgba(255,180,77,0.10)" stroke-width="2">
+    <line x1="128" y1="76" x2="128" y2="344"/><line x1="176" y1="76" x2="176" y2="344"/>
+    <line x1="224" y1="76" x2="224" y2="344"/><line x1="272" y1="76" x2="272" y2="344"/>
+    <line x1="320" y1="76" x2="320" y2="344"/><line x1="368" y1="76" x2="368" y2="344"/>
+    <line x1="128" y1="124" x2="368" y2="124"/><line x1="128" y1="172" x2="368" y2="172"/>
+    <line x1="128" y1="220" x2="368" y2="220"/><line x1="128" y1="268" x2="368" y2="268"/>
+  </g>
+  <g fill="rgba(255,180,77,0.045)">
+    <rect x="176" y="76" width="48" height="48"/><rect x="272" y="76" width="48" height="48"/>
+    <rect x="128" y="124" width="48" height="48"/><rect x="224" y="124" width="48" height="48"/><rect x="320" y="124" width="48" height="48"/>
+    <rect x="176" y="172" width="48" height="48"/><rect x="272" y="172" width="48" height="48"/>
+    <rect x="128" y="220" width="48" height="48"/><rect x="224" y="220" width="48" height="48"/><rect x="320" y="220" width="48" height="48"/>
+    <rect x="176" y="268" width="48" height="48"/><rect x="272" y="268" width="48" height="48"/>
+    <rect x="128" y="316" width="48" height="48"/><rect x="224" y="316" width="48" height="48"/><rect x="320" y="316" width="48" height="48"/>
+  </g>
+
+  <ellipse cx="256" cy="210" rx="150" ry="150" fill="url(#glowG)"/>
+
+  <g>
+    <rect x="240" y="66" width="10" height="34" rx="5" fill="url(#spireG)" opacity="0.85"/>
+    <rect x="262" y="66" width="10" height="34" rx="5" fill="url(#spireG)" opacity="0.85"/>
+    <rect x="251" y="56" width="10" height="20" rx="4" fill="url(#spireG)" opacity="0.95"/>
+    <polygon points="256,30 247,58 265,58" fill="url(#spireG)"/>
+  </g>
+
+  <g>
+    <path d="M116 132 Q 112 140 116 148 L 396 148 Q 400 140 396 132 Z" fill="rgba(20,24,42,0.95)" stroke="rgba(255,180,77,0.35)" stroke-width="2"/>
+    <path d="M138 148 L 374 148 L 374 300 Q 374 320 356 320 L 156 320 Q 138 320 138 300 Z" fill="rgba(20,24,42,0.95)" stroke="rgba(255,180,77,0.35)" stroke-width="2"/>
+    <path d="M138 148 L 374 148 L 374 300 Q 374 320 356 320 L 156 320 Q 138 320 138 300 Z" fill="none" stroke="rgba(255,215,106,0.10)" stroke-width="18"/>
+  </g>
+
+  <text x="256" y="300" text-anchor="middle" font-family="'Segoe UI Symbol','Noto Sans Symbols 2',Arial,serif" font-size="196" font-weight="700" fill="url(#goldG)" stroke="rgba(120,80,20,0.55)" stroke-width="3">&#9821;</text>
+
+  <g font-family="'Segoe UI Symbol','Noto Sans Symbols 2',Arial,serif" font-size="34" fill="url(#goldG)" opacity="0.9">
+    <text x="116" y="342">&#9823;</text>
+    <text x="168" y="342">&#9823;</text>
+    <text x="220" y="342">&#9823;</text>
+    <text x="272" y="342">&#9823;</text>
+    <text x="324" y="342">&#9823;</text>
+    <text x="376" y="342">&#9823;</text>
+  </g>
+
+  <rect x="0" y="0" width="512" height="42" fill="rgba(6,8,13,0.72)"/>
+  <text x="256" y="28" text-anchor="middle" fill="url(#titleG)" font-family="system-ui, sans-serif" font-size="25" font-weight="900" letter-spacing="2">BISHOPSPIRE</text>
+  <g>
+    <rect x="398" y="6" width="106" height="18" rx="9" fill="#ffffff"/>
+    <text x="451" y="18.5" text-anchor="middle" fill="#0f172a" font-family="system-ui, sans-serif" font-size="10.5" font-weight="800">GAMEVERSE</text>
+  </g>
+</svg>

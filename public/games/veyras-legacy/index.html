@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Veyra's Legacy</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; background: #17140e; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; color: #e2e8f0; }
+  body { display: flex; align-items: center; justify-content: center; }
+  #wrap { position: relative; width: min(96vmin, 900px, calc((100dvh - 160px) * 16 / 10)); display: flex; flex-direction: column; align-items: center; }
+  #stage { position: relative; width: 100%; aspect-ratio: 16/10; }
+  canvas { width: 100%; height: 100%; display: block; border-radius: 16px; background: #1d1a13; box-shadow: 0 10px 40px rgba(0,0,0,.5); touch-action: none; }
+  #hud { position: absolute; top: 8px; left: 0; right: 0; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 4px 10px; padding: 0 12px; font-size: 12px; font-weight: 700; z-index: 4; pointer-events: none; }
+  #hud .keys { color: #fbbf24; text-shadow: 0 1px 6px rgba(0,0,0,.9); }
+  #hud .gems { color: #34d399; text-shadow: 0 1px 6px rgba(0,0,0,.9); }
+  #hud .lvl { color: #94a3b8; text-shadow: 0 1px 6px rgba(0,0,0,.9); }
+  #soundBtn { pointer-events: auto; background: rgba(255,255,255,.1); border: 0; border-radius: 10px; width: 30px; height: 30px; font-size: 15px; cursor: pointer; color: #fff; -webkit-user-select: none; user-select: none; touch-action: manipulation; }
+  #logbox { width: 100%; background: #17140e; border: 1px solid rgba(255,255,255,.08); border-radius: 12px; margin-top: 8px; padding: 8px 10px; font-size: 11px; line-height: 1.7; color: #a8a29e; min-height: 52px; max-height: 52px; overflow: hidden; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  #logbox .bad { color: #f87171; }
+  #logbox .good { color: #4ade80; }
+  #logbox .info { color: #38bdf8; }
+  #controls { display: none; width: 100%; margin-top: 8px; justify-content: space-between; align-items: center; gap: 12px; }
+  @media (pointer: coarse) { #controls { display: flex; } }
+  #dpad { display: grid; grid-template-columns: repeat(2, 46px); grid-template-rows: repeat(1, 46px); gap: 4px; }
+  #dpad .d { border: 0; border-radius: 10px; background: rgba(255,255,255,.1); color: #e2e8f0; font-size: 16px; cursor: pointer; touch-action: manipulation; -webkit-user-select: none; user-select: none; }
+  #dpad .d:active { background: rgba(255,255,255,.28); }
+  #jumpBtn { width: 62px; height: 62px; border-radius: 50%; border: 0; background: #f59e0b; color: #fff; font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 18px rgba(245,158,11,.4); touch-action: manipulation; -webkit-user-select: none; user-select: none; }
+  #jumpBtn:active { transform: scale(.93); }
+  #switchBtn { width: 62px; height: 62px; border-radius: 50%; border: 0; background: #0ea5e9; color: #fff; font-size: 12px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 18px rgba(14,165,233,.4); touch-action: manipulation; -webkit-user-select: none; user-select: none; }
+  #switchBtn:active { transform: scale(.93); }
+  #overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: rgba(23,20,14,.92); border-radius: 16px; text-align: center; padding: 16px; z-index: 3; backdrop-filter: blur(3px); overflow-y: auto; }
+  #overlay.hidden { display: none; }
+  #overlay h1 { font-size: 24px; letter-spacing: 1px; color: #fff; }
+  #overlay h1 span { color: #fbbf24; }
+  #overlay .sub { font-size: 12.5px; color: #a8a29e; max-width: 340px; line-height: 1.6; }
+  #overlay .final { font-size: 15px; color: #fbbf24; font-weight: 700; display: none; }
+  #overlay .btn { background: #fbbf24; color: #3b2a00; border: 0; border-radius: 12px; padding: 12px 30px; font-size: 15px; font-weight: 800; cursor: pointer; transition: transform .1s, filter .1s; touch-action: manipulation; }
+  #overlay .btn:hover { filter: brightness(1.1); }
+  #overlay .btn:active { transform: scale(.96); }
+  @media (max-height: 560px) {
+    #overlay { gap: 8px; padding: 10px; }
+    #overlay h1 { font-size: 18px; }
+    #overlay .sub { font-size: 11px; max-height: 40px; overflow: hidden; }
+    #overlay .final { font-size: 13px; }
+    #overlay .btn { padding: 9px 22px; font-size: 13px; }
+    #logbox { min-height: 42px; max-height: 42px; font-size: 10px; }
+    #jumpBtn, #switchBtn { width: 52px; height: 52px; font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="stage">
+    <div id="hud">
+      <span class="keys" id="keys">🔑 0/1</span>
+      <span class="gems" id="gems">💎 0</span>
+      <span class="lvl" id="lvl">🏛 Level 1</span>
+      <button id="soundBtn" title="Sound: on" aria-label="Toggle sound">🔊</button>
+    </div>
+    <canvas id="game"></canvas>
+    <div id="overlay">
+      <h1>VEYRA'S<span> LEGACY</span></h1>
+      <div class="sub">Explorers <b>Lena</b> and <b>Rafiq</b> brave the Temple of Veyra. Collect every golden key to open the ancient gate — and don't forget the emeralds. Small Lena can climb onto tall Rafiq's shoulders to reach the highest ledges.</div>
+      <div class="final" id="finalMsg"></div>
+      <button class="btn" id="playBtn">⚔️ START EXPLORATION</button>
+    </div>
+  </div>
+  <div id="logbox"></div>
+  <div id="controls">
+    <div id="dpad">
+      <button class="d" data-d="l" aria-label="Left">◀</button>
+      <button class="d" data-d="r" aria-label="Right">▶</button>
+    </div>
+    <button id="switchBtn" aria-label="Switch character">🔁 SWITCH</button>
+    <button id="jumpBtn" aria-label="Jump">⬆ JUMP</button>
+  </div>
+</div>
+<script>
+(function () {
+  "use strict";
+
+  var canvas = document.getElementById("game");
+  var ctx = canvas.getContext("2d");
+  var stage = document.getElementById("stage");
+  var wrap = document.getElementById("wrap");
+  var controls = document.getElementById("controls");
+  var overlay = document.getElementById("overlay");
+  var playBtn = document.getElementById("playBtn");
+  var finalMsg = document.getElementById("finalMsg");
+  var logbox = document.getElementById("logbox");
+  var soundBtn = document.getElementById("soundBtn");
+  var keysEl = document.getElementById("keys");
+  var gemsEl = document.getElementById("gems");
+  var lvlEl = document.getElementById("lvl");
+
+  var DPR = window.devicePixelRatio || 1;
+  var SW = 0, SH = 0;
+  var ROWS = 14;
+
+  var soundOn = true;
+  var AC = null;
+  function ac() {
+    try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
+    if (AC && AC.state === "suspended") AC.resume();
+    return AC;
+  }
+  function tone(f, dur, type, vol, slide) {
+    if (!soundOn) return;
+    var a = ac(); if (!a) return;
+    try {
+      var o = a.createOscillator(), g = a.createGain(), t = a.currentTime;
+      o.type = type || "square";
+      o.frequency.setValueAtTime(f, t);
+      if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(30, slide), t + dur);
+      g.gain.setValueAtTime(vol || 0.1, t);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.connect(g); g.connect(a.destination);
+      o.start(t); o.stop(t + dur + 0.02);
+    } catch (e) {}
+  }
+
+  soundBtn.addEventListener("click", function () {
+    soundOn = !soundOn;
+    soundBtn.textContent = soundOn ? "🔊" : "🔇";
+  });
+
+      var LEVELS = [
+    [
+      "................................................",
+      "................................................",
+      "................................................",
+      "................................................",
+      "................................................",
+      "................................................",
+      "................................................",
+      "................................................",
+      "................................................",
+      "......G.................G.......................",
+      ".....=.................=........................",
+      "...1..K..................^...^........2.D.......",
+      "####################..##########################",
+      "####################..##########################",
+    ],
+    [
+      "................................................",
+      "................................................",
+      "................................................",
+      "................................................",
+      "................................................",
+      "................................................",
+      "................................................",
+      "................................................",
+      "................................................",
+      "..................G..............G..............",
+      ".................=..............=...............",
+      "..1..^...^....2.....^...^.....K......D..........",
+      "############..##################################",
+      "############..##################################",
+    ],
+    [
+      ".....................................................",
+      ".....................................................",
+      ".....................................................",
+      ".....................................................",
+      ".....................................................",
+      ".....................................................",
+      ".....................................................",
+      ".....................................................",
+      ".....................................................",
+      "......G............G...............G.................",
+      ".....=............=...............=..................",
+      "...1...^...^..2....^...^...........K....D............",
+      "##########################..#########################",
+      "##########################..#########################",
+    ],
+    [
+      ".......................................................",
+      ".......................................................",
+      ".......................................................",
+      ".......................................................",
+      ".......................................................",
+      ".......................................................",
+      ".......................................................",
+      ".......................................................",
+      ".......................................................",
+      "..............G.......G.......G........................",
+      ".............=.......=.......=.........................",
+      "...1....2...^...^....K....^...^....D...................",
+      "#######################################################",
+      "#######################################################",
+    ],
+    [
+      "................................................................",
+      "................................................................",
+      "................................................................",
+      "................................................................",
+      "................................................................",
+      "................................................................",
+      "................................................................",
+      "................................................................",
+      "................................................................",
+      "..........G.......G...........G.................................",
+      ".........=.......=...........=..................................",
+      "...1....^...^......2....K....^...^....D....^..^.................",
+      "#####################..################..#######################",
+      "#####################..################..#######################",
+    ],
+  ];
+
+
+
+  var TS = 0, COLS = 0;
+  var lvl = null, curLevel = 0;
+  var keysLeft = 0, keysTotal = 0, gems = 0;
+  var phase = "menu";
+  var cam = 0;
+  var chars = null;
+  var active = null;
+  var flash = [0, 0];
+  var logArr = [];
+  var time = 0;
+
+  var MOVE = 0, GRAV = 0, JUMP = 0, BOOST = 0, MAXFALL = 0;
+
+  function padMap(map) {
+    var w = 0, i, r;
+    for (i = 0; i < map.length; i++) w = Math.max(w, map[i].length);
+    var out = [];
+    for (i = 0; i < map.length; i++) {
+      r = map[i];
+      while (r.length < w) r += ".";
+      out.push(r);
+    }
+    return out;
+  }
+
+  function loadLevel(n) {
+    curLevel = n;
+    lvl = padMap(LEVELS[n]);
+    COLS = lvl[0].length;
+    keysLeft = 0;
+    gems = 0;
+    var r, c;
+    var spawns = {};
+    for (r = 0; r < ROWS; r++) {
+      for (c = 0; c < COLS; c++) {
+        var ch = lvl[r][c];
+        if (ch === "K") { keysLeft++; }
+        else if (ch === "1") { spawns.lena = { c: c, r: r }; lvl[r] = lvl[r].slice(0, c) + "." + lvl[r].slice(c + 1); }
+        else if (ch === "2") { spawns.rafiq = { c: c, r: r }; lvl[r] = lvl[r].slice(0, c) + "." + lvl[r].slice(c + 1); }
+      }
+    }
+    keysTotal = keysLeft;
+    chars = [
+      { name: "Lena", kind: "lena", x: (spawns.lena.c + 0.5) * TS - TS * 0.25, feet: (spawns.lena.r + 1) * TS, w: TS * 0.5, h: TS * 0.62, vx: 0, vy: 0, onGround: false, on: null, face: 1, spawn: spawns.lena },
+      { name: "Rafiq", kind: "rafiq", x: (spawns.rafiq.c + 0.5) * TS - TS * 0.28, feet: (spawns.rafiq.r + 1) * TS, w: TS * 0.56, h: TS * 0.95, vx: 0, vy: 0, onGround: false, on: null, face: -1, spawn: spawns.rafiq }
+    ];
+    active = chars[0];
+    flash = [0, 0];
+    cam = 0;
+    updateHud();
+  }
+
+  function tileAt(col, row) {
+    if (row < 0) return ".";
+    if (row >= ROWS) return "#";
+    if (col < 0 || col >= COLS) return "#";
+    return lvl[row][col];
+  }
+  function gateLocked() { return keysLeft > 0; }
+  function isSolid(ch) { return ch === "#" || (ch === "D" && gateLocked()); }
+  function isStandable(ch) { return ch === "#" || ch === "=" || (ch === "D" && gateLocked()); }
+
+  function charRect(ch) {
+    return { x: ch.x, y: ch.feet - ch.h, w: ch.w, h: ch.h };
+  }
+
+  function moveCharX(ch, dx) {
+    ch.x += dx;
+    var rect = charRect(ch);
+    var c0 = Math.floor(rect.x / TS), c1 = Math.floor((rect.x + rect.w - 0.01) / TS);
+    var r0 = Math.floor(rect.y / TS), r1 = Math.floor((rect.y + rect.h - 0.01) / TS);
+    for (var r = r0; r <= r1; r++) {
+      for (var c = c0; c <= c1; c++) {
+        var ch2 = tileAt(c, r);
+        if (!isStandable(ch2)) continue;
+        if (ch2 === "=" && Math.abs(rect.y + rect.h - r * TS) <= 0.01) continue;
+        if (dx > 0) ch.x = c * TS - ch.w - 0.01;
+        else if (dx < 0) ch.x = (c + 1) * TS + 0.01;
+      }
+    }
+  }
+
+  function moveCharY(ch, dy) {
+    var prevFeet = ch.feet;
+    ch.feet += dy;
+    var rect = charRect(ch);
+    var c0 = Math.floor(rect.x / TS), c1 = Math.floor((rect.x + rect.w - 0.01) / TS);
+    var r0 = Math.floor(rect.y / TS), r1 = Math.floor((rect.y + rect.h - 0.01) / TS);
+    for (var r = r0; r <= r1; r++) {
+      for (var c = c0; c <= c1; c++) {
+        var ch2 = tileAt(c, r);
+        if (!isStandable(ch2)) continue;
+        var wasAbove = prevFeet <= r * TS + 0.01;
+        if (dy > 0 && (isSolid(ch2) ? true : wasAbove)) {
+          ch.feet = r * TS - 0.01;
+          ch.vy = 0;
+          ch.onGround = true;
+        } else if (dy < 0 && isSolid(ch2)) {
+          ch.feet = (r + 1) * TS + ch.h + 0.01;
+          ch.vy = 0;
+        }
+      }
+    }
+    if (ch.feet >= ROWS * TS - 0.5) {
+      respawn(ch);
+    }
+  }
+
+  function respawn(ch) {
+    ch.feet = (ch.spawn.r + 1) * TS;
+    ch.x = (ch.spawn.c + 0.5) * TS - ch.w / 2;
+    ch.vy = 0;
+    ch.onGround = false;
+    ch.on = null;
+    tone(160, 0.2, "sawtooth", 0.1, 80);
+  }
+
+  function charTileOverlap(ch, target) {
+    var rect = charRect(ch);
+    var c0 = Math.floor(rect.x / TS), c1 = Math.floor((rect.x + rect.w - 0.01) / TS);
+    var r0 = Math.floor(rect.y / TS), r1 = Math.floor((rect.y + rect.h - 0.01) / TS);
+    for (var r = r0; r <= r1; r++) {
+      for (var c = c0; c <= c1; c++) {
+        if (tileAt(c, r) === target) return { c: c, r: r };
+      }
+    }
+    return null;
+  }
+
+  function removeTile(c, r) {
+    var s = lvl[r];
+    lvl[r] = s.slice(0, c) + "." + s.slice(c + 1);
+  }
+
+  function otherChar(ch) { return ch === chars[0] ? chars[1] : chars[0]; }
+
+  function log(t, cls) {
+    logArr.unshift({ t: t, c: cls || "" });
+    if (logArr.length > 6) logArr.pop();
+    renderLog();
+  }
+  function renderLog() {
+    var h = "";
+    for (var i = 0; i < logArr.length; i++) {
+      h += '<span class="' + logArr[i].c + '">·</span> ' + logArr[i].t + "<br>";
+    }
+    logbox.innerHTML = h;
+  }
+
+  function updateHud() {
+    keysEl.textContent = "🔑 " + (keysTotal - keysLeft) + "/" + keysTotal;
+    gemsEl.textContent = "💎 " + gems;
+    lvlEl.textContent = "🏛 Level " + (curLevel + 1);
+  }
+
+  function startGame() {
+    gems = 0;
+    loadLevel(0);
+    phase = "playing";
+    log("Find the golden key to open the gate. Both heroes must reach it!", "info");
+    log("Q / TAB to switch hero · Arrows to move · SPACE to jump", "info");
+    ac();
+  }
+
+  playBtn.addEventListener("click", function () {
+    overlay.classList.add("hidden");
+    finalMsg.style.display = "none";
+    startGame();
+  });
+
+  var keys = { l: false, r: false };
+  var jumpHeld = false;
+  window.addEventListener("keydown", function (e) {
+    var k = e.key.toLowerCase();
+    if (k === "arrowleft" || k === "a") keys.l = true;
+    else if (k === "arrowright" || k === "d") keys.r = true;
+    else if (k === " " || k === "arrowup" || k === "w") jumpHeld = true;
+    else if (k === "q" || k === "tab" || k === "shift") { switchChar(); e.preventDefault(); }
+    else return;
+    if (k.indexOf("arrow") === 0 || k === " ") e.preventDefault();
+  });
+  window.addEventListener("keyup", function (e) {
+    var k = e.key.toLowerCase();
+    if (k === "arrowleft" || k === "a") keys.l = false;
+    else if (k === "arrowright" || k === "d") keys.r = false;
+    else if (k === " " || k === "arrowup" || k === "w") jumpHeld = false;
+  });
+  function bindBtn(btn, on, off) {
+    btn.addEventListener("pointerdown", function (e) { e.preventDefault(); on(); });
+    btn.addEventListener("pointerup", function (e) { e.preventDefault(); off(); });
+    btn.addEventListener("pointerleave", function (e) { e.preventDefault(); off(); });
+    btn.addEventListener("pointercancel", function (e) { e.preventDefault(); off(); });
+    btn.addEventListener("contextmenu", function (e) { e.preventDefault(); });
+  }
+  var dL = document.querySelector("#dpad [data-d='l']"), dR = document.querySelector("#dpad [data-d='r']");
+  bindBtn(dL, function () { keys.l = true; }, function () { keys.l = false; });
+  bindBtn(dR, function () { keys.r = true; }, function () { keys.r = false; });
+  bindBtn(document.getElementById("jumpBtn"), function () { jumpHeld = true; }, function () { jumpHeld = false; });
+  bindBtn(document.getElementById("switchBtn"), function () { switchChar(); }, function () {});
+
+  function switchChar() {
+    if (phase !== "playing") return;
+    active = otherChar(active);
+    tone(500, 0.06, "square", 0.07);
+  }
+
+  function applyPhysics(ch, dir) {
+    ch.vx = dir * MOVE;
+    if (dir) ch.face = dir;
+    var prevX = ch.x;
+    moveCharX(ch, ch.vx * dt_);
+    if (!ch.onGround) {
+      ch.vy += GRAV * dt_;
+      if (ch.vy > MAXFALL) ch.vy = MAXFALL;
+    } else {
+      ch.vy = 0;
+    }
+    ch.onGround = false;
+    moveCharY(ch, ch.vy * dt_);
+    if (ch.feet >= ROWS * TS - 0.5) ch.onGround = true;
+    ch.prevX = prevX;
+  }
+
+  var dt_ = 0.016;
+
+  function update(dt) {
+    dt_ = dt;
+    time += dt;
+    if (phase !== "playing") return;
+
+    var i;
+    for (i = 0; i < 2; i++) if (flash[i] > 0) flash[i] -= dt;
+
+    var ch = active;
+    var partner = otherChar(ch);
+    var dir = (keys.r ? 1 : 0) - (keys.l ? 1 : 0);
+
+    applyPhysics(ch, dir);
+
+    // land on partner's head (must precede the jump check so a boost can fire)
+    var pr = charRect(ch), rp = charRect(partner);
+    var hOverlap = pr.x < rp.x + rp.w - 2 && pr.x + pr.w > rp.x + 2;
+    if (hOverlap && ch.vy >= 0 && pr.y + pr.h >= rp.y - 4 && pr.y + pr.h <= rp.y + 8) {
+      ch.feet = rp.y;
+      ch.vy = 0;
+      ch.onGround = true;
+      ch.on = partner;
+    }
+
+    var wasOnPartner = ch.on === partner;
+    if (jumpHeld && ch.onGround && ch.vy === 0) {
+      var boost = ch.kind === "lena" && wasOnPartner;
+      ch.vy = boost ? BOOST : JUMP;
+      ch.onGround = false;
+      ch.on = null;
+      if (partner.on === ch) partner.on = null;
+      tone(boost ? 340 : 240, 0.09, "triangle", 0.1, boost ? 560 : 420);
+      if (boost) log("Lena leaps off Rafiq's shoulders!", "info");
+    }
+
+    // idle char
+    if (partner.on === ch && partner.onGround) {
+      partner.x += ch.x - ch.prevX;
+      partner.feet = ch.feet - ch.h;
+      partner.vy = 0;
+      partner.onGround = true;
+    } else {
+      applyPhysics(partner, 0);
+    }
+
+    // hazards and pickups for both
+    for (i = 0; i < 2; i++) {
+      var ci = chars[i];
+      var sp = charTileOverlap(ci, "^");
+      if (sp && flash[i] <= 0) {
+        flash[i] = 1;
+        respawn(ci);
+        log(ci.name + " hit the spikes!", "bad");
+        continue;
+      }
+      var k = charTileOverlap(ci, "K");
+      if (k) {
+        removeTile(k.c, k.r);
+        keysLeft--;
+        tone(660, 0.09, "square", 0.1);
+        setTimeout(function () { tone(990, 0.12, "square", 0.1); }, 70);
+        if (keysLeft <= 0) log("The gate creaks open!", "good");
+        else log("Key collected! " + keysLeft + " left.", "info");
+        updateHud();
+      }
+      var g = charTileOverlap(ci, "G");
+      if (g) {
+        removeTile(g.c, g.r);
+        gems++;
+        tone(880, 0.07, "triangle", 0.1);
+        updateHud();
+      }
+    }
+
+    if (gateLocked() === false) {
+      var a = charTileOverlap(chars[0], "D");
+      var b = charTileOverlap(chars[1], "D");
+      if (a && b) completeLevel();
+    }
+
+    cam += (ch.x + ch.w / 2 - (cam + SW / 2)) * Math.min(1, dt * 8);
+    if (cam < 0) cam = 0;
+    var maxCam = COLS * TS - SW;
+    if (cam > maxCam) cam = maxCam;
+  }
+
+  function completeLevel() {
+    if (curLevel === LEVELS.length - 1) {
+      phase = "won";
+      finalMsg.textContent = "The Temple of Veyra is yours — Veyra's Legacy is complete! Gems found: " + gems;
+      finalMsg.style.display = "block";
+      playBtn.textContent = "▶ PLAY AGAIN";
+      overlay.classList.remove("hidden");
+      log("VICTORY! Veyra's Legacy has come to a triumphant end.", "good");
+    } else {
+      tone(520, 0.1, "triangle", 0.12);
+      setTimeout(function () { tone(780, 0.14, "triangle", 0.12); }, 110);
+      log("Level " + (curLevel + 1) + " cleared! Descend deeper...", "good");
+      loadLevel(curLevel + 1);
+    }
+  }
+
+  function draw() {
+    ctx.fillStyle = "#1d1a13";
+    ctx.fillRect(0, 0, SW, SH);
+    var sky = ctx.createLinearGradient(0, 0, 0, SH);
+    sky.addColorStop(0, "#2c2418");
+    sky.addColorStop(1, "#1d1a13");
+    ctx.fillStyle = sky;
+    ctx.fillRect(0, 0, SW, SH);
+
+    var c0 = Math.max(0, Math.floor(cam / TS) - 1);
+    var c1 = Math.min(COLS - 1, Math.ceil((cam + SW) / TS) + 1);
+    var r, c;
+
+    for (r = 0; r < ROWS; r++) {
+      for (c = c0; c <= c1; c++) {
+        var ch = tileAt(c, r);
+        var x = c * TS - cam, y = r * TS;
+        if (ch === "#") {
+          ctx.fillStyle = "#3d3426";
+          ctx.fillRect(x, y, TS + 0.5, TS + 0.5);
+          ctx.fillStyle = "rgba(0,0,0,0.18)";
+          ctx.fillRect(x, y + TS - 4, TS, 4);
+          if (((c * 7 + r * 13) % 4) === 0) {
+            ctx.fillStyle = "rgba(255,255,255,0.04)";
+            ctx.fillRect(x + 3, y + 3, TS - 6, TS - 6);
+          }
+        } else if (ch === "=") {
+          ctx.fillStyle = "#8a6a35";
+          ctx.fillRect(x, y + TS * 0.55, TS, TS * 0.45);
+          ctx.fillStyle = "#b28b4d";
+          ctx.fillRect(x, y + TS * 0.55, TS, 3);
+        } else if (ch === "^") {
+          ctx.fillStyle = "#71717a";
+          ctx.beginPath();
+          ctx.moveTo(x + 2, y + TS);
+          ctx.lineTo(x + TS / 2, y + 2);
+          ctx.lineTo(x + TS - 2, y + TS);
+          ctx.closePath();
+          ctx.fill();
+          ctx.fillStyle = "#a1a1aa";
+          ctx.beginPath();
+          ctx.moveTo(x + TS * 0.22, y + TS);
+          ctx.lineTo(x + TS * 0.5, y + TS * 0.28);
+          ctx.lineTo(x + TS * 0.78, y + TS);
+          ctx.closePath();
+          ctx.fill();
+        } else if (ch === "K") {
+          var kx = x + TS / 2, ky = y + TS / 2 + Math.sin(time * 4) * 2;
+          ctx.fillStyle = "rgba(251,191,36,0.25)";
+          ctx.beginPath();
+          ctx.arc(kx, ky, TS * 0.34, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = "#fbbf24";
+          ctx.beginPath();
+          ctx.arc(kx, ky, TS * 0.24, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = "#b45309";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(kx + TS * 0.18, ky);
+          ctx.lineTo(kx + TS * 0.34, ky - TS * 0.2);
+          ctx.moveTo(kx + TS * 0.18, ky);
+          ctx.lineTo(kx + TS * 0.34, ky + TS * 0.2);
+          ctx.stroke();
+        } else if (ch === "G") {
+          var gx = x + TS / 2, gy = y + TS / 2 + Math.sin(time * 5 + c) * 2;
+          ctx.fillStyle = "#34d399";
+          ctx.beginPath();
+          ctx.moveTo(gx, gy - TS * 0.26);
+          ctx.lineTo(gx + TS * 0.18, gy);
+          ctx.lineTo(gx, gy + TS * 0.26);
+          ctx.lineTo(gx - TS * 0.18, gy);
+          ctx.closePath();
+          ctx.fill();
+          ctx.fillStyle = "rgba(255,255,255,0.55)";
+          ctx.beginPath();
+          ctx.moveTo(gx, gy - TS * 0.16);
+          ctx.lineTo(gx + TS * 0.08, gy);
+          ctx.lineTo(gx, gy + TS * 0.12);
+          ctx.closePath();
+          ctx.fill();
+        } else if (ch === "D") {
+          var open = !gateLocked();
+          ctx.fillStyle = open ? "#57534e" : "#44403c";
+          ctx.fillRect(x + 3, y, TS - 6, TS);
+          ctx.fillStyle = open ? "#fbbf24" : "#292524";
+          ctx.fillRect(x + 3, y + TS * 0.55, TS - 6, TS * 0.45);
+          ctx.strokeStyle = open ? "#fde68a" : "#78716c";
+          ctx.lineWidth = 2;
+          ctx.strokeRect(x + 6, y + 3, TS - 12, TS - 6);
+          ctx.fillStyle = open ? "#fde68a" : "#78716c";
+          ctx.beginPath();
+          ctx.arc(x + TS / 2, y + TS / 2, 3, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    }
+
+    if (chars) {
+      for (var i2 = 0; i2 < chars.length; i2++) {
+        var ch2 = chars[i2];
+        var px2 = ch2.x - cam;
+        if (px2 + ch2.w < -40 || px2 > SW + 40) continue;
+        drawChar(ch2, px2);
+      }
+    }
+
+    var v = ctx.createRadialGradient(SW / 2, SH / 2, SH * 0.3, SW / 2, SH / 2, SH);
+    v.addColorStop(0, "rgba(0,0,0,0)");
+    v.addColorStop(1, "rgba(0,0,0,0.3)");
+    ctx.fillStyle = v;
+    ctx.fillRect(0, 0, SW, SH);
+  }
+
+  function drawChar(ch, px) {
+    var top = ch.feet - ch.h;
+    var idx = chars.indexOf(ch);
+    ctx.fillStyle = "rgba(0,0,0,0.3)";
+    ctx.beginPath();
+    ctx.ellipse(px + ch.w / 2, ch.feet + 2, ch.w * 0.7, 3, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    if (flash[idx] > 0 && Math.floor(time * 14) % 2 === 0) return;
+
+    if (ch.kind === "lena") {
+      ctx.fillStyle = "#0e7490";
+      ctx.beginPath();
+      ctx.arc(px + ch.w / 2, top + ch.h * 0.22, ch.w * 0.42, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#0f172a";
+      ctx.fillRect(px + ch.w * 0.15, top + ch.h * 0.16, ch.w * 0.7, ch.h * 0.1);
+      ctx.fillStyle = "#22d3ee";
+      ctx.fillRect(px + ch.w * 0.2, top + ch.h * 0.4, ch.w * 0.6, ch.h * 0.5);
+      ctx.fillStyle = "#0f172a";
+      ctx.fillRect(px + ch.w * 0.15, top + ch.h * 0.4, 3, ch.h * 0.5);
+    } else {
+      ctx.fillStyle = "#b45309";
+      ctx.beginPath();
+      ctx.arc(px + ch.w / 2, top + ch.h * 0.18, ch.w * 0.4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#ef4444";
+      ctx.fillRect(px + ch.w * 0.12, top + ch.h * 0.38, ch.w * 0.76, ch.h * 0.5);
+      ctx.fillStyle = "#78350f";
+      ctx.fillRect(px + ch.w * 0.15, top + ch.h * 0.38, 4, ch.h * 0.5);
+    }
+
+    if (ch === active) {
+      ctx.fillStyle = "rgba(251,191,36,0.8)";
+      ctx.fillRect(px + ch.w / 2 - 6, top - 9, 12, 4);
+      ctx.fillStyle = "rgba(251,191,36,0.2)";
+      ctx.beginPath();
+      ctx.arc(px + ch.w / 2, top + ch.h / 2, ch.h, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function fitWrap() {
+    var ctrlH = controls.offsetHeight || 0;
+    var logH = logbox.offsetHeight || 56;
+    var margin = 12;
+    var availH = window.innerHeight - margin * 2 - logH - ctrlH;
+    var availW = window.innerWidth - margin * 2;
+    var w = Math.min(availW, availH * 16 / 10, 900);
+    wrap.style.width = Math.max(240, Math.floor(w)) + "px";
+  }
+
+  function resize() {
+    fitWrap();
+    var oldTS = TS;
+    SW = stage.clientWidth || 640;
+    SH = stage.clientHeight || Math.round(SW * 10 / 16);
+    canvas.width = Math.round(SW * DPR);
+    canvas.height = Math.round(SH * DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    TS = SH / ROWS;
+    MOVE = TS * 7;
+    GRAV = TS * 65;
+    JUMP = TS * -18;
+    BOOST = TS * -28;
+    MAXFALL = TS * 34;
+    if (phase === "playing" && chars && oldTS > 0) {
+      var k = TS / oldTS;
+      for (var i = 0; i < chars.length; i++) {
+        chars[i].x *= k;
+        chars[i].feet *= k;
+        chars[i].w *= k;
+        chars[i].h *= k;
+      }
+      cam *= k;
+      if (cam < 0) cam = 0;
+      var maxCam = COLS * TS - SW;
+      if (cam > maxCam) cam = maxCam;
+    }
+  }
+  window.addEventListener("resize", resize);
+  resize();
+
+  window.__gv = function () {
+    return {
+      phase: phase, level: curLevel, keysLeft: keysLeft, gems: gems,
+      lvl: lvl ? lvl.slice() : null, ROWS: ROWS, COLS: COLS, TS: TS,
+      active: active ? active.name : null,
+      chars: chars ? chars.map(function (c) {
+        return { name: c.name, x: c.x, feet: c.feet, onGround: c.onGround, on: c.on ? c.on.name : null, vy: c.vy };
+      }) : null
+    };
+  };
+  window.__gv.teleport = function (name, c, r) {
+    var ch2 = null, i;
+    for (i = 0; i < chars.length; i++) if (chars[i].name === name) ch2 = chars[i];
+    if (!ch2) return "n/a";
+    ch2.x = (c + 0.5) * TS - ch2.w / 2;
+    ch2.feet = (r + 1) * TS;
+    ch2.vy = 0;
+    ch2.on = null;
+    return name + " -> " + c + "," + r;
+  };
+
+  var last = 0, raf = null;
+  function loop(t) {
+    raf = requestAnimationFrame(loop);
+    var dt = Math.min(0.05, (t - last) / 1000 || 0.016);
+    last = t;
+    update(dt);
+    draw();
+  }
+  raf = requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Klondrake — Original Exclusive Card Game</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; }
+  body {
+    background: #0b0d16; color: #fff; font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+    -webkit-tap-highlight-color: transparent; user-select: none;
+  }
+  canvas { display: block; position: absolute; inset: 0; width: 100% !important; height: 100% !important; touch-action: none; cursor: grab; }
+
+  .overlay { position: absolute; inset: 0; z-index: 6; display: flex; align-items: center; justify-content: center;
+    background: rgba(6,8,14,0.82); backdrop-filter: blur(6px); text-align: center; padding: 16px; }
+  .overlay.hidden { display: none; }
+  .panel { max-width: 460px; width: 100%; max-height: 100%; overflow-y: auto; background: linear-gradient(160deg, #161c30, #0e1220);
+    border: 1px solid rgba(224,177,92,0.28); border-radius: 22px; padding: 30px 26px; box-shadow: 0 20px 60px rgba(0,0,0,0.55); }
+  .tag { display: inline-block; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: #e0b15c;
+    border: 1px solid rgba(224,177,92,0.35); border-radius: 999px; padding: 4px 12px; margin-bottom: 14px; }
+  h1 { font-size: 42px; font-weight: 900; letter-spacing: 2px; color: #ffd76a;
+    text-shadow: 0 0 24px rgba(224,177,92,0.35); margin-bottom: 10px; }
+  .sub { color: #9aa7c9; font-size: 13.5px; line-height: 1.6; margin-bottom: 22px; }
+  .mbtn { background: rgba(255,255,255,0.06); color: #d6dff5; border: 1px solid rgba(120,160,255,0.22); border-radius: 12px;
+    padding: 10px 14px; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .mbtn:hover { background: rgba(255,255,255,0.1); }
+  .mbtn.active { background: linear-gradient(135deg, #e0b15c, #c8872f); color: #141008; border-color: transparent; box-shadow: 0 4px 18px rgba(224,177,92,0.35); }
+  #modes, #colors { display: flex; gap: 8px; justify-content: center; margin-bottom: 14px; }
+  .btn { background: linear-gradient(135deg, #e0b15c, #c8872f); color: #141008; border: none; border-radius: 14px;
+    padding: 13px 26px; font-size: 15px; font-weight: 900; letter-spacing: 1px; cursor: pointer; box-shadow: 0 6px 22px rgba(224,177,92,0.35); }
+  .btn:hover { filter: brightness(1.1); }
+  .hint { color: #6c7896; font-size: 12px; margin-top: 16px; line-height: 1.5; }
+
+  #hud { position: absolute; top: 6px; left: 10px; z-index: 4; display: flex; gap: 5px; align-items: center; font-variant-numeric: tabular-nums; }
+  .chip { background: rgba(10,13,20,0.72); border: 1px solid rgba(120,160,255,0.2); border-radius: 8px; padding: 3px 7px; font-size: 10px; line-height: 1.25; min-width: 44px; }
+  .chip b { display: block; font-size: 13px; color: #fff; }
+  .chip span { color: #8b9ac0; font-size: 9px; letter-spacing: 0.5px; text-transform: uppercase; }
+
+  #msg { position: absolute; top: 40px; left: 50%; transform: translateX(-50%); z-index: 4; background: rgba(10,13,20,0.78);
+    border: 1px solid rgba(224,177,92,0.35); color: #ffd76a; border-radius: 999px; padding: 3px 14px; font-size: 12px; font-weight: 700;
+    letter-spacing: 0.5px; white-space: nowrap; pointer-events: none; transition: opacity 0.25s; }
+
+  #btns { position: absolute; top: 6px; right: 10px; z-index: 4; display: flex; gap: 6px; align-items: center; }
+  #btns button { background: rgba(10,13,20,0.72); border: 1px solid rgba(120,160,255,0.2); color: #fff; border-radius: 10px;
+    padding: 5px 10px; font-size: 12px; font-weight: 700; cursor: pointer; }
+  #btns button:hover { background: rgba(30,38,60,0.9); }
+
+  #over h1 { font-size: 34px; }
+  .ovStats { display: flex; gap: 10px; justify-content: center; margin: 18px 0 22px; flex-wrap: wrap; }
+  .ovStats div { background: rgba(255,255,255,0.05); border: 1px solid rgba(224,177,92,0.2); border-radius: 12px; padding: 10px 16px; min-width: 84px; }
+  .ovStats b { display: block; font-size: 20px; color: #ffd76a; }
+  .ovStats span { font-size: 10px; color: #8b9ac0; text-transform: uppercase; letter-spacing: 1px; }
+  #ovRow { display: flex; gap: 10px; justify-content: center; margin-top: 4px; }
+
+  @media (max-width: 480px) {
+    .overlay { padding: 12px; }
+    .panel { padding: 20px 18px; border-radius: 18px; }
+    .tag { font-size: 9px; letter-spacing: 2px; padding: 3px 10px; margin-bottom: 10px; }
+    h1 { font-size: 30px; margin-bottom: 8px; }
+    .sub { font-size: 12px; line-height: 1.5; margin-bottom: 14px; }
+    .mbtn { padding: 9px 12px; font-size: 12px; }
+    #modes, #colors { gap: 6px; margin-bottom: 10px; }
+    .btn { padding: 11px 22px; font-size: 14px; }
+    .hint { font-size: 10.5px; margin-top: 12px; }
+  }
+  @media (max-width: 430px) {
+    #hud { top: 4px; left: 6px; gap: 3px; }
+    .chip { padding: 2px 4px; min-width: 32px; font-size: 9px; }
+    .chip b { font-size: 10px; }
+    .chip span { font-size: 8px; letter-spacing: 0.3px; }
+    #btns { top: 4px; right: 6px; gap: 3px; }
+    #btns button { padding: 3px 6px; font-size: 10px; }
+    #msg { top: 34px; font-size: 11px; }
+    .ovStats div { min-width: 68px; padding: 8px 12px; }
+    .ovStats b { font-size: 16px; }
+    #over h1 { font-size: 26px; }
+  }
+  @media (max-height: 340px) {
+    .overlay { padding: 8px; }
+    .panel { padding: 12px 16px; border-radius: 14px; }
+    .tag { font-size: 8px; letter-spacing: 2px; padding: 2px 8px; margin-bottom: 6px; }
+    h1 { font-size: 20px; margin-bottom: 4px; }
+    .sub { font-size: 10px; line-height: 1.4; margin-bottom: 6px; }
+    .mbtn { padding: 6px 10px; font-size: 11px; }
+    #modes, #colors { gap: 6px; margin-bottom: 6px; }
+    .btn { padding: 8px 18px; font-size: 12px; }
+    .hint { font-size: 9px; margin-top: 6px; }
+    .ovStats { gap: 6px; margin: 10px 0 12px; }
+    .ovStats div { min-width: 62px; padding: 6px 10px; }
+    .ovStats b { font-size: 14px; }
+    #over h1 { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+  <canvas id="cv"></canvas>
+
+  <div id="hud">
+    <div class="chip"><span>Score</span><b id="sc">0</b></div>
+    <div class="chip"><span>Moves</span><b id="mv">0</b></div>
+    <div class="chip"><span>Time</span><b id="tm">00:00</b></div>
+  </div>
+  <div id="msg"></div>
+  <div id="btns">
+    <button id="newBtn" title="New deal (N)">New</button>
+    <button id="hintBtn" title="Hint (H)">Hint</button>
+    <button id="undoBtn" title="Undo (U)">Undo</button>
+    <button id="menuBtn" title="Main menu">Menu</button>
+  </div>
+
+  <div class="overlay" id="menu">
+    <div class="panel">
+      <div class="tag">Original Exclusive</div>
+      <h1>KLONDRAKE</h1>
+      <div class="sub">Stack the drake&rsquo;s golden hoard. A full classical Klondike solitaire &mdash; build the four suits from Ace to King on the towers, untangle the seven tableaux, and spend every draw from the lair&rsquo;s stockpile wisely. The drake does not forgive a wasted hand.</div>
+      <div id="modes">
+        <button class="mbtn active" data-mode="c1">Casual &middot; Draw 1</button>
+        <button class="mbtn" data-mode="c3">Savage &middot; Draw 3</button>
+      </div>
+      <button class="btn" id="startBtn">ENTER THE LAIR</button>
+      <div class="hint">Click a card to pick it up, click a glowing spot to drop it &middot; double-click to auto-play &middot; <b>Space</b> draw &middot; <b>U</b> undo &middot; <b>H</b> hint &middot; <b>A</b> auto-move &middot; <b>M</b> mute</div>
+    </div>
+  </div>
+
+  <div class="overlay hidden" id="over">
+    <div class="panel">
+      <div class="tag">Hoard Complete</div>
+      <h1>🏆</h1>
+      <h1 style="font-size:26px">THE LAIR IS YOURS</h1>
+      <div class="ovStats">
+        <div><b id="ovScore">0</b><span>Score</span></div>
+        <div><b id="ovMoves">0</b><span>Moves</span></div>
+        <div><b id="ovTime">00:00</b><span>Time</span></div>
+        <div><b id="ovBest">0</b><span>Best</span></div>
+      </div>
+      <div id="ovRow">
+        <button class="btn" id="againBtn" style="padding:11px 18px;font-size:13px">PLAY AGAIN</button>
+        <button class="mbtn" id="overMenuBtn" style="padding:11px 18px">MENU</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="dbg" style="display:none; position:absolute; top:46px; right:6px; z-index:999; background:rgba(0,0,0,0.85); color:#7dff9b; font:10px/1.5 monospace; padding:6px 8px; border-radius:6px; white-space:pre; pointer-events:none;"></div>
+
+<script>
+/* ==================== KLONDRAKE ENGINE */
+var S = {
+  stock: [], waste: [], fnd: [[], [], [], []], tab: [[], [], [], [], [], [], []],
+  mode: "c1", score: 0, moves: 0, t0: null, elapsed: 0,
+  playing: false, solved: false, muted: false, best: 0, dealt: false,
+  history: [], sel: null, hint: null, msgT: 0, msgText: "", drag: null
+};
+var W = 0, H = 0, DPR = 1;
+var cv = null, ctx = null;
+  var TOP_RESERVE = 64, PAD = 10, gapX = 8, CARD_R = 1.42, fdYf = 0.18, fuYf = 0.32, MAXDEP = 20;
+  var stepUp = 0, stepDn = 0;
+var cw = 80, cardH = 113;
+var startX = 0, stockX = 0, stockY = 0, wasteX = 0, wasteY = 0;
+var fndX = [0,0,0,0], fndY = 0;
+var tabX = [0,0,0,0,0,0,0], tabY = 0;
+
+var SUITS = ["\u2660","\u2665","\u2666","\u2663"];
+var RANKS = ["","A","2","3","4","5","6","7","8","9","10","J","Q","K"];
+var GOLD = "#e0b15c", GOLD2 = "#ffd76a", RED = "#e5484d", INK = "#1b2333", IVORY = "#f4f0e4";
+
+function $(id) { return document.getElementById(id); }
+function el(id, tag) { var e = document.createElement(tag || "div"); e.id = id; document.body.appendChild(e); return e; }
+function setText(id, txt) { var e = $(id); if (e) e.textContent = txt; }
+
+function rnd(n) { return Math.floor(Math.random() * n); }
+function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = rnd(i + 1); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+
+function makeDeck() {
+  var d = [];
+  for (var s = 0; s < 4; s++) for (var r = 1; r <= 13; r++) d.push({ id: s * 13 + r, s: s, r: r, u: false });
+  return d;
+}
+function colorOf(c) { return (c.s === 1 || c.s === 2) ? "red" : "black"; }
+function opp(a, b) { return colorOf(a) !== colorOf(b); }
+function cardById(id) { return { id: id, s: Math.floor((id - 1) / 13), r: ((id - 1) % 13) + 1, u: false }; }
+
+/* ==================== AUDIO */
+var actx = null;
+function audio() { if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (actx && actx.state === "suspended") actx.resume(); }
+function beep(f, d, t, v) { if (S.muted || !actx) return; try { var o = actx.createOscillator(), g = actx.createGain(); o.type = t || "triangle"; o.frequency.value = f; g.gain.setValueAtTime(v || 0.06, actx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + (d || 0.2)); o.connect(g); g.connect(actx.destination); o.start(); o.stop(actx.currentTime + (d || 0.2)); } catch (e) {} }
+function sSnap() { beep(220, 0.06, "triangle", 0.05); }
+function sFlip() { beep(300, 0.05, "sine", 0.05); setTimeout(function () { beep(360, 0.05, "sine", 0.05); }, 45); }
+function sMove() { beep(480, 0.07, "triangle", 0.05); }
+function sBad() { beep(140, 0.16, "sawtooth", 0.05); }
+function sWin() { var n = [523, 659, 784, 1046]; n.forEach(function (f, i) { setTimeout(function () { beep(f, 0.3, "triangle", 0.09); }, i * 140); }); }
+
+/* ==================== LAYOUT */
+function layout() {
+  var short = H < 300;
+  var reserve = short ? 50 : TOP_RESERVE;
+  var maxOff = 12, guard = 0;
+  var cwW = Math.floor((W - 2 * PAD - 6 * gapX) / 7);
+  var cwH = Math.floor(((H - reserve - 40) / 3.2) / CARD_R);
+  cw = Math.max(28, Math.min(122, cwW, cwH));
+  if (W < 1024) cw = Math.min(cw, 40);
+  cardH = Math.round(cw * CARD_R);
+  while (guard++ < 80) {
+    var topBot = reserve + 8 + cardH + 14;
+    var avail = H - topBot - 14;
+    var du = Math.round(fuYf * cardH), dd = Math.round(fdYf * cardH);
+    var minU = Math.max(short ? 2 : 3, Math.round(cw * (short ? 0.08 : 0.12)));
+    var minD = Math.max(short ? 1 : 2, Math.round(cw * (short ? 0.05 : 0.07)));
+    var maxU = Math.max(minU, Math.floor((avail - cardH) / maxOff));
+    stepUp = Math.max(minU, Math.min(du, maxU));
+    stepDn = Math.max(minD, Math.min(dd, maxU));
+    var blockH = cardH + 12 * stepUp;
+    if (blockH <= avail || cw <= 28) break;
+    cw--; cardH = Math.round(cw * CARD_R);
+  }
+  cw = Math.max(28, cw); cardH = Math.round(cw * CARD_R);
+  startX = Math.floor((W - (7 * cw + 6 * gapX)) / 2);
+  for (var j = 0; j < 7; j++) tabX[j] = startX + j * (cw + gapX);
+  var topBot2 = reserve + 8 + cardH + 14;
+  var avail2 = H - topBot2 - 14;
+  var du2 = Math.round(fuYf * cardH), dd2 = Math.round(fdYf * cardH);
+  var minU2 = Math.max(short ? 2 : 3, Math.round(cw * (short ? 0.08 : 0.12)));
+  var minD2 = Math.max(short ? 1 : 2, Math.round(cw * (short ? 0.05 : 0.07)));
+  var maxU2 = Math.max(minU2, Math.floor((avail2 - cardH) / maxOff));
+  stepUp = Math.max(minU2, Math.min(du2, maxU2));
+  stepDn = Math.max(minD2, Math.min(dd2, maxU2));
+  var blockH2 = cardH + 12 * stepUp;
+  var off = Math.max(4, Math.floor((H - (topBot2 + blockH2)) / 2));
+  stockX = startX; stockY = off + reserve + 8;
+  wasteX = stockX + cw + gapX; wasteY = stockY;
+  for (var i = 0; i < 4; i++) fndX[i] = startX + (3 + i) * (cw + gapX);
+  fndY = stockY;
+  tabY = off + reserve + 8 + cardH + 14 + Math.max(0, Math.floor((avail2 - blockH2) / 2));
+}
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 2.5);
+  W = window.innerWidth; H = window.innerHeight;
+  cv.width = Math.floor(W * DPR); cv.height = Math.floor(H * DPR);
+  layout();
+  render();
+}
+
+/* ==================== GAME LOGIC */
+function newDeal(mode) {
+  mode = mode || S.mode || "c1";
+  S.mode = mode; S.score = 0; S.moves = 0; S.t0 = null; S.elapsed = 0;
+  S.solved = false; S.history = []; S.sel = null; S.hint = null; S.drag = null; S.dealt = true;
+  S.playing = true;
+  var deck = shuffle(makeDeck());
+  S.stock = []; S.waste = []; S.fnd = [[], [], [], []]; S.tab = [];
+  for (var i = 0; i < 7; i++) S.tab.push([]);
+  for (var p = 0; p < 7; p++) for (var k = 0; k <= p; k++) S.tab[p].push(deck.pop());
+  for (var t = 0; t < 7; t++) S.tab[t][S.tab[t].length - 1].u = true;
+  S.stock = deck;
+  setText("mv", "0"); setText("sc", "0"); setText("tm", "00:00");
+  $("menu").classList.add("hidden");
+  $("over").classList.add("hidden");
+  showMsg("Casual" === (mode === "c1" ? "Casual" : "") ? "New deal \u2014 Draw 1" : "New deal \u2014 Draw 3");
+  updateHud();
+  render();
+}
+function startGame() {
+  audio();
+  var m = "c1";
+  var modes = document.getElementById("modes").querySelectorAll(".mbtn");
+  for (var i = 0; i < modes.length; i++) if (modes[i].classList.contains("active")) m = modes[i].getAttribute("data-mode");
+  newDeal(m);
+}
+function showMsg(txt) { S.msgText = txt; S.msgT = 2200; var e = $("msg"); if (e) { e.textContent = txt; e.style.opacity = "1"; } }
+function updateHud() { setText("sc", String(S.score)); setText("mv", String(S.moves)); if (S.solved) return; if (S.t0) S.elapsed = Math.floor((Date.now() - S.t0) / 1000); setText("tm", fmt(S.elapsed)); }
+function fmt(s) { var m = Math.floor(s / 60), r = s % 60; return (m < 10 ? "0" : "") + m + ":" + (r < 10 ? "0" : "") + r; }
+function pushSnap() {
+  S.history.push({
+    s: S.stock.slice(), w: S.waste.slice(),
+    f: S.fnd.map(function (a) { return a.slice(); }),
+    t: S.tab.map(function (a) { return a.map(function (c) { return { i: c.id, u: c.u }; }); }),
+    sc: S.score, mv: S.moves, t0: S.t0, el: S.elapsed
+  });
+}
+function restoreSnap(snap) {
+  S.stock = snap.s.slice(); S.waste = snap.w.slice();
+  S.fnd = snap.f.map(function (a) { return a.map(function (c) { return cardById(c); }); });
+  S.tab = snap.t.map(function (a) { return a.map(function (c) { var x = cardById(c.i); x.u = c.u; return x; }); });
+  S.score = snap.sc; S.moves = snap.mv; S.t0 = snap.t0; S.elapsed = snap.el;
+}
+function revealTab(pi) {
+  var pile = S.tab[pi];
+  if (pile.length && !pile[pile.length - 1].u) { pile[pile.length - 1].u = true; S.score += 5; sFlip(); }
+}
+function fndFits(fi, c) {
+  var f = S.fnd[fi];
+  if (!f.length) return c.r === 1;
+  var top = f[f.length - 1];
+  return top.s === c.s && top.r === c.r - 1;
+}
+function tabFits(ti, c) {
+  var p = S.tab[ti];
+  if (!p.length) return c.r === 13;
+  var top = p[p.length - 1];
+  return top.u && opp(top, c) && top.r === c.r + 1;
+}
+function validTargets() {
+  var sel = S.sel;
+  var out = { f: [], t: [] };
+  if (!sel) return out;
+  var src, ci = sel.ci;
+  if (sel.type === "waste") { src = S.waste; ci = S.waste.length - 1; }
+  else if (sel.type === "fnd") { src = S.fnd[sel.pi]; ci = S.fnd[sel.pi].length - 1; }
+  else src = S.tab[sel.pi];
+  if (ci < 0 || ci >= src.length) return out;
+  var head = src[ci];
+  if (!head.u) return out;
+  if (sel.type !== "fnd") for (var f = 0; f < 4; f++) if (fndFits(f, head)) out.f.push(f);
+  for (var t = 0; t < 7; t++) if (t !== sel.pi || sel.type !== "tab") if (tabFits(t, head)) out.t.push(t);
+  return out;
+}
+function doMove(sel, tType, tIdx) {
+  if (!sel) return false;
+  var src, ci = sel.ci;
+  if (sel.type === "waste") { src = S.waste; ci = S.waste.length - 1; }
+  else if (sel.type === "fnd") { src = S.fnd[sel.pi]; ci = S.fnd[sel.pi].length - 1; }
+  else src = S.tab[sel.pi];
+  if (ci < 0 || ci >= src.length) return false;
+  var cards = src.slice(ci);
+  var head = cards[0];
+  if (!head.u) return false;
+  if (tType === "f") {
+    if (cards.length !== 1 || !fndFits(tIdx, head)) return false;
+    pushSnap();
+    S.fnd[tIdx].push(cards[0]);
+    src.splice(ci, 1);
+    S.score += 10; S.moves++;
+    if (sel.type === "tab") revealTab(sel.pi);
+    S.sel = null;
+    sMove();
+    afterMove();
+    return true;
+  } else {
+    if (!tabFits(tIdx, head)) return false;
+    pushSnap();
+    var p = S.tab[tIdx];
+    for (var k = 0; k < cards.length; k++) p.push(cards[k]);
+    src.splice(ci, cards.length);
+    S.moves++;
+    if (sel.type === "fnd") S.score -= 15;
+    else if (sel.type === "waste") S.score += 5;
+    if (sel.type === "tab") revealTab(sel.pi);
+    S.sel = null;
+    sSnap();
+    afterMove();
+    return true;
+  }
+}
+function draw() {
+  if (!S.playing || S.solved) return;
+  audio();
+  if (!S.t0) S.t0 = Date.now();
+  if (!S.stock.length) {
+    if (!S.waste.length) { showMsg("Laid bare \u2014 nothing left to draw"); sBad(); return; }
+    pushSnap();
+    while (S.waste.length) { var rcard = S.waste.pop(); rcard.u = false; S.stock.push(rcard); }
+    if (S.mode === "c3") S.score -= 100;
+    S.moves++;
+    showMsg("Laid bare again \u2014 redeal");
+    sFlip();
+    S.sel = null;
+    afterMove();
+    return;
+  }
+  pushSnap();
+  var n = S.mode === "c3" ? 3 : 1;
+  while (n > 0 && S.stock.length) { var dcard = S.stock.pop(); dcard.u = true; S.waste.push(dcard); n--; }
+  S.moves++;
+  sFlip();
+  S.sel = null;
+  afterMove();
+}
+function afterMove() {
+  if (!S.t0) S.t0 = Date.now();
+  if (checkWin()) { win(); return; }
+  updateHud(); render();
+}
+function checkWin() {
+  for (var f = 0; f < 4; f++) if (S.fnd[f].length < 13) return false;
+  return true;
+}
+function win() {
+  S.playing = false; S.solved = true; S.hint = null; S.sel = null; S.drag = null;
+  if (S.t0) S.elapsed = Math.floor((Date.now() - S.t0) / 1000);
+  if (S.score > S.best) { S.best = S.score; try { localStorage.setItem("klondrake_best", String(S.best)); } catch (e) {} }
+  setText("ovScore", String(S.score));
+  setText("ovMoves", String(S.moves));
+  setText("ovTime", fmt(S.elapsed));
+  setText("ovBest", String(S.best));
+  updateHud();
+  $("over").classList.remove("hidden");
+  sWin();
+  render();
+}
+function undo() {
+  if (!S.playing || !S.history.length) return;
+  var prev = S.history.pop();
+  restoreSnap(prev);
+  S.solved = false; S.sel = null; S.hint = null; S.drag = null;
+  $("over").classList.add("hidden");
+  sSnap();
+  showMsg("Undone");
+  updateHud(); render();
+}
+function autoMove() {
+  if (!S.playing || S.solved) return;
+  var moved = 0, guard = 0;
+  while (guard++ < 200) {
+    var done = false;
+    for (var t = 0; t < 7; t++) {
+      var p = S.tab[t];
+      if (p.length && p[p.length - 1].u) {
+        for (var f = 0; f < 4; f++) if (fndFits(f, p[p.length - 1])) {
+          doMove({ type: "tab", pi: t, ci: p.length - 1 }, "f", f); moved++; done = true; break;
+        }
+      }
+      if (done) break;
+    }
+    if (done) continue;
+    if (S.waste.length) {
+      for (var f2 = 0; f2 < 4; f2++) if (fndFits(f2, S.waste[S.waste.length - 1])) {
+        doMove({ type: "waste", pi: 0, ci: 0 }, "f", f2); moved++; done = true; break;
+      }
+    }
+    if (!done) break;
+  }
+  if (moved) showMsg("Auto-placed " + moved + (moved === 1 ? " card" : " cards"));
+  else showMsg("Nothing to auto-place");
+  sSnap();
+  render();
+}
+function hintMove() {
+  if (!S.playing || S.solved) return;
+  for (var t = 0; t < 7; t++) {
+    var p = S.tab[t];
+    if (!p.length || !p[p.length - 1].u) continue;
+    var c = p[p.length - 1];
+    for (var f = 0; f < 4; f++) if (fndFits(f, c)) { S.hint = { src: { type: "tab", pi: t, ci: p.length - 1 }, t: { type: "f", i: f } }; showMsg("Hint: place to a tower"); sBad(); return; }
+    for (var t2 = 0; t2 < 7; t2++) if (t2 !== t && tabFits(t2, c)) { S.hint = { src: { type: "tab", pi: t, ci: p.length - 1 }, t: { type: "t", i: t2 } }; showMsg("Hint: build a column"); sBad(); return; }
+  }
+  if (S.waste.length) {
+    var wc = S.waste[S.waste.length - 1];
+    for (var f3 = 0; f3 < 4; f3++) if (fndFits(f3, wc)) { S.hint = { src: { type: "waste", pi: 0, ci: 0 }, t: { type: "f", i: f3 } }; showMsg("Hint: use the revealed card"); sBad(); return; }
+    for (var t3 = 0; t3 < 7; t3++) if (tabFits(t3, wc)) { S.hint = { src: { type: "waste", pi: 0, ci: 0 }, t: { type: "t", i: t3 } }; showMsg("Hint: use the revealed card"); sBad(); return; }
+  }
+  if (S.stock.length) { showMsg("Hint: draw from the lair"); sBad(); }
+  else showMsg("No immediate move \u2014 keep looking");
+  S.hint = null;
+}
+function toMenu() {
+  S.playing = false; S.sel = null; S.hint = null; S.drag = null;
+  $("over").classList.add("hidden");
+  $("menu").classList.remove("hidden");
+}
+
+/* ==================== INPUT */
+function hitTest(x, y) {
+  var i, p, rect;
+  for (i = 6; i >= 0; i--) {
+    p = S.tab[i];
+    for (var k = p.length - 1; k >= 0; k--) {
+      if (!p[k].u) break;
+      rect = cardBox(tabPos(i, k));
+      if (x >= rect.x && x < rect.x + rect.w && y >= rect.y && y < rect.y + rect.h) return { type: "tab", pi: i, ci: k };
+    }
+  }
+  if (S.waste.length) {
+    rect = cardBox({ x: wasteX, y: wasteY });
+    if (x >= rect.x && x < rect.x + rect.w && y >= rect.y && y < rect.y + rect.h) return { type: "waste", pi: 0, ci: 0 };
+  }
+  for (i = 0; i < 4; i++) if (S.fnd[i].length) {
+    rect = cardBox({ x: fndX[i], y: fndY });
+    if (x >= rect.x && x < rect.x + rect.w && y >= rect.y && y < rect.y + rect.h) return { type: "fnd", pi: i, ci: S.fnd[i].length - 1 };
+  }
+  return { type: "slot", pi: 0, ci: 0 };
+}
+function slotAt(x, y) {
+  var i, rect;
+  for (i = 0; i < 4; i++) {
+    rect = cardBox({ x: fndX[i], y: fndY });
+    if (x >= rect.x && x < rect.x + rect.w && y >= rect.y && y < rect.y + rect.h) return { type: "f", i: i };
+  }
+  for (i = 0; i < 7; i++) {
+    var p = S.tab[i];
+    var topY = p.length ? tabPos(i, p.length - 1).y : tabY;
+    if (x >= tabX[i] && x < tabX[i] + cw && y >= topY) return { type: "t", i: i };
+  }
+  return null;
+}
+function clickAt(x, y) {
+  if (!S.playing || S.solved) return;
+  audio();
+  if (!S.t0) S.t0 = Date.now();
+  if (x >= stockX && x < stockX + cw && y >= stockY && y < stockY + cardH) { draw(); return; }
+  var hit = hitTest(x, y);
+  var slot = slotAt(x, y);
+  if (slot) {
+    var vt = validTargets();
+    var can = slot.type === "f" ? vt.f.indexOf(slot.i) >= 0 : vt.t.indexOf(slot.i) >= 0;
+    if (can) { doMove(S.sel, slot.type, slot.i); return; }
+  }
+  if (!hit || hit.type === "slot") { S.sel = null; S.hint = null; render(); return; }
+  if (hit.type === "waste" || hit.type === "fnd") {
+    var top = hit.type === "waste" ? S.waste[S.waste.length - 1] : S.fnd[hit.pi][S.fnd[hit.pi].length - 1];
+    if (S.sel && S.sel.type === hit.type && S.sel.pi === hit.pi && S.sel.ci === (hit.type === "waste" ? 0 : S.fnd[hit.pi].length - 1)) { S.sel = null; render(); return; }
+    S.sel = { type: hit.type, pi: hit.pi, ci: hit.type === "waste" ? 0 : S.fnd[hit.pi].length - 1 };
+    S.hint = null; render(); return;
+  }
+  if (S.sel && S.sel.type === "tab" && S.sel.pi === hit.pi && S.sel.ci === hit.ci) { S.sel = null; render(); return; }
+  S.sel = { type: "tab", pi: hit.pi, ci: hit.ci };
+  S.hint = null; render();
+}
+function dblAt(x, y) {
+  if (!S.playing || S.solved) return;
+  audio();
+  var hit = hitTest(x, y);
+  if (!hit || hit.type === "slot") return;
+  var c;
+  if (hit.type === "tab") c = S.tab[hit.pi][hit.ci];
+  else if (hit.type === "waste") c = S.waste[S.waste.length - 1];
+  else return;
+  for (var f = 0; f < 4; f++) if (fndFits(f, c)) { doMove({ type: hit.type, pi: hit.pi, ci: hit.ci }, "f", f); break; }
+}
+
+/* ==================== DRAG & DROP */
+var lastTap = { t: 0, x: 0, y: 0 };
+function coords(e) {
+  var r = cv.getBoundingClientRect();
+  return { x: (e.clientX - r.left) * W / r.width, y: (e.clientY - r.top) * H / r.height };
+}
+function onDownAt(x, y) {
+  if (!S.playing || S.solved) return;
+  audio();
+  if (!S.t0) S.t0 = Date.now();
+  var hit = hitTest(x, y);
+  S.drag = { x: x, y: y, sx: x, sy: y, hit: hit, active: false, set: false };
+}
+function onMoveAt(x, y) {
+  if (!S.drag) return;
+  S.drag.x = x; S.drag.y = y;
+  if (!S.drag.active && (Math.abs(x - S.drag.sx) > 8 || Math.abs(y - S.drag.sy) > 8)) {
+    var h = S.drag.hit;
+    if (h && h.type !== "slot") {
+      S.drag.active = true; S.drag.set = true;
+      S.sel = { type: h.type, pi: h.pi, ci: h.ci };
+      S.hint = null;
+      render();
+    } else { S.drag = null; }
+  } else if (S.drag.active) {
+    render();
+  }
+}
+function onUpAt(x, y) {
+  var d = S.drag;
+  S.drag = null;
+  if (!d) return;
+  if (d.active) {
+    if (S.sel) {
+      var slot = slotAt(x, y);
+      var vt = validTargets();
+      var can = slot ? (slot.type === "f" ? vt.f.indexOf(slot.i) >= 0 : vt.t.indexOf(slot.i) >= 0) : false;
+      if (can) doMove(S.sel, slot.type, slot.i);
+      else { S.sel = null; render(); }
+    }
+  } else {
+    var now = Date.now();
+    if (now - lastTap.t < 300 && Math.abs(x - lastTap.x) < 25 && Math.abs(y - lastTap.y) < 25) {
+      lastTap = { t: 0, x: 0, y: 0 };
+      dblAt(x, y);
+    } else {
+      lastTap = { t: now, x: x, y: y };
+      clickAt(x, y);
+    }
+  }
+}
+function onCancelDrag() {
+  if (S.drag && S.drag.set) S.sel = null;
+  S.drag = null;
+  render();
+}
+
+/* ==================== RENDER */
+function cardBox(pos) { return { x: pos.x, y: pos.y, w: cw, h: cardH }; }
+function tabPos(pi, ci) {
+  var p = S.tab[pi], y = tabY;
+  for (var k = 0; k < ci; k++) y += (p[k].u ? stepUp : stepDn);
+  return { x: tabX[pi], y: y };
+}
+function wastePos(ci) {
+  var n = Math.min(3, S.waste.length);
+  var k = ci - (S.waste.length - n);
+  if (k < 0) k = 0;
+  return { x: wasteX, y: wasteY + (n - 1 - k) * 3 };
+}
+function rrect(x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+function drawSlot(x, y) {
+  rrect(x, y, cw, cardH, 8);
+  ctx.fillStyle = "rgba(255,255,255,0.03)";
+  ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255,0.12)";
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([5, 5]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+}
+function drawBack(x, y) {
+  rrect(x, y, cw, cardH, 8);
+  var g = ctx.createLinearGradient(x, y, x + cw, y + cardH);
+  g.addColorStop(0, "#222b45"); g.addColorStop(1, "#141a2e");
+  ctx.fillStyle = g; ctx.fill();
+  ctx.strokeStyle = GOLD; ctx.lineWidth = 2; ctx.stroke();
+  rrect(x + 5, y + 5, cw - 10, cardH - 10, 5);
+  ctx.strokeStyle = "rgba(224,177,92,0.5)"; ctx.lineWidth = 1; ctx.stroke();
+  ctx.fillStyle = "rgba(224,177,92,0.16)";
+  for (var i = 0; i < 6; i++) for (var j = 0; j < 4; j++) { ctx.fillRect(x + 10 + j * ((cw - 20) / 4), y + 10 + i * ((cardH - 20) / 6), 2, 2); }
+  ctx.fillStyle = GOLD2;
+  ctx.font = "900 " + Math.round(cw * 0.4) + "px Georgia, serif";
+  ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  ctx.fillText("K", x + cw / 2, y + cardH / 2 - 2);
+  ctx.font = "bold " + Math.round(cw * 0.2) + "px Georgia, serif";
+  ctx.fillStyle = "rgba(255,215,106,0.8)";
+  ctx.fillText("\u25B2", x + cw / 2, y + cardH / 2 + Math.round(cw * 0.24));
+  ctx.textAlign = "left";
+}
+function drawFace(c, x, y) {
+  rrect(x, y, cw, cardH, 8);
+  var g = ctx.createLinearGradient(x, y, x + cw, y + cardH);
+  g.addColorStop(0, "#fffdf6"); g.addColorStop(1, "#eae3d2");
+  ctx.fillStyle = g; ctx.fill();
+  ctx.strokeStyle = "rgba(0,0,0,0.25)"; ctx.lineWidth = 1.2; ctx.stroke();
+  var col = colorOf(c) === "red" ? RED : INK;
+  var fs = Math.round(cw * 0.24);
+  ctx.fillStyle = col;
+  ctx.font = "800 " + fs + "px Segoe UI, sans-serif";
+  ctx.textAlign = "left"; ctx.textBaseline = "top";
+  ctx.fillText(RANKS[c.r], x + 6, y + 5);
+  ctx.font = "800 " + Math.round(fs * 0.85) + "px Segoe UI, sans-serif";
+  ctx.fillText(SUITS[c.s], x + 6, y + 5 + fs);
+  ctx.save();
+  ctx.translate(x + cw - 8, y + cardH - 8); ctx.rotate(Math.PI);
+  ctx.textAlign = "left"; ctx.textBaseline = "top";
+  ctx.font = "800 " + fs + "px Segoe UI, sans-serif";
+  ctx.fillText(RANKS[c.r], 0, 0);
+  ctx.font = "800 " + Math.round(fs * 0.85) + "px Segoe UI, sans-serif";
+  ctx.fillText(SUITS[c.s], 0, fs);
+  ctx.restore();
+  ctx.fillStyle = "rgba(27,35,51,0.12)";
+  ctx.font = Math.round(cw * 0.85) + "px Georgia, serif";
+  ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  ctx.fillText(SUITS[c.s], x + cw / 2, y + cardH * 0.62);
+  ctx.fillStyle = "rgba(224,177,92,0.85)";
+  ctx.font = "bold " + Math.round(cw * 0.3) + "px Georgia, serif";
+  ctx.fillText("\u25B2", x + cw / 2, y + cardH * 0.82);
+}
+function glow(x, y, w, h, col, dash) {
+  ctx.save();
+  rrect(x - 3, y - 3, w + 6, h + 6, 10);
+  ctx.strokeStyle = col; ctx.lineWidth = 3;
+  if (dash) { ctx.setLineDash([6, 4]); ctx.lineDashOffset = -Date.now() / 40 % 10; }
+  ctx.stroke();
+  ctx.restore();
+}
+function render() {
+  if (!ctx) return;
+  var w = Math.floor(W * DPR), h = Math.floor(H * DPR);
+  if (cv.width !== w) cv.width = w;
+  if (cv.height !== h) cv.height = h;
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  var bg = ctx.createRadialGradient(W / 2, H * 0.35, 40, W / 2, H / 2, Math.max(W, H) * 0.75);
+  bg.addColorStop(0, "#171d30"); bg.addColorStop(1, "#080a12");
+  ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+  var vt = validTargets();
+  var dragging = !!(S.drag && S.drag.active && S.sel);
+  drawSlot(stockX, stockY);
+  if (!S.stock.length) { if (S.waste.length) { ctx.fillStyle = "rgba(255,215,106,0.5)"; ctx.font = "bold 11px Segoe UI, sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "top"; ctx.fillText("\u21BB", stockX + cw / 2, stockY + cardH - 16); ctx.textAlign = "left"; } }
+  else {
+    drawBack(stockX, stockY);
+    ctx.fillStyle = "rgba(10,13,20,0.85)";
+    rrect(stockX + cw - 30, stockY + cardH - 24, 24, 18, 9); ctx.fill();
+    ctx.fillStyle = "#ffd76a"; ctx.font = "bold 12px Segoe UI, sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText(String(S.stock.length), stockX + cw - 18, stockY + cardH - 15);
+    ctx.textAlign = "left";
+  }
+  drawSlot(wasteX, wasteY);
+  for (var wi = Math.max(0, S.waste.length - 3); wi < S.waste.length; wi++) {
+    if (dragging && S.sel.type === "waste" && wi === S.waste.length - 1) continue;
+    drawFace(S.waste[wi], wastePos(wi).x, wastePos(wi).y, false);
+  }
+  for (var fi = 0; fi < 4; fi++) {
+    if (S.fnd[fi].length) {
+      if (!(dragging && S.sel.type === "fnd" && S.sel.pi === fi)) drawFace(S.fnd[fi][S.fnd[fi].length - 1], fndX[fi], fndY);
+      else drawSlot(fndX[fi], fndY);
+    } else {
+      drawSlot(fndX[fi], fndY);
+      ctx.fillStyle = "rgba(255,255,255,0.1)";
+      ctx.font = Math.round(cw * 0.42) + "px Georgia, serif";
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText(SUITS[fi], fndX[fi] + cw / 2, fndY + cardH / 2);
+      ctx.textAlign = "left";
+    }
+  }
+  for (var ti = 0; ti < 7; ti++) {
+    var p = S.tab[ti];
+    if (!p.length) drawSlot(tabX[ti], tabY);
+    for (var k = 0; k < p.length; k++) {
+      if (dragging && S.sel.type === "tab" && S.sel.pi === ti && k >= S.sel.ci) continue;
+      var pos = tabPos(ti, k);
+      if (p[k].u) drawFace(p[k], pos.x, pos.y);
+      else drawBack(pos.x, pos.y);
+      if (S.hint && S.hint.src.type === "tab" && S.hint.src.pi === ti && S.hint.src.ci === k) glow(pos.x, pos.y, cw, cardH, "#4ade80", true);
+    }
+    if (vt.t.indexOf(ti) >= 0) {
+      var last = p.length ? tabPos(ti, p.length - 1).y : tabY;
+      glow(tabX[ti] - 2, last - 2, cw + 4, cardH + 4, "#ffd76a");
+    }
+  }
+  if (S.sel) {
+    if (!dragging) {
+      if (S.sel.type === "tab") { var sp = tabPos(S.sel.pi, S.sel.ci); glow(sp.x - 2, sp.y - 2, cw + 4, cardH + 4, "#e0b15c"); }
+      else if (S.sel.type === "waste") glow(wasteX - 2, wasteY - 2, cw + 4, cardH + 4, "#e0b15c");
+      else glow(fndX[S.sel.pi] - 2, fndY - 2, cw + 4, cardH + 4, "#e0b15c");
+    }
+    for (var vi = 0; vi < vt.f.length; vi++) {
+      var fx = fndX[vt.f[vi]];
+      glow(fx - 3, fndY - 3, cw + 6, cardH + 6, "#4ade80", true);
+    }
+  }
+  if (S.hint && S.hint.t) {
+    if (S.hint.t.type === "f") glow(fndX[S.hint.t.i] - 3, fndY - 3, cw + 6, cardH + 6, "#4ade80", true);
+    else {
+      var hp = S.tab[S.hint.t.i];
+      var hy = hp.length ? tabPos(S.hint.t.i, hp.length - 1).y : tabY;
+      glow(tabX[S.hint.t.i] - 3, hy - 3, cw + 6, cardH + 6, "#4ade80", true);
+    }
+  }
+  if (dragging) drawDragRun();
+}
+function drawDragRun() {
+  var sel = S.sel, cards, off = stepUp;
+  if (sel.type === "tab") cards = S.tab[sel.pi].slice(sel.ci);
+  else if (sel.type === "waste") cards = [S.waste[S.waste.length - 1]];
+  else cards = [S.fnd[sel.pi][S.fnd[sel.pi].length - 1]];
+  if (!cards.length) return;
+  var x = S.drag.x - cw / 2, y = S.drag.y - cardH * 0.5;
+  for (var k = 0; k < cards.length; k++) drawFace(cards[k], x, y + k * off);
+  glow(x - 2, y - 2, cw + 4, cardH + 4, "#e0b15c");
+}
+function loop() { if (S.msgT > 0 && S.playing) { S.msgT -= 16; if (S.msgT <= 0) { var e = $("msg"); if (e) e.style.opacity = "0"; } } if (S.playing && S.t0 && !S.solved) { setText("tm", fmt(Math.floor((Date.now() - S.t0) / 1000))); } render(); requestAnimationFrame(loop); }
+
+/* ==================== WIRING */
+(function () {
+  cv = $("cv");
+  ctx = cv.getContext("2d");
+  try { S.best = parseInt(localStorage.getItem("klondrake_best") || "0", 10) || 0; } catch (e) { S.best = 0; }
+  try { S.muted = localStorage.getItem("klondrake_mute") === "1"; } catch (e) {}
+  var modes = Array.prototype.slice.call(document.getElementById("modes").querySelectorAll(".mbtn"));
+  modes.forEach(function (b) {
+    b.addEventListener("click", function () {
+      modes.forEach(function (x) { x.classList.remove("active"); });
+      b.classList.add("active");
+    });
+  });
+  $("startBtn").addEventListener("click", startGame);
+  $("againBtn").addEventListener("click", function () { newDeal(S.mode); });
+  $("overMenuBtn").addEventListener("click", toMenu);
+  $("newBtn").addEventListener("click", function () { if (S.dealt) newDeal(S.mode); });
+  $("hintBtn").addEventListener("click", hintMove);
+  $("undoBtn").addEventListener("click", undo);
+  $("menuBtn").addEventListener("click", toMenu);
+  var muteBtn = document.createElement("button");
+  muteBtn.id = "muteBtn";
+  muteBtn.textContent = S.muted ? "\uD83D\uDD07" : "\uD83D\uDD0A";
+  muteBtn.title = "Mute (M)";
+  $("btns").appendChild(muteBtn);
+  muteBtn.addEventListener("click", function () {
+    S.muted = !S.muted;
+    muteBtn.textContent = S.muted ? "\uD83D\uDD07" : "\uD83D\uDD0A";
+    try { localStorage.setItem("klondrake_mute", S.muted ? "1" : "0"); } catch (e) {}
+  });
+  cv.addEventListener("pointerdown", function (e) {
+    var c = coords(e);
+    onDownAt(c.x, c.y);
+    if (cv.setPointerCapture) { try { cv.setPointerCapture(e.pointerId); } catch (err) {} }
+    if (e.cancelable) e.preventDefault();
+  });
+  cv.addEventListener("pointermove", function (e) {
+    var c = coords(e);
+    onMoveAt(c.x, c.y);
+    if (S.drag && S.drag.active && e.cancelable) e.preventDefault();
+  });
+  cv.addEventListener("pointerup", function (e) {
+    var c = coords(e);
+    onUpAt(c.x, c.y);
+  });
+  cv.addEventListener("pointercancel", onCancelDrag);
+  document.addEventListener("keydown", function (e) {
+    var k = e.key;
+    if (k === " " || k === "d" || k === "D") { e.preventDefault(); if (S.playing && !S.solved) draw(); }
+    else if (k === "u" || k === "U") { undo(); }
+    else if (k === "h" || k === "H") { hintMove(); }
+    else if (k === "a" || k === "A") { autoMove(); }
+    else if (k === "m" || k === "M") { muteBtn.click(); }
+    else if (k === "n" || k === "N") { if (S.dealt) newDeal(S.mode); }
+    else if (k === "Enter") { if (!$("menu").classList.contains("hidden")) startGame(); }
+    else if (k === "Escape") { S.sel = null; render(); }
+  });
+  window.addEventListener("resize", resize);
+  resize();
+  render();
+  requestAnimationFrame(loop);
+})();
+if ((typeof location !== "undefined" && location.search && location.search.indexOf("debug") >= 0) || (function () { try { return typeof parent !== "undefined" && parent.location && parent.location.search && parent.location.search.indexOf("debug") >= 0; } catch (e) { return false; } })()) {
+  var dbgEl = $("dbg");
+  if (dbgEl) {
+    dbgEl.style.display = "block";
+    var dbgTick = function () {
+      dbgEl.textContent =
+        "view " + window.innerWidth + "x" + window.innerHeight + "  dpr " + window.devicePixelRatio +
+        "\nbox " + W + "x" + H + "  card " + cw + "x" + cardH +
+        "\nstartX " + startX + "  right " + (startX + 7 * cw + 6 * gapX) +
+        "\nup " + stepUp + "  dn " + stepDn + "  tabY " + tabY +
+        "\nbottom " + (tabY + 6 * stepDn + 6 * stepUp + cardH) +
+        "\nUA " + String(typeof navigator !== "undefined" ? navigator.userAgent : "?");
+    };
+    dbgTick();
+    if (typeof setInterval !== "undefined") setInterval(dbgTick, 700);
+  }
+}
+window.__K = {
+  setSize: function (w, h) { W = w; H = h; layout(); render(); },
+  newDeal: function (m) { newDeal(m); },
+  draw: draw, undo: undo, autoMove: autoMove, hintMove: hintMove,
+  click: clickAt, dbl: dblAt, render: render,
+  down: onDownAt, move: onMoveAt, up: onUpAt,
+  getState: function () {
+    return {
+      stock: S.stock.length, wasteTop: S.waste.length ? S.waste[S.waste.length - 1].r + SUITS[S.waste[S.waste.length - 1].s] : null,
+      fnd: S.fnd.map(function (a) { return a.map(function (c) { return { s: c.s, r: c.r }; }); }),
+      tab: S.tab.map(function (a) { return a.map(function (c) { return { s: c.s, r: c.r, u: c.u }; }); }),
+      score: S.score, moves: S.moves, mode: S.mode, playing: S.playing, solved: S.solved, best: S.best
+    };
+  },
+  _set: function (st, w, f, t) {
+    var m = function (c) { return typeof c === "object" && c !== null ? c : { id: c }; };
+    S.stock = st.map(function (c) { var x = cardById(m(c).id); x.u = false; return x; });
+    S.waste = w.map(function (c) { var x = cardById(m(c).id); x.u = true; return x; });
+    S.fnd = f.map(function (a) { return a.map(function (c) { return cardById(m(c).id); }); });
+    S.tab = t.map(function (a) { return a.map(function (c) { var o = m(c); var x = cardById(o.id); x.u = o.u !== false; return x; }); });
+    S.score = 0; S.moves = 0; S.solved = false; S.playing = true; S.hint = null; S.sel = null; S.drag = null; S.history = [];
+    S.dealt = true;
+    render();
+  },
+  cw: function () { return cw; }, cardH: function () { return cardH; },
+  stockXY: function () { return [stockX, stockY]; }, fndXs: function () { return fndX.slice(); }, fndYV: function () { return fndY; },
+  canFnd: fndFits, canTab: tabFits, tabPos: tabPos, layout: layout, checkWin: checkWin
+};
+/* ==================== RENDER */
+</script>
+</body>
+</html>

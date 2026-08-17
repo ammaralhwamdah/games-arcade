@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Aphelion Assault</title>
+<style>
+  html,body{margin:0;height:100%;background:#0a0a14;overflow:hidden;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+  #wrap{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  canvas{background:#0a0a14;touch-action:none;outline:none}
+  #controls{display:none;position:fixed;left:0;right:0;bottom:0;height:64px;justify-content:space-between;align-items:flex-end;padding:0 12px 12px;box-sizing:border-box;pointer-events:none}
+  #controls .grp{display:flex;gap:8px;pointer-events:none}
+  #controls button{width:58px;height:46px;border-radius:12px;border:1px solid rgba(139,92,246,.3);background:rgba(139,92,246,.12);color:#c4b5fd;font-size:18px;font-weight:700;touch-action:none;font-family:system-ui;opacity:.75;pointer-events:auto}
+  #controls button:active{background:rgba(139,92,246,.4);opacity:1}
+  @media (pointer:coarse){ #controls{display:flex} }
+</style>
+</head>
+<body>
+<div id="wrap"><canvas id="c" tabindex="0"></canvas></div>
+<div id="controls"><div class="grp"><button id="bL">◀</button><button id="bR">▶</button></div><button id="bF">⚡</button></div>
+<script>
+"use strict";
+/* Aphelion Assault — GameVerse Exclusive Edition. Original code. */
+(function () {
+  var canvas = document.getElementById("c");
+  var ctx = canvas.getContext("2d");
+  var W = 480, H = 700;
+  var DPR = Math.min(window.devicePixelRatio || 1, 2);
+
+  function resize() {
+    var scale = Math.min(window.innerWidth / W, window.innerHeight / H);
+    canvas.style.width = (W * scale) + "px";
+    canvas.style.height = (H * scale) + "px";
+    canvas.width = Math.round(W * scale * DPR);
+    canvas.height = Math.round(H * scale * DPR);
+    ctx.setTransform(scale * DPR, 0, 0, scale * DPR, 0, 0);
+  }
+  window.addEventListener("resize", resize);
+  resize();
+
+  /* ---------------- Audio ---------------- */
+  var AC = null;
+  function ac() { if (!AC) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } return AC; }
+  function tone(f0, f1, dur, type, vol) {
+    var a = ac(); if (!a) return;
+    var o = a.createOscillator(), g = a.createGain(), t = a.currentTime;
+    o.type = type || "square";
+    o.frequency.setValueAtTime(f0, t);
+    if (f1) o.frequency.exponentialRampToValueAtTime(f1, t + dur);
+    g.gain.setValueAtTime(vol || 0.08, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(a.destination);
+    o.start(t); o.stop(t + dur + 0.02);
+  }
+  function sfxShot() { tone(880, 180, 0.09, "square", 0.05); }
+  function sfxHit() { tone(300, 60, 0.12, "sawtooth", 0.07); }
+  function sfxBoom() { tone(200, 40, 0.25, "sawtooth", 0.1); }
+  function sfxPlayer() { tone(500, 50, 0.4, "sawtooth", 0.12); }
+  function sfxSaucer() { tone(1400, 700, 0.3, "triangle", 0.05); }
+  function sfxLevel() { tone(440, 880, 0.3, "triangle", 0.08); }
+
+  /* ---------------- State ---------------- */
+  var S = {
+    mode: "start", // start | play | over
+    score: 0, high: 0, lives: 3, level: 1,
+    time: 0
+  };
+  try { S.high = parseInt(localStorage.getItem("ai_high") || "0", 10) || 0; } catch (e) {}
+
+  var player = { x: W / 2, w: 40, h: 14, speed: 5 };
+  var bullets = [], ebullets = [], particles = [], stars = [];
+  var invaders = [], formation = { ox: 40, oy: 90, dir: 1, speed: 0.6, drop: 14 };
+  var shields = [], saucer = null, saucerT = 0;
+  var keys = {};
+  var touch = { fire: false, x: null };
+  var anim = 0;
+  var fireCd = 0;
+
+  function makeStars() {
+    stars = [];
+    for (var i = 0; i < 60; i++) {
+      stars.push({ x: Math.random() * W, y: Math.random() * H, s: Math.random() * 1.5 + 0.5, a: Math.random() * 0.5 + 0.2 });
+    }
+  }
+  makeStars();
+
+  /* ---------------- Invaders ---------------- */
+  function makeInvaders() {
+    invaders = [];
+    var cols = 9, rows = 4;
+    for (var r = 0; r < rows; r++) {
+      for (var c = 0; c < cols; c++) {
+        invaders.push({ x: c * 46, y: r * 40, w: 38, h: 26, type: r < 2 ? 2 : (r === 2 ? 1 : 0), alive: true, anim: Math.random() < 0.5 });
+      }
+    }
+    formation.ox = 40; formation.oy = 90; formation.dir = 1;
+    formation.speed = 0.35 + S.level * 0.12;
+    formation.drop = 12;
+  }
+
+  function makeShields() {
+    shields = [];
+    var tile = 5, cols = 20, rows = 12;
+    var n = Math.min(3, S.level - 1); /* lvl1: none, lvl2: 1, lvl3: 2, lvl4+: 3 */
+    if (n <= 0) return;
+    var spacing = 170, start = W / 2 - (n - 1) * spacing / 2;
+    for (var s = 0; s < n; s++) {
+      var bx = start + s * spacing - cols * tile / 2;
+      var by = H - 130;
+      var cells = [];
+      for (var r = 0; r < rows; r++) {
+        for (var c = 0; c < cols; c++) {
+          var dx = c - cols / 2;
+          if (Math.abs(dx) < 6 && r < 4) continue; /* notch at top center */
+          cells.push({ x: bx + c * tile, y: by + r * tile, s: tile, alive: true });
+        }
+      }
+      shields.push(cells);
+    }
+  }
+
+  /* ---------------- Helpers ---------------- */
+  function spawnBullet(x, y) { bullets.push({ x: x, y: y, vy: -7 }); }
+  function spawnEBullet(x, y, vx) { ebullets.push({ x: x, y: y, vy: 2.5, vx: vx || 0 }); }
+  function burst(x, y, color, n) {
+    for (var i = 0; i < (n || 12); i++) {
+      var a = Math.random() * Math.PI * 2, sp = Math.random() * 3 + 1;
+      particles.push({ x: x, y: y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, l: 30 + Math.random() * 20, t: 0, c: color });
+    }
+  }
+
+  /* ---------------- Input ---------------- */
+  document.addEventListener("keydown", function (e) {
+    keys[e.key] = true;
+    if (e.key === " ") e.preventDefault();
+    if (e.key === "Enter" || e.key === " " || e.key === "ArrowUp") {
+      if (S.mode === "start") startGame();
+      else if (S.mode === "over") startGame();
+    }
+  });
+  document.addEventListener("keyup", function (e) { keys[e.key] = false; });
+
+  function onPointer(e) {
+    var r = canvas.getBoundingClientRect();
+    var x = (e.clientX - r.left) / (r.width / W);
+    player.x = Math.max(player.w / 2, Math.min(W - player.w / 2, x));
+    if (S.mode === "start" || S.mode === "over") startGame();
+    else if (S.mode === "play") touch.fire = true;
+  }
+  canvas.addEventListener("pointerdown", function (e) { onPointer(e); canvas.focus(); e.preventDefault(); });
+  canvas.addEventListener("pointermove", function (e) { if (e.buttons > 0) onPointer(e); });
+  canvas.addEventListener("pointerup", function () { touch.fire = false; });
+  canvas.addEventListener("contextmenu", function (e) { e.preventDefault(); });
+  canvas.focus();
+
+  var bL = document.getElementById("bL"), bR = document.getElementById("bR"), bF = document.getElementById("bF");
+  var keyL = false, keyR = false;
+  bL.addEventListener("pointerdown", function (e) { keyL = true; e.preventDefault(); });
+  bR.addEventListener("pointerdown", function (e) { keyR = true; e.preventDefault(); });
+  bF.addEventListener("pointerdown", function (e) { touch.fire = true; e.preventDefault(); });
+  window.addEventListener("pointerup", function () { keyL = false; keyR = false; });
+
+  /* ---------------- Game flow ---------------- */
+  function startGame() {
+    S.mode = "play"; S.score = 0; S.lives = 3; S.level = 1;
+    bullets = []; ebullets = []; particles = []; fireCd = 0;
+    player.x = W / 2;
+    makeInvaders(); makeShields();
+    saucer = null; saucerT = 14 + Math.random() * 8;
+    sfxLevel();
+  }
+
+  function nextLevel() {
+    S.level++;
+    bullets = []; ebullets = [];
+    makeInvaders(); makeShields();
+    saucer = null; saucerT = 12;
+    sfxLevel();
+  }
+
+  function gameOver() {
+    S.mode = "over";
+    if (S.score > S.high) { S.high = S.score; try { localStorage.setItem("ai_high", String(S.high)); } catch (e) {} }
+    sfxPlayer();
+  }
+
+  /* ---------------- Update ---------------- */
+  function update(dt) {
+    S.time += dt;
+    anim += 0.08 * dt;
+
+    for (var i = stars.length - 1; i >= 0; i--) {
+      stars[i].y += stars[i].s * 0.4 * dt;
+      if (stars[i].y > H) stars[i].y = 0;
+    }
+
+    if (S.mode !== "play") {
+      for (i = particles.length - 1; i >= 0; i--) {
+        var p = particles[i];
+        p.t += dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 0.08 * dt;
+        if (p.t > p.l) particles.splice(i, 1);
+      }
+      return;
+    }
+
+    fireCd -= dt;
+
+    /* player move */
+    var dir = 0;
+    if (keys["ArrowLeft"] || keys["a"] || keys["A"] || keyL) dir -= 1;
+    if (keys["ArrowRight"] || keys["d"] || keys["D"] || keyR) dir += 1;
+    player.x += dir * player.speed * dt;
+    player.x = Math.max(player.w / 2, Math.min(W - player.w / 2, player.x));
+
+    /* player fire */
+    var wantFire = keys[" "] || touch.fire;
+    if (wantFire && fireCd <= 0 && bullets.length < 3) {
+      spawnBullet(player.x, H - 60);
+      fireCd = 0.22;
+      sfxShot();
+    }
+
+    /* formation move */
+    var alive = invaders.filter(function (v) { return v.alive; });
+    if (alive.length === 0) { nextLevel(); return; }
+
+    formation.ox += formation.dir * formation.speed * dt;
+    var maxX = 0;
+    for (i = 0; i < invaders.length; i++) {
+      if (!invaders[i].alive) continue;
+      if (invaders[i].x + formation.ox > maxX) maxX = invaders[i].x + formation.ox;
+    }
+    var minX = W;
+    for (i = 0; i < invaders.length; i++) {
+      if (!invaders[i].alive) continue;
+      if (invaders[i].x + formation.ox < minX) minX = invaders[i].x + formation.ox;
+    }
+    if (formation.dir > 0 && maxX > W - 30) { formation.dir = -1; formation.oy += formation.drop; }
+    else if (formation.dir < 0 && minX < 30) { formation.dir = 1; formation.oy += formation.drop; }
+
+    /* invaders shoot */
+    var shooters = alive.filter(function (v) { return v.y > formation.oy - 10 && v.y < formation.oy + 10; });
+    var bottom = {};
+    shooters.forEach(function (v) { bottom[v.x + formation.ox] = v; });
+    var bottomKeys = Object.keys(bottom);
+    if (bottomKeys.length && Math.random() < (0.008 + S.level * 0.002) * dt) {
+      var k = bottomKeys[Math.floor(Math.random() * bottomKeys.length)];
+      var s = bottom[k];
+      spawnEBullet(s.x + formation.ox, s.y + formation.oy + 14, (player.x - (s.x + formation.ox)) / 90 * 0.5);
+      sfxHit();
+    }
+
+    /* bullets */
+    for (i = bullets.length - 1; i >= 0; i--) {
+      var b = bullets[i];
+      b.y += b.vy * dt;
+      var hit = false;
+      /* vs invaders */
+      for (var j = 0; j < invaders.length; j++) {
+        var v = invaders[j];
+        if (!v.alive) continue;
+        if (Math.abs(b.x - (v.x + formation.ox)) < v.w / 2 && Math.abs(b.y - (v.y + formation.oy)) < v.h / 2) {
+          v.alive = false;
+          S.score += [30, 20, 10][v.type];
+          burst(b.x, b.y, "#7dd3fc", 10);
+          sfxBoom();
+          hit = true;
+          break;
+        }
+      }
+      /* vs saucer */
+      if (!hit && saucer && Math.abs(b.x - saucer.x) < 24 && Math.abs(b.y - saucer.y) < 12) {
+        S.score += 100;
+        burst(saucer.x, saucer.y, "#f472b6", 16);
+        saucer = null;
+        hit = true;
+        sfxSaucer();
+      }
+      /* vs shields */
+      if (!hit) hit = hitShield(b.x, b.y, 4);
+      if (!hit && b.y < -10) hit = true;
+      if (hit) bullets.splice(i, 1);
+    }
+
+    /* enemy bullets */
+    for (i = ebullets.length - 1; i >= 0; i--) {
+      var eb = ebullets[i];
+      eb.x += eb.vx * dt; eb.y += eb.vy * dt;
+      var dead = false;
+      /* vs player */
+      if (Math.abs(eb.x - player.x) < player.w / 2 && eb.y > H - 66 && eb.y < H - 40) {
+        dead = true;
+        hitPlayer();
+      }
+      /* vs shields */
+      if (!dead) dead = hitShield(eb.x, eb.y, 5);
+      if (!dead && eb.y > H + 10) dead = true;
+      if (dead) ebullets.splice(i, 1);
+    }
+
+    /* invaders reach bottom */
+    for (i = 0; i < invaders.length; i++) {
+      var vv = invaders[i];
+      if (vv.alive && vv.y + formation.oy > H - 90) { hitPlayer(); break; }
+    }
+
+    /* saucer */
+    saucerT -= dt;
+    if (saucerT <= 0 && !saucer) {
+      saucer = { x: -30, y: 50, dir: 1, t: 0 };
+      sfxSaucer();
+    }
+    if (saucer) {
+      saucer.t += dt;
+      saucer.x += saucer.dir * 1.8 * dt;
+      if (saucer.t > 0.8) saucer.dir = -1;
+      if (saucer.x > W + 40) saucer = null;
+    }
+
+    /* particles */
+    for (i = particles.length - 1; i >= 0; i--) {
+      p = particles[i];
+      p.t += dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 0.08 * dt;
+      if (p.t > p.l) particles.splice(i, 1);
+    }
+
+    /* invader bullets near player top -> not needed */
+  }
+
+  function hitShield(x, y, r) {
+    var hit = false;
+    for (var s = 0; s < shields.length; s++) {
+      for (var c = shields[s].length - 1; c >= 0; c--) {
+        var cell = shields[s][c];
+        if (!cell.alive) continue;
+        if (Math.abs(x - (cell.x + cell.s / 2)) < cell.s / 2 + r && Math.abs(y - (cell.y + cell.s / 2)) < cell.s / 2 + r) {
+          cell.alive = false;
+          burst(cell.x + cell.s / 2, cell.y + cell.s / 2, "#38bdf8", 4);
+          hit = true;
+          break;
+        }
+      }
+      if (hit) break;
+    }
+    return hit;
+  }
+
+  function hitPlayer() {
+    S.lives--;
+    burst(player.x, H - 53, "#f87171", 22);
+    sfxPlayer();
+    bullets = []; ebullets = [];
+    if (S.lives <= 0) { gameOver(); }
+  }
+
+  /* ---------------- Draw ---------------- */
+  function invaderShape(type, x, y, anim) {
+    ctx.save();
+    ctx.translate(x, y);
+    if (type === 0) {
+      /* crab */
+      ctx.fillStyle = "#c084fc";
+      ctx.fillRect(-15, 4, 30, 4);
+      ctx.fillRect(-12, -4, 24, 10);
+      ctx.fillRect(-17, -8, 6, 8); ctx.fillRect(11, -8, 6, 8);
+      ctx.fillRect(-4, -10, 8, 6);
+      ctx.fillStyle = "#0a0a14";
+      ctx.fillRect(-8, 0, 4, 4); ctx.fillRect(4, 0, 4, 4);
+      ctx.fillStyle = "#c084fc";
+      ctx.fillRect(-18, 8, 5, anim ? 4 : 8); ctx.fillRect(13, 8, 5, anim ? 4 : 8);
+    } else if (type === 1) {
+      /* squid */
+      ctx.fillStyle = "#f472b6";
+      ctx.fillRect(-12, 0, 24, 4);
+      ctx.fillRect(-10, -6, 20, 8);
+      ctx.fillRect(-4, -9, 8, 6);
+      ctx.fillStyle = "#0a0a14";
+      ctx.fillRect(-6, -2, 4, 4); ctx.fillRect(2, -2, 4, 4);
+      ctx.fillStyle = "#f472b6";
+      ctx.fillRect(-13, 6, 4, anim ? 5 : 9); ctx.fillRect(9, 6, 4, anim ? 5 : 9);
+      ctx.fillRect(-6, 6, 3, anim ? 5 : 9); ctx.fillRect(3, 6, 3, anim ? 5 : 9);
+    } else {
+      /* blob */
+      ctx.fillStyle = "#38bdf8";
+      ctx.fillRect(-10, 4, 20, 5);
+      ctx.fillRect(-8, -2, 16, 8);
+      ctx.fillRect(-4, -6, 8, 6);
+      ctx.fillStyle = "#0a0a14";
+      ctx.fillRect(-5, 1, 4, 4); ctx.fillRect(1, 1, 4, 4);
+    }
+    ctx.restore();
+  }
+
+  function drawPlayer() {
+    var x = player.x, y = H - 53;
+    ctx.fillStyle = "#22d3ee";
+    ctx.beginPath();
+    ctx.moveTo(x, y - 14);
+    ctx.lineTo(x + 20, y + 10);
+    ctx.lineTo(x + 8, y + 10);
+    ctx.lineTo(x + 8, y + 14);
+    ctx.lineTo(x - 8, y + 14);
+    ctx.lineTo(x - 8, y + 10);
+    ctx.lineTo(x - 20, y + 10);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = "#a5f3fc";
+    ctx.fillRect(x - 3, y - 8, 6, 10);
+    ctx.fillStyle = "#0ea5e9";
+    ctx.fillRect(x - 1, y - 14, 2, 4);
+    ctx.fillStyle = "#f472b6";
+    ctx.fillRect(x - 8, y - 6, 2, 3); ctx.fillRect(x + 6, y - 6, 2, 3);
+  }
+
+  function drawSaucer() {
+    if (!saucer) return;
+    var x = saucer.x;
+    ctx.fillStyle = "#f472b6";
+    ctx.beginPath();
+    ctx.ellipse(x, 50, 24, 8, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#fbcfe8";
+    ctx.beginPath();
+    ctx.ellipse(x, 46, 12, 5, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#0a0a14";
+    ctx.fillRect(x - 6, 43, 4, 4); ctx.fillRect(x + 2, 43, 4, 4);
+  }
+
+  function drawHud() {
+    ctx.fillStyle = "#94a3b8";
+    ctx.font = "700 16px system-ui, sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText("SCORE " + S.score, 16, 28);
+    ctx.textAlign = "center";
+    ctx.fillText("LVL " + S.level, W / 2, 28);
+    ctx.textAlign = "right";
+    ctx.fillText("BEST " + S.high, W - 16, 28);
+    /* lives */
+    for (var i = 0; i < S.lives; i++) {
+      ctx.fillStyle = "#22d3ee";
+      ctx.beginPath();
+      ctx.moveTo(24 + i * 30, H - 22);
+      ctx.lineTo(34 + i * 30, H - 34);
+      ctx.lineTo(44 + i * 30, H - 22);
+      ctx.closePath();
+      ctx.fill();
+    }
+  }
+
+  function drawShields() {
+    ctx.fillStyle = "#38bdf8";
+    for (var s = 0; s < shields.length; s++) {
+      for (var c = 0; c < shields[s].length; c++) {
+        var cell = shields[s][c];
+        if (!cell.alive) continue;
+        ctx.fillRect(cell.x, cell.y, cell.s - 1, cell.s - 1);
+      }
+    }
+  }
+
+  function drawOverlay(title, sub) {
+    ctx.fillStyle = "rgba(10,10,20,0.72)";
+    ctx.fillRect(0, 0, W, H);
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#c084fc";
+    ctx.font = "900 34px system-ui, sans-serif";
+    ctx.fillText(title, W / 2, H / 2 - 40);
+    ctx.fillStyle = "#94a3b8";
+    ctx.font = "16px system-ui, sans-serif";
+    var lines = sub.split("\n");
+    for (var i = 0; i < lines.length; i++) ctx.fillText(lines[i], W / 2, H / 2 + i * 26 + 10);
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    /* stars */
+    for (var i = 0; i < stars.length; i++) {
+      ctx.globalAlpha = stars[i].a;
+      ctx.fillStyle = "#e2e8f0";
+      ctx.fillRect(stars[i].x, stars[i].y, stars[i].s, stars[i].s);
+    }
+    ctx.globalAlpha = 1;
+
+    drawHud();
+
+    if (S.mode === "play") {
+      /* shields */
+      drawShields();
+      /* invaders */
+      for (i = 0; i < invaders.length; i++) {
+        var v = invaders[i];
+        if (!v.alive) continue;
+        invaderShape(v.type, v.x + formation.ox, v.y + formation.oy, v.anim ? Math.sin(anim) > 0 : Math.cos(anim) > 0);
+      }
+      drawSaucer();
+      /* bullets */
+      ctx.fillStyle = "#7dd3fc";
+      for (i = 0; i < bullets.length; i++) ctx.fillRect(bullets[i].x - 1.5, bullets[i].y - 7, 3, 12);
+      ctx.fillStyle = "#f87171";
+      for (i = 0; i < ebullets.length; i++) {
+        ctx.beginPath();
+        ctx.arc(ebullets[i].x, ebullets[i].y, 3.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      drawPlayer();
+    } else if (S.mode === "start") {
+      /* demo scene */
+      for (i = 0; i < invaders.length; i++) {
+        var vv = invaders[i];
+        invaderShape(vv.type, vv.x + formation.ox, vv.y + formation.oy, Math.sin(anim) > 0);
+      }
+      drawOverlay("APHELION ASSAULT", "Defend the galaxy from the Andromeda fleet.\n\n← → or A/D to move · Space to fire\nDrag to aim · tap to fire on mobile\n\nClick, tap, or press Enter to start");
+    } else {
+      drawOverlay("GAME OVER", "Your score: " + S.score + "   ·   Best: " + S.high + "\n\nClick, tap, or press Enter to play again");
+    }
+
+    /* particles always on top */
+    for (i = 0; i < particles.length; i++) {
+      var p = particles[i];
+      ctx.globalAlpha = Math.max(0, 1 - p.t / p.l);
+      ctx.fillStyle = p.c;
+      ctx.fillRect(p.x - 2, p.y - 2, 4, 4);
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  /* ---------------- Loop ---------------- */
+  var lastT = performance.now();
+  function loop(now) {
+    var dt = (now - lastT) / 16.666; /* normalize to 60fps */
+    if (dt > 2.5) dt = 2.5; /* avoid huge jumps after tab switch */
+    if (dt < 0) dt = 1;
+    lastT = now;
+    update(dt);
+    draw();
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+  window.__game = { getMode: function () { return S.mode; }, getScore: function () { return S.score; }, getLevel: function () { return S.level; }, shieldCount: function () { return shields.length; }, formX: function () { return formation.ox; } };
+})();
+</script>
+</body>
+</html>

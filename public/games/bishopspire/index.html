@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Bishopspire</title>
+<style>
+  html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #0b0e14; font-family: system-ui, sans-serif; color: #e8eef7; }
+  canvas { display: block; position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; }
+
+  .overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(6,8,13,0.86); backdrop-filter: blur(7px); z-index: 6; transition: opacity 0.35s; }
+  .overlay.hidden { opacity: 0; pointer-events: none; }
+  .panel { background: rgba(14,17,26,0.94); border: 1px solid rgba(120,200,255,0.22); border-radius: 18px; padding: 28px 34px; max-width: 92vw; box-shadow: 0 24px 70px rgba(0,0,0,0.6); text-align: center; }
+  h1 { margin: 0 0 6px; font-size: clamp(28px, 6vw, 44px); font-weight: 900; letter-spacing: 2px; background: linear-gradient(90deg, #ffd76a, #ff9e5e, #d2a8ff); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .tag { font-size: 11px; letter-spacing: 3px; color: #7f8db0; text-transform: uppercase; margin-bottom: 8px; }
+  .sub { font-size: 14px; line-height: 1.65; color: #9aa8c4; max-width: 470px; margin: 8px auto 20px; }
+  .hint { font-size: 12.5px; color: #6b7894; line-height: 1.7; margin-top: 16px; }
+  .btn { background: linear-gradient(180deg, #e8a33d, #c06f20); color: #1c1205; border: none; border-radius: 12px; font-weight: 800; font-size: 16px; padding: 13px 30px; cursor: pointer; box-shadow: 0 8px 24px rgba(230,160,60,0.35); }
+  .btn:hover { filter: brightness(1.1); }
+  .btn.small { font-size: 13px; padding: 9px 18px; background: rgba(255,255,255,0.08); color: #dde6ff; box-shadow: none; }
+  .row { display: flex; gap: 12px; justify-content: center; margin-top: 12px; }
+
+  #modes { display: flex; gap: 8px; justify-content: center; margin: 14px 0 4px; flex-wrap: wrap; }
+  #modes .mbtn { background: rgba(255,255,255,0.06); border: 1px solid rgba(120,200,255,0.25); color: #b9c6e6; border-radius: 999px; padding: 8px 16px; font-size: 13px; font-weight: 700; cursor: pointer; }
+  #modes .mbtn.active { background: linear-gradient(180deg, #e8a33d, #c06f20); border-color: transparent; color: #1c1205; box-shadow: 0 6px 18px rgba(230,160,60,0.35); }
+  #colors { display: flex; gap: 8px; justify-content: center; margin: 4px 0 2px; flex-wrap: wrap; }
+  #colors .mbtn { background: rgba(255,255,255,0.06); border: 1px solid rgba(120,200,255,0.25); color: #b9c6e6; border-radius: 999px; padding: 7px 14px; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+  #colors .mbtn.active { background: linear-gradient(180deg, #e8a33d, #c06f20); border-color: transparent; color: #1c1205; }
+
+  #hud { position: absolute; top: 6px; left: 10px; z-index: 4; display: flex; gap: 5px; align-items: center; font-variant-numeric: tabular-nums; }
+  .chip { background: rgba(10,13,20,0.72); border: 1px solid rgba(120,200,255,0.2); border-radius: 8px; padding: 3px 7px; font-size: 10px; line-height: 1.25; min-width: 44px; }
+  .chip b { display: block; font-size: 13px; color: #fff; }
+  .chip span { color: #8b9ac0; font-size: 9px; letter-spacing: 0.5px; text-transform: uppercase; }
+
+  #turn { position: absolute; top: 40px; left: 50%; transform: translateX(-50%); z-index: 4; background: rgba(10,13,20,0.72); border: 1px solid rgba(120,200,255,0.2); color: #ffd76a; border-radius: 999px; padding: 3px 14px; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; white-space: nowrap; }
+
+  #capt { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); z-index: 4; font-size: 13px; letter-spacing: 1px; white-space: nowrap; text-shadow: 0 1px 4px rgba(0,0,0,0.8); pointer-events: none; }
+  #capt span { margin: 0 6px; }
+  @media (max-width: 560px) { #capt { display: none; } }
+
+  #btns { position: absolute; top: 6px; right: 10px; z-index: 4; display: flex; gap: 6px; align-items: center; }
+  #btns button { background: rgba(10,13,20,0.72); border: 1px solid rgba(120,200,255,0.2); color: #fff; border-radius: 10px; padding: 5px 10px; font-size: 12px; font-weight: 700; cursor: pointer; }
+  #btns button:hover { background: rgba(30,38,60,0.9); }
+
+  #toast { position: absolute; top: 78px; left: 50%; transform: translateX(-50%); z-index: 5; font-size: 18px; font-weight: 800; color: #ffd76a; text-shadow: 0 2px 12px rgba(0,0,0,0.8); opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+
+  #promo { z-index: 7; }
+  #promo .promoRow { display: flex; gap: 10px; justify-content: center; margin-top: 14px; }
+  #promo .pbtn { width: 58px; height: 58px; border-radius: 12px; background: rgba(255,255,255,0.07); border: 1px solid rgba(120,200,255,0.3); color: #fff; font-size: 36px; cursor: pointer; }
+  #promo .pbtn:hover { background: rgba(232,163,61,0.35); }
+</style>
+</head>
+<body>
+  <canvas id="cv"></canvas>
+
+  <div id="hud">
+    <div class="chip"><span id="wLabel">You</span><b id="wScore">0</b></div>
+    <div class="chip"><span>Draws</span><b id="dScore">0</b></div>
+    <div class="chip"><span id="bLabel">CPU</span><b id="bScore">0</b></div>
+    <div class="chip"><span>Move</span><b id="mvNum">1</b></div>
+  </div>
+  <div id="turn">White to move</div>
+  <div id="capt"></div>
+  <div id="btns">
+    <button id="undoBtn" title="Undo (U)">Undo</button>
+    <button id="flipBtn" title="Flip board (F)">Flip</button>
+    <button id="menuBtn" title="Main menu">Menu</button>
+  </div>
+
+  <div id="toast"></div>
+
+  <div class="overlay" id="menu">
+    <div class="panel">
+      <div class="tag">Original Exclusive</div>
+      <h1>BISHOPSPIRE</h1>
+      <div class="sub">Climb the royal tower of strategy. Full classical chess against an engine with a temper, or on the same screen with a friend &mdash; castling, en passant, promotion and all. The spire does not forgive the careless.</div>
+      <div id="modes">
+        <button class="mbtn" data-mode="easy">Casual</button>
+        <button class="mbtn active" data-mode="medium">Balanced</button>
+        <button class="mbtn" data-mode="hard">Savage</button>
+        <button class="mbtn" data-mode="pvp">Two Players</button>
+      </div>
+      <div id="colors">
+        <button class="mbtn" data-color="w">Play White</button>
+        <button class="mbtn" data-color="b">Play Black</button>
+        <button class="mbtn active" data-color="r">Random</button>
+      </div>
+      <button class="btn" id="startBtn">CLIMB THE SPIRE</button>
+      <div class="hint">Click a piece then a highlighted square to move &middot; <b>U</b> undo &middot; <b>F</b> flip &middot; <b>M</b> mute &middot; <b>R</b> restart</div>
+    </div>
+  </div>
+
+  <div class="overlay hidden" id="promo">
+    <div class="panel">
+      <div class="tag">Promotion</div>
+      <h1 style="font-size:26px">CHOOSE YOUR PIECE</h1>
+      <div class="promoRow">
+        <button class="pbtn" data-promo="q">&#9813;</button>
+        <button class="pbtn" data-promo="r">&#9814;</button>
+        <button class="pbtn" data-promo="b">&#9815;</button>
+        <button class="pbtn" data-promo="n">&#9816;</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay hidden" id="over">
+    <div class="panel">
+      <div class="tag" id="ovTag">Game over</div>
+      <h1 id="ovTitle">CHECKMATE!</h1>
+      <div class="sub" id="ovSub">White wins</div>
+      <div class="row"><button class="btn" id="againBtn">REMATCH</button></div>
+      <div class="row"><button class="btn small" id="overMenuBtn">Main Menu</button></div>
+    </div>
+  </div>
+
+<script>
+"use strict";
+/* ==================== CANVAS ==================== */
+var cv = document.getElementById("cv");
+var ctx = cv.getContext("2d");
+var DPR = 1, W = 0, H = 0, bx = 0, by = 0, cell = 0;
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 2.5);
+  W = window.innerWidth; H = window.innerHeight;
+  cv.width = Math.floor(W * DPR); cv.height = Math.floor(H * DPR);
+  layout();
+}
+var TOP_RESERVE = 64;
+function layout() {
+  cell = Math.floor(Math.min(W, H - TOP_RESERVE - 8) / 8);
+  if (cell < 24) cell = 24;
+  bx = Math.floor((W - cell * 8) / 2);
+  by = TOP_RESERVE + Math.floor((H - TOP_RESERVE - 8 - cell * 8) / 2);
+  if (by < TOP_RESERVE) by = TOP_RESERVE;
+}
+window.addEventListener("resize", resize);
+resize();
+
+/* ==================== AUDIO ==================== */
+var AC = null, master = null, muted = false;
+try { muted = localStorage.getItem("bishopspire_mute") === "1"; } catch (e) {}
+function audioInit() {
+  if (!AC) {
+    try {
+      var Ctor = window.AudioContext || window.webkitAudioContext;
+      if (Ctor) AC = new Ctor();
+    } catch (e) {}
+  }
+  if (AC && !master) {
+    try {
+      master = AC.createGain();
+      master.gain.value = muted ? 0 : 0.85;
+      master.connect(AC.destination);
+    } catch (e) {}
+  }
+  return AC;
+}
+function tone(freq, dur, type, vol, delay) {
+  if (muted || !AC || !master) return;
+  try {
+    var o = AC.createOscillator(), g = AC.createGain();
+    o.type = type || "square";
+    o.frequency.setValueAtTime(freq, AC.currentTime + (delay || 0));
+    g.gain.setValueAtTime(vol || 0.16, AC.currentTime + (delay || 0));
+    g.gain.exponentialRampToValueAtTime(0.0001, AC.currentTime + (delay || 0) + dur);
+    o.connect(g); g.connect(master);
+    o.start(AC.currentTime + (delay || 0));
+    o.stop(AC.currentTime + (delay || 0) + dur + 0.02);
+  } catch (e) {}
+}
+function sfxMove() { tone(520, 0.07, "triangle", 0.14); }
+function sfxCapture() { tone(200, 0.12, "square", 0.16); }
+function sfxCheck() { tone(880, 0.09, "sine", 0.18); }
+function sfxWin() { tone(392, 0.12, "square", 0.16); tone(523, 0.12, "square", 0.16, 0.12); tone(659, 0.2, "square", 0.16, 0.24); }
+function sfxLose() { tone(330, 0.16, "sawtooth", 0.12); tone(247, 0.2, "sawtooth", 0.12, 0.14); tone(165, 0.3, "sawtooth", 0.12, 0.28); }
+function sfxDraw() { tone(440, 0.14, "sine", 0.15); tone(440, 0.14, "sine", 0.15, 0.18); }
+function sfxCastle() { tone(700, 0.08, "triangle", 0.13); tone(520, 0.09, "triangle", 0.13, 0.08); }
+
+/* ==================== PERSISTENCE ==================== */
+function load(key, def) { try { var v = localStorage.getItem(key); return v === null ? def : JSON.parse(v); } catch (e) { return def; } }
+function save(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {} }
+var scores = load("bishopspire_scores", { w: 0, b: 0, d: 0 });
+var mode = load("bishopspire_mode", "medium");
+var colorPref = load("bishopspire_color", "r");
+
+/* ==================== CHESS ENGINE ==================== */
+var EMPTY = "";
+var PIECE_VAL = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 0 };
+var MATE = 100000, INF = 10000000;
+
+function row(i) { return (i / 8) | 0; }
+function col(i) { return i % 8; }
+function idx(r, c) { return r * 8 + c; }
+function lower(p) { return p.charCodeAt(0) > 96 ? p : p.toLowerCase(); }
+function pieceColor(p) { return p && p.charCodeAt(0) > 96 ? "b" : "w"; }
+function opp(c) { return c === "w" ? "b" : "w"; }
+
+var KNIGHT_D = [-17, -15, -10, -6, 6, 10, 15, 17];
+var SLIDER = {
+  b: [-9, -7, 7, 9],
+  r: [-8, -1, 1, 8],
+  q: [-9, -8, -7, -1, 1, 7, 8, 9]
+};
+function dirDelta(d) {
+  if (d === -9) return [-1, -1];
+  if (d === -8) return [-1, 0];
+  if (d === -7) return [-1, 1];
+  if (d === -1) return [0, -1];
+  if (d === 1) return [0, 1];
+  if (d === 7) return [1, -1];
+  if (d === 8) return [1, 0];
+  if (d === 9) return [1, 1];
+  return [0, 0];
+}
+
+var PST_P = [0,0,0,0,0,0,0,0, 50,50,50,50,50,50,50,50, 10,10,20,30,30,20,10,10, 5,5,10,25,25,10,5,5, 0,0,0,20,20,0,0,0, 5,-5,-10,0,0,-10,-5,5, 5,10,10,-20,-20,10,10,5, 0,0,0,0,0,0,0,0];
+var PST_N = [-50,-40,-30,-30,-30,-30,-40,-50, -40,-20,0,0,0,0,-20,-40, -30,0,10,15,15,10,0,-30, -30,5,15,20,20,15,5,-30, -30,0,15,20,20,15,0,-30, -30,5,10,15,15,10,5,-30, -40,-20,0,5,5,0,-20,-40, -50,-40,-30,-30,-30,-30,-40,-50];
+var PST_B = [-20,-10,-10,-10,-10,-10,-10,-20, -10,0,0,0,0,0,0,-10, -10,0,5,10,10,5,0,-10, -10,5,5,10,10,5,5,-10, -10,0,10,10,10,10,0,-10, -10,10,10,10,10,10,10,-10, -10,5,0,0,0,0,5,-10, -20,-10,-10,-10,-10,-10,-10,-20];
+var PST_R = [0,0,0,0,0,0,0,0, 5,10,10,10,10,10,10,5, -5,0,0,0,0,0,0,-5, -5,0,0,0,0,0,0,-5, -5,0,0,0,0,0,0,-5, -5,0,0,0,0,0,0,-5, -5,0,0,0,0,0,0,-5, 0,0,0,5,5,0,0,0];
+var PST_Q = [-20,-10,-10,-5,-5,-10,-10,-20, -10,0,0,0,0,0,0,-10, -10,0,5,5,5,5,0,-10, -5,0,5,5,5,5,0,-5, 0,0,5,5,5,5,0,-5, -10,5,5,5,5,5,0,-10, -10,0,5,0,0,0,0,-10, -20,-10,-10,-5,-5,-10,-10,-20];
+var PST_K = [-30,-40,-40,-50,-50,-40,-40,-30, -30,-40,-40,-50,-50,-40,-40,-30, -30,-40,-40,-50,-50,-40,-40,-30, -30,-40,-40,-50,-50,-40,-40,-30, -20,-30,-30,-40,-40,-30,-30,-20, -10,-20,-20,-20,-20,-20,-20,-10, 20,20,0,0,0,0,20,20, 20,30,10,0,0,10,30,20];
+var PST_MAP = { p: PST_P, n: PST_N, b: PST_B, r: PST_R, q: PST_Q, k: PST_K };
+
+function initialState() {
+  return {
+    b: ["r","n","b","q","k","b","n","r","p","p","p","p","p","p","p","p",EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,"P","P","P","P","P","P","P","P","R","N","B","Q","K","B","N","R"],
+    t: "w",
+    c: { K: true, Q: true, k: true, q: true },
+    ep: null,
+    hm: 0
+  };
+}
+function cloneS(S) {
+  return { b: S.b.slice(), t: S.t, c: { K: S.c.K, Q: S.c.Q, k: S.c.k, q: S.c.q }, ep: S.ep, hm: S.hm };
+}
+function inBounds(r, c) { return r >= 0 && r < 8 && c >= 0 && c < 8; }
+
+function isAttacked(S, sq, by) {
+  var sr = row(sq), sc = col(sq);
+  for (var i = 0; i < 64; i++) {
+    var p = S.b[i];
+    if (!p || pieceColor(p) !== by) continue;
+    var t = lower(p);
+    var pr = row(i), pc = col(i);
+    if (t === "p") {
+      var d = by === "w" ? -1 : 1;
+      if (sr === pr + d && Math.abs(sc - pc) === 1) return true;
+    } else if (t === "n") {
+      var dr = sr - pr, dc = sc - pc;
+      if (dr * dr + dc * dc === 5) return true;
+    } else if (t === "k") {
+      if (Math.abs(pr - sr) <= 1 && Math.abs(pc - sc) <= 1) return true;
+    } else if (t === "b" || t === "r" || t === "q") {
+      var dirs = SLIDER[t];
+      for (var d2 = 0; d2 < dirs.length; d2++) {
+        var dd = dirDelta(dirs[d2]);
+        var rr = pr + dd[0], cc = pc + dd[1];
+        while (inBounds(rr, cc)) {
+          if (rr === sr && cc === sc) return true;
+          if (S.b[idx(rr, cc)]) break;
+          rr += dd[0]; cc += dd[1];
+        }
+      }
+    }
+  }
+  return false;
+}
+
+function inCheck(S, color) {
+  var king = -1;
+  var k = color === "w" ? "K" : "k";
+  for (var i = 0; i < 64; i++) if (S.b[i] === k) { king = i; break; }
+  if (king < 0) return false;
+  return isAttacked(S, king, opp(color));
+}
+
+function pseudoMoves(S, color) {
+  var moves = [];
+  var pawnD = color === "w" ? -1 : 1;
+  var startR = color === "w" ? 6 : 1;
+  var promoR = color === "w" ? 0 : 7;
+  for (var i = 0; i < 64; i++) {
+    var p = S.b[i];
+    if (!p || pieceColor(p) !== color) continue;
+    var t = lower(p), r = row(i), c = col(i);
+    if (t === "p") {
+      var one = i + pawnD * 8;
+      if (one >= 0 && one < 64 && !S.b[one]) {
+        if (r + pawnD === promoR) { moves.push({ f: i, t: one, promo: "q", fl: 4 }); moves.push({ f: i, t: one, promo: "r", fl: 4 }); moves.push({ f: i, t: one, promo: "b", fl: 4 }); moves.push({ f: i, t: one, promo: "n", fl: 4 }); }
+        else {
+          moves.push({ f: i, t: one, fl: 0 });
+          if (r === startR && !S.b[i + pawnD * 16]) moves.push({ f: i, t: i + pawnD * 16, fl: 1 });
+        }
+      }
+      for (var dc = -1; dc <= 1; dc += 2) {
+        var nc = c + dc;
+        if (nc < 0 || nc > 7) continue;
+        var cap = idx(r + pawnD, nc);
+        var capP = S.b[cap];
+        if (capP && pieceColor(capP) !== color) {
+          if (r + pawnD === promoR) { moves.push({ f: i, t: cap, promo: "q", fl: 4 }); moves.push({ f: i, t: cap, promo: "r", fl: 4 }); moves.push({ f: i, t: cap, promo: "b", fl: 4 }); moves.push({ f: i, t: cap, promo: "n", fl: 4 }); }
+          else moves.push({ f: i, t: cap, fl: 0 });
+        } else if (S.ep !== null && row(S.ep) === r + pawnD && Math.abs(col(S.ep) - c) === 1) {
+          moves.push({ f: i, t: S.ep, fl: 2 });
+        }
+      }
+    } else if (t === "n") {
+      for (var d = 0; d < 8; d++) {
+        var ni = i + KNIGHT_D[d];
+        if (ni < 0 || ni >= 64) continue;
+        var nr = row(ni), nc2 = col(ni);
+        if (Math.abs(nr - r) + Math.abs(nc2 - c) !== 3) continue;
+        if (Math.abs(nr - r) === 2 || Math.abs(nc2 - c) === 2) {
+          if (!S.b[ni] || pieceColor(S.b[ni]) !== color) moves.push({ f: i, t: ni, fl: 0 });
+        }
+      }
+    } else if (t === "b" || t === "r" || t === "q") {
+      var dirs = SLIDER[t];
+      for (var d2 = 0; d2 < dirs.length; d2++) {
+        var dd = dirDelta(dirs[d2]);
+        var rr = r + dd[0], cc = c + dd[1];
+        while (inBounds(rr, cc)) {
+          var ti = idx(rr, cc), tp = S.b[ti];
+          if (!tp) { moves.push({ f: i, t: ti, fl: 0 }); }
+          else { if (pieceColor(tp) !== color) moves.push({ f: i, t: ti, fl: 0 }); break; }
+          rr += dd[0]; cc += dd[1];
+        }
+      }
+    } else if (t === "k") {
+      for (var dr2 = -1; dr2 <= 1; dr2++) for (var dc3 = -1; dc3 <= 1; dc3++) {
+        if (!dr2 && !dc3) continue;
+        var kr = r + dr2, kc = c + dc3;
+        if (!inBounds(kr, kc)) continue;
+        var ki = idx(kr, kc);
+        if (!S.b[ki] || pieceColor(S.b[ki]) !== color) moves.push({ f: i, t: ki, fl: 0 });
+      }
+      if (color === "w" && i === 60 && S.c.K && !S.b[61] && !S.b[62] && !inCheck(S, "w") && !isAttacked(S, 61, "b") && !isAttacked(S, 62, "b")) moves.push({ f: i, t: 62, fl: 3 });
+      if (color === "w" && i === 60 && S.c.Q && !S.b[59] && !S.b[58] && !S.b[57] && !inCheck(S, "w") && !isAttacked(S, 59, "b") && !isAttacked(S, 58, "b")) moves.push({ f: i, t: 58, fl: 3 });
+      if (color === "b" && i === 4 && S.c.k && !S.b[5] && !S.b[6] && !inCheck(S, "b") && !isAttacked(S, 5, "w") && !isAttacked(S, 6, "w")) moves.push({ f: i, t: 6, fl: 3 });
+      if (color === "b" && i === 4 && S.c.q && !S.b[3] && !S.b[2] && !S.b[1] && !inCheck(S, "b") && !isAttacked(S, 3, "w") && !isAttacked(S, 2, "w")) moves.push({ f: i, t: 2, fl: 3 });
+    }
+  }
+  return moves;
+}
+
+function applyMove(S, mv) {
+  var p = S.b[mv.f];
+  var cap = S.b[mv.t];
+  var epPrev = S.ep;
+  var castlePrev = { K: S.c.K, Q: S.c.Q, k: S.c.k, q: S.c.q };
+  var hmPrev = S.hm;
+  var epVictim = null;
+
+  S.hm = (lower(p) === "p" || cap) ? 0 : S.hm + 1;
+
+  if (mv.fl === 2) {
+    epVictim = mv.t + (S.t === "w" ? 8 : -8);
+    S.b[epVictim] = EMPTY;
+  }
+  if (mv.fl === 3) {
+    var kFrom = mv.f, kTo = mv.t;
+    S.b[kFrom] = EMPTY; S.b[kTo] = p;
+    var rFrom, rTo;
+    if (kTo === 62) { rFrom = 63; rTo = 61; }
+    else if (kTo === 58) { rFrom = 56; rTo = 59; }
+    else if (kTo === 6) { rFrom = 7; rTo = 5; }
+    else { rFrom = 0; rTo = 3; }
+    S.b[rTo] = S.b[rFrom]; S.b[rFrom] = EMPTY;
+  } else {
+    S.b[mv.f] = EMPTY;
+    S.b[mv.t] = mv.promo ? (S.t === "w" ? mv.promo.toUpperCase() : mv.promo) : p;
+  }
+
+  if (lower(p) === "k") {
+    if (S.t === "w") { S.c.K = false; S.c.Q = false; }
+    else { S.c.k = false; S.c.q = false; }
+  }
+  if (lower(p) === "r") {
+    if (mv.f === 63) S.c.K = false; else if (mv.f === 56) S.c.Q = false;
+    else if (mv.f === 7) S.c.k = false; else if (mv.f === 0) S.c.q = false;
+  }
+  if (lower(cap || EMPTY) === "r") {
+    if (mv.t === 63) S.c.K = false; else if (mv.t === 56) S.c.Q = false;
+    else if (mv.t === 7) S.c.k = false; else if (mv.t === 0) S.c.q = false;
+  }
+
+  if (mv.fl === 1) S.ep = mv.f + (S.t === "w" ? -8 : 8);
+  else S.ep = null;
+
+  S.t = opp(S.t);
+  return { mv: mv, cap: cap, epPrev: epPrev, castlePrev: castlePrev, hmPrev: hmPrev, epVictim: epVictim };
+}
+
+function undoMove(S, u) {
+  var mv = u.mv;
+  var p = S.b[mv.t];
+  S.t = opp(S.t);
+  S.c = u.castlePrev;
+  S.ep = u.epPrev;
+  S.hm = u.hmPrev;
+  if (mv.fl === 3) {
+    S.b[mv.t] = EMPTY;
+    S.b[mv.f] = S.t === "w" ? "K" : "k";
+    var rFrom, rTo;
+    if (mv.t === 62) { rFrom = 63; rTo = 61; }
+    else if (mv.t === 58) { rFrom = 56; rTo = 59; }
+    else if (mv.t === 6) { rFrom = 7; rTo = 5; }
+    else { rFrom = 0; rTo = 3; }
+    S.b[rFrom] = S.b[rTo]; S.b[rTo] = EMPTY;
+  } else {
+    if (mv.promo) S.b[mv.f] = S.t === "w" ? "P" : "p";
+    else S.b[mv.f] = p;
+    S.b[mv.t] = u.cap || EMPTY;
+  }
+  if (u.epVictim !== null) S.b[u.epVictim] = S.t === "w" ? "p" : "P";
+}
+
+function legalMoves(S, color) {
+  var pseudo = pseudoMoves(S, color);
+  var out = [];
+  for (var i = 0; i < pseudo.length; i++) {
+    var u = applyMove(S, pseudo[i]);
+    var ok = !inCheck(S, color);
+    undoMove(S, u);
+    if (ok) out.push(pseudo[i]);
+  }
+  return out;
+}
+
+function posKey(S) {
+  var s = "";
+  for (var i = 0; i < 64; i++) s += S.b[i] || ".";
+  return s + S.t + (S.c.K ? 1 : 0) + (S.c.Q ? 1 : 0) + (S.c.k ? 1 : 0) + (S.c.q ? 1 : 0) + (S.ep === null ? "-" : S.ep);
+}
+
+function evaluate(S) {
+  var score = 0;
+  for (var i = 0; i < 64; i++) {
+    var p = S.b[i];
+    if (!p) continue;
+    var t = lower(p), c = pieceColor(p);
+    var tval = PIECE_VAL[t] * 100;
+    var table = PST_MAP[t];
+    var pst = c === "w" ? table[i] : table[i ^ 56];
+    var v = tval + pst;
+    score += c === "w" ? v : -v;
+  }
+  return score;
+}
+
+function orderMoves(S, moves, color) {
+  var scored = [];
+  for (var i = 0; i < moves.length; i++) {
+    var m = moves[i];
+    var s = 0;
+    var victim = S.b[m.t];
+    var attacker = S.b[m.f];
+    if (victim) s += 10 * PIECE_VAL[lower(victim)] * 100 - PIECE_VAL[lower(attacker)] * 100;
+    else if (m.promo) s += 800;
+    scored.push([m, s]);
+  }
+  scored.sort(function (a, b) { return b[1] - a[1]; });
+  var out = [];
+  for (var j = 0; j < scored.length; j++) out.push(scored[j][0]);
+  return out;
+}
+
+var nodes = 0;
+function negamax(S, depth, alpha, beta, color, ply) {
+  nodes++;
+  var moves = legalMoves(S, color);
+  if (moves.length === 0) {
+    if (inCheck(S, color)) return -(MATE - ply);
+    return 0;
+  }
+  if (depth === 0) return color === "w" ? evaluate(S) : -evaluate(S);
+  moves = orderMoves(S, moves, color);
+  var best = -INF;
+  for (var i = 0; i < moves.length; i++) {
+    var u = applyMove(S, moves[i]);
+    var v = -negamax(S, depth - 1, -beta, -alpha, opp(color), ply + 1);
+    undoMove(S, u);
+    if (v > best) best = v;
+    if (best > alpha) alpha = best;
+    if (alpha >= beta) break;
+  }
+  return best;
+}
+
+var AI_DEPTH = { easy: 2, medium: 3, hard: 4 };
+var AI_JITTER = { easy: 60, medium: 25, hard: 0 };
+
+function findBestMove(S, color, diff) {
+  var moves = legalMoves(S, color);
+  if (moves.length === 0) return null;
+  var depth = AI_DEPTH[diff] || 3;
+  moves = orderMoves(S, moves, color);
+  var best = -INF, bestMoves = [];
+  var alpha = -INF, beta = INF;
+  for (var i = 0; i < moves.length; i++) {
+    var u = applyMove(S, moves[i]);
+    var v = -negamax(S, depth - 1, -beta, -alpha, opp(color), 1);
+    undoMove(S, u);
+    if (v > best + (AI_JITTER[diff] || 0)) { best = v; bestMoves = [moves[i]]; }
+    else if (v >= best - (AI_JITTER[diff] || 0)) { bestMoves.push(moves[i]); }
+    if (v > alpha) alpha = v;
+  }
+  return bestMoves[Math.floor(Math.random() * bestMoves.length)];
+}
+
+/* ==================== GAME STATE ==================== */
+var S = initialState();
+var plies = [];            // undo info stack
+var repMap = {};
+var state = "menu";        // menu | play | over
+var won = false;
+var result = "";           // "w" | "b" | "d"
+var resultReason = "";
+var humanColor = "w";      // who the human controls (pvp: 'p')
+var selected = -1;
+var legalTargets = [];
+var lastMove = null;
+var thinking = false;
+var pendingPromo = null;   // { moves:[], from, to }
+
+var HUMAN_LABEL = "You", CPU_LABEL = "CPU";
+var captW = [], captB = [];  // captured by white / black
+
+function resetScores() { scores = { w: 0, b: 0, d: 0 }; save("bishopspire_scores", scores); }
+
+function startGame(m, colorPrefX) {
+  S = initialState();
+  plies = [];
+  repMap = {};
+  selected = -1;
+  legalTargets = [];
+  lastMove = null;
+  thinking = false;
+  pendingPromo = null;
+  captW = []; captB = [];
+  mode = m; save("bishopspire_mode", m);
+  if (mode === "pvp") {
+    humanColor = "p";
+    HUMAN_LABEL = "White"; CPU_LABEL = "Black";
+  } else {
+    colorPref = colorPrefX || colorPref;
+    save("bishopspire_color", colorPref);
+    if (colorPref === "r") colorPref = Math.random() < 0.5 ? "w" : "b";
+    humanColor = colorPref;
+    HUMAN_LABEL = humanColor === "w" ? "You (White)" : "You (Black)";
+    CPU_LABEL = humanColor === "w" ? "CPU (Black)" : "CPU (White)";
+  }
+  if (mode !== "pvp" && humanColor === "b") thinking = true;
+  syncHud();
+  toast("");
+  showMenu(false);
+  showPromo(false);
+  showOver(false);
+  state = "play";
+  if (mode !== "pvp" && humanColor === "b") {
+    setTimeout(function () { if (state === "play") aiMove(); }, 350);
+  }
+}
+
+function aiMove() {
+  if (state !== "play") return;
+  if (mode === "pvp") return;
+  if (S.t === humanColor) return;
+  thinking = true;
+  document.getElementById("turn").textContent = "CPU thinking…";
+  var st = S;
+  var mv = null;
+  try { mv = findBestMove(st, S.t, mode); } catch (e) {}
+  thinking = false;
+  if (mv) doMove(mv, true);
+}
+
+function doMove(mv, isAi) {
+  if (state !== "play") return;
+  var u = applyMove(S, mv);
+  plies.push(u);
+  var key = posKey(S);
+  repMap[key] = (repMap[key] || 0) + 1;
+  lastMove = { f: mv.f, t: mv.t };
+
+  if (u.cap) {
+    if (S.t === "b") captW.push(u.cap); else captB.push(u.cap);
+    sfxCapture();
+  } else if (mv.fl === 3) sfxCastle();
+  else if (mv.fl === 2) { if (S.t === "b") captW.push("p"); else captB.push("p"); sfxCapture(); }
+  else sfxMove();
+
+  if (inCheck(S, S.t)) sfxCheck();
+  selected = -1; legalTargets = []; pendingPromo = null;
+  syncHud();
+  updateCaptured();
+
+  checkEnd();
+  if (state !== "play") return;
+  if (mode !== "pvp" && S.t !== humanColor) {
+    thinking = true;
+    setTimeout(function () { thinking = false; aiMove(); }, 200);
+  }
+}
+
+function checkEnd() {
+  var color = S.t;
+  var moves = legalMoves(S, color);
+  if (moves.length === 0) {
+    if (inCheck(S, color)) {
+      result = opp(color);
+      resultReason = "checkmate";
+      won = result === (mode === "pvp" ? "w" : humanColor);
+      if (result === "w") scores.w++; else scores.b++;
+      save("bishopspire_scores", scores);
+      if (result === (mode === "pvp" ? "w" : humanColor)) sfxWin(); else sfxLose();
+    } else {
+      result = "d"; resultReason = "stalemate";
+      scores.d++; save("bishopspire_scores", scores);
+      sfxDraw();
+    }
+    endGame();
+    return;
+  }
+  if (S.hm >= 100) {
+    result = "d"; resultReason = "fifty-move rule";
+    scores.d++; save("bishopspire_scores", scores);
+    sfxDraw();
+    endGame();
+    return;
+  }
+  if (insufficientMaterial()) {
+    result = "d"; resultReason = "insufficient material";
+    scores.d++; save("bishopspire_scores", scores);
+    sfxDraw();
+    endGame();
+    return;
+  }
+  var k = posKey(S);
+  if (repMap[k] >= 3) {
+    result = "d"; resultReason = "threefold repetition";
+    scores.d++; save("bishopspire_scores", scores);
+    sfxDraw();
+    endGame();
+    return;
+  }
+  if (inCheck(S, color)) toast("Check!");
+}
+
+function insufficientMaterial() {
+  var pieces = [];
+  for (var i = 0; i < 64; i++) if (S.b[i]) pieces.push({ p: S.b[i], i: i });
+  var nonKing = pieces.filter(function (x) { return lower(x.p) !== "k"; });
+  if (nonKing.length === 0) return true;
+  if (nonKing.length === 1 && (lower(nonKing[0].p) === "n" || lower(nonKing[0].p) === "b")) return true;
+  if (nonKing.length === 2 && nonKing[0].p.toLowerCase() === "b" && nonKing[1].p.toLowerCase() === "b") {
+    return pieceColor(nonKing[0].p) === pieceColor(nonKing[1].p) && (nonKing[0].i + nonKing[1].i) % 2 === 0;
+  }
+  return false;
+}
+
+function endGame() {
+  state = "over";
+  syncHud();
+  updateCaptured();
+  document.getElementById("ovTag").textContent = "Game over";
+  var title = "", sub = "";
+  if (result === "d") {
+    title = "DRAW!";
+    sub = "The spire calls it even — " + resultReason + ".";
+  } else {
+    var winnerName = result === "w" ? HUMAN_LABEL : CPU_LABEL;
+    if (mode === "pvp") winnerName = result === "w" ? "White" : "Black";
+    title = winnerName.toUpperCase() + " WINS!";
+    sub = resultReason === "checkmate" ? "Checkmate — the king has fallen." : "Victory by " + resultReason + ".";
+  }
+  document.getElementById("ovTitle").textContent = title;
+  document.getElementById("ovSub").textContent = sub;
+  showOver(true);
+}
+
+function undoLast() {
+  if (state !== "play") return;
+  var n = 1;
+  if (mode !== "pvp" && plies.length > 0 && (plies.length % 2 === 0 ? false : true)) {
+    // AI played last: undo AI + human move (2 plies) unless it's a fresh AI-to-move position
+    n = plies.length % 2 === 1 ? Math.min(2, plies.length) : 1;
+  }
+  if (mode !== "pvp" && plies.length % 2 === 1) n = Math.min(2, plies.length);
+  var did = false;
+  for (var i = 0; i < n && plies.length > 0; i++) {
+    var u = plies.pop();
+    var key = posKey(S);
+    repMap[key] = (repMap[key] || 1) - 1;
+    if (repMap[key] <= 0) delete repMap[key];
+    undoMove(S, u);
+    if (u.cap) { if (S.t === "w") captW.pop(); else captB.pop(); }
+    if (u.mv.fl === 2) { if (S.t === "w") captW.pop(); else captB.pop(); }
+    did = true;
+  }
+  if (did) {
+    lastMove = plies.length ? { f: plies[plies.length - 1].mv.f, t: plies[plies.length - 1].mv.t } : null;
+    selected = -1; legalTargets = []; pendingPromo = null;
+    thinking = false;
+    syncHud();
+    updateCaptured();
+  }
+}
+
+/* ==================== RENDER ==================== */
+var flip = false;
+
+function boardXY(sq) {
+  var r = row(sq), c = col(sq);
+  var dr = flip ? 7 - r : r;
+  var dc = flip ? 7 - c : c;
+  return { x: bx + dc * cell, y: by + dr * cell };
+}
+function sqAt(px, py) {
+  var c = Math.floor((px - bx) / cell), r = Math.floor((py - by) / cell);
+  if (c < 0 || c > 7 || r < 0 || r > 7) return -1;
+  var rr = flip ? 7 - r : r, cc = flip ? 7 - c : c;
+  return idx(rr, cc);
+}
+
+var PIECE_GLYPH = { K: "\u2654", Q: "\u2655", R: "\u2656", B: "\u2657", N: "\u2658", P: "\u2659", k: "\u265A", q: "\u265B", r: "\u265C", b: "\u265D", n: "\u265E", p: "\u265F" };
+var tPulse = 0;
+
+function draw() {
+  tPulse += 0.02;
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = "#0b0e14";
+  ctx.fillRect(0, 0, W, H);
+
+  // frame
+  var pad = 4;
+  ctx.fillStyle = "rgba(20,26,42,0.9)";
+  ctx.fillRect(bx - pad, by - pad, cell * 8 + pad * 2, cell * 8 + pad * 2);
+
+  for (var r = 0; r < 8; r++) for (var c = 0; c < 8; c++) {
+    var sq = idx(r, c);
+    var p = boardXY(sq);
+    var light = (r + c) % 2 === 0;
+    ctx.fillStyle = light ? "#e8ddc8" : "#8a6f4d";
+    ctx.fillRect(p.x, p.y, cell, cell);
+    if (lastMove && (sq === lastMove.f || sq === lastMove.t)) {
+      ctx.fillStyle = "rgba(232,163,61,0.38)";
+      ctx.fillRect(p.x, p.y, cell, cell);
+    }
+  }
+
+  // selected
+  if (selected >= 0) {
+    var sp = boardXY(selected);
+    ctx.fillStyle = "rgba(255,214,102,0.5)";
+    ctx.fillRect(sp.x, sp.y, cell, cell);
+  }
+
+  // legal targets
+  for (var i = 0; i < legalTargets.length; i++) {
+    var tp = boardXY(legalTargets[i]);
+    var occ = S.b[legalTargets[i]];
+    if (occ) {
+      ctx.strokeStyle = "rgba(255,214,102,0.95)";
+      ctx.lineWidth = 3;
+      ctx.strokeRect(tp.x + 3, tp.y + 3, cell - 6, cell - 6);
+    } else {
+      ctx.fillStyle = "rgba(255,214,102,0.45)";
+      var pr = (0.35 + 0.15 * Math.sin(tPulse * 4)) * cell;
+      ctx.beginPath();
+      ctx.arc(tp.x + cell / 2, tp.y + cell / 2, Math.max(3, pr), 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  // check ring
+  if (state === "play") {
+    var ck = S.t === "w" ? "K" : "k";
+    for (var q = 0; q < 64; q++) if (S.b[q] === ck && inCheck(S, S.t)) {
+      var kp = boardXY(q);
+      ctx.strokeStyle = "rgba(255,70,70,0.95)";
+      ctx.lineWidth = 4;
+      ctx.strokeRect(kp.x + 2, kp.y + 2, cell - 4, cell - 4);
+    }
+  }
+
+  // pieces
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  for (var i2 = 0; i2 < 64; i2++) {
+    var pp = S.b[i2];
+    if (!pp) continue;
+    var pos = boardXY(i2);
+    var isWhite = pieceColor(pp) === "w";
+    ctx.save();
+    ctx.shadowColor = "rgba(0,0,0,0.55)";
+    ctx.shadowBlur = 4;
+    ctx.shadowOffsetY = 2;
+    ctx.font = "700 " + Math.floor(cell * 0.86) + "px 'Segoe UI Symbol', 'Noto Sans Symbols 2', Georgia, serif";
+    if (isWhite) ctx.fillStyle = "#f7f3ea"; else ctx.fillStyle = "#232026";
+    ctx.fillText(PIECE_GLYPH[pp], pos.x + cell / 2, pos.y + cell / 2 + cell * 0.02);
+    ctx.restore();
+  }
+
+  // coordinates
+  ctx.font = "600 " + Math.max(10, Math.floor(cell * 0.22)) + "px system-ui, sans-serif";
+  for (var f = 0; f < 8; f++) {
+    var lr = flip ? 0 : 7;
+    var lc = flip ? 0 : 7;
+    var fr = boardXY(idx(flip ? 0 : 7, f));
+    ctx.fillStyle = "rgba(0,0,0,0.55)";
+    ctx.fillText(String.fromCharCode(97 + (flip ? 7 - f : f)), fr.x + cell - 5, fr.y + cell - 3);
+    var rr2 = boardXY(idx(f, lr));
+    ctx.fillStyle = "rgba(0,0,0,0.55)";
+    ctx.fillText(flip ? 8 - f : f + 1, rr2.x + 6, rr2.y + 14);
+  }
+}
+
+function renderLoop() {
+  draw();
+  requestAnimationFrame(renderLoop);
+}
+renderLoop();
+
+/* ==================== INPUT ==================== */
+function onPointer(x, y) {
+  if (state !== "play") return;
+  if (thinking) return;
+  if (pendingPromo) return;
+  var sq = sqAt(x, y);
+  if (sq < 0) return;
+  var p = S.b[sq];
+  var me = mode === "pvp" ? S.t : humanColor;
+
+  if (selected >= 0) {
+    // try to move to sq
+    var movesHere = legalTargets.filter(function (m) { return m.t === sq; });
+    if (movesHere.length) {
+      var promoMoves = movesHere.filter(function (m) { return m.fl === 4; });
+      if (promoMoves.length) {
+        pendingPromo = { moves: promoMoves, from: selected, to: sq };
+        showPromo(true);
+        return;
+      }
+      doMove(movesHere[0], false);
+      return;
+    }
+  }
+
+  if (p && pieceColor(p) === me) {
+    selected = sq;
+    legalTargets = legalMoves(S, me).filter(function (m) { return m.f === sq; });
+  } else {
+    selected = -1;
+    legalTargets = [];
+  }
+}
+
+cv.addEventListener("pointerdown", function (e) {
+  var rect = cv.getBoundingClientRect();
+  onPointer(e.clientX - rect.left, e.clientY - rect.top);
+});
+cv.addEventListener("mousedown", function (e) { e.preventDefault(); }, false);
+
+/* ==================== HUD ==================== */
+function syncHud() {
+  document.getElementById("wLabel").textContent = mode === "pvp" ? "White" : HUMAN_LABEL;
+  document.getElementById("bLabel").textContent = mode === "pvp" ? "Black" : CPU_LABEL;
+  document.getElementById("wScore").textContent = scores.w;
+  document.getElementById("bScore").textContent = scores.b;
+  document.getElementById("dScore").textContent = scores.d;
+  document.getElementById("mvNum").textContent = Math.floor(plies.length / 2) + 1;
+  var t = S.t === "w" ? "White" : "Black";
+  if (state === "play") {
+    if (mode === "pvp") document.getElementById("turn").textContent = t + " to move";
+    else if (S.t === humanColor) document.getElementById("turn").textContent = t + " — your move";
+    else document.getElementById("turn").textContent = t + " — CPU thinking…";
+  } else {
+    document.getElementById("turn").textContent = t + (state === "over" ? " — game over" : "");
+  }
+}
+function updateCaptured() {
+  var g = { P: "\u2659", N: "\u2658", B: "\u2657", R: "\u2656", Q: "\u2655", p: "\u265F", n: "\u265E", b: "\u265D", r: "\u265C", q: "\u265B" };
+  var order = ["Q", "R", "B", "N", "P"];
+  function fmt(list) {
+    var s = "";
+    for (var o = 0; o < order.length; o++) {
+      var ch = order[o];
+      var n = list.filter(function (x) { return x.toLowerCase() === ch.toLowerCase(); }).length;
+      for (var i = 0; i < n; i++) s += g[ch];
+    }
+    return s;
+  }
+  document.getElementById("capt").innerHTML = "<span>" + fmt(captW) + "</span><span>" + fmt(captB) + "</span>";
+}
+
+var toastTimer = null;
+function toast(msg) {
+  var el = document.getElementById("toast");
+  el.textContent = msg;
+  el.style.opacity = msg ? "1" : "0";
+  if (toastTimer) clearTimeout(toastTimer);
+  if (msg) toastTimer = setTimeout(function () { el.style.opacity = "0"; }, 1200);
+}
+
+function showMenu(v) {
+  var el = document.getElementById("menu");
+  el.classList.toggle("hidden", !v);
+}
+function showPromo(v) {
+  var el = document.getElementById("promo");
+  el.classList.toggle("hidden", !v);
+}
+function showOver(v) {
+  var el = document.getElementById("over");
+  el.classList.toggle("hidden", !v);
+}
+
+/* ==================== DOM WIRING ==================== */
+(function () {
+  var m = Array.prototype.slice.call(document.getElementById("modes").querySelectorAll(".mbtn"));
+  var modes = ["easy", "medium", "hard", "pvp"];
+  m.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      m.forEach(function (b) { b.classList.remove("active"); });
+      btn.classList.add("active");
+    });
+  });
+  var c = Array.prototype.slice.call(document.getElementById("colors").querySelectorAll(".mbtn"));
+  var colors = ["w", "b", "r"];
+  c.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      c.forEach(function (b) { b.classList.remove("active"); });
+      btn.classList.add("active");
+    });
+  });
+  document.getElementById("startBtn").addEventListener("click", function () {
+    audioInit();
+    var activeMode = modes[m.findIndex(function (b) { return b.classList.contains("active"); })] || "medium";
+    var activeColor = colors[c.findIndex(function (b) { return b.classList.contains("active"); })] || "r";
+    startGame(activeMode, activeColor);
+  });
+  document.getElementById("undoBtn").addEventListener("click", undoLast);
+  document.getElementById("flipBtn").addEventListener("click", function () { flip = !flip; });
+  document.getElementById("menuBtn").addEventListener("click", function () {
+    state = "menu";
+    showMenu(true); showOver(false); showPromo(false);
+  });
+  document.getElementById("againBtn").addEventListener("click", function () {
+    startGame(mode, colorPref);
+  });
+  document.getElementById("overMenuBtn").addEventListener("click", function () {
+    state = "menu";
+    showMenu(true); showOver(false); showPromo(false);
+  });
+  var pbtn = document.querySelectorAll(".pbtn");
+  pbtn.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      if (!pendingPromo) return;
+      var promo = btn.getAttribute("data-promo");
+      var pick = null;
+      for (var i = 0; i < pendingPromo.moves.length; i++) {
+        if (pendingPromo.moves[i].promo === promo) { pick = pendingPromo.moves[i]; break; }
+      }
+      if (!pick) pick = pendingPromo.moves[0];
+      var mv = pick;
+      pendingPromo = null;
+      showPromo(false);
+      doMove(mv, false);
+    });
+  });
+
+  var muteBtn = document.createElement("button");
+  muteBtn.id = "muteBtn";
+  muteBtn.textContent = muted ? "\uD83D\uDD07" : "\uD83D\uDD0A";
+  muteBtn.title = "Mute (M)";
+  document.getElementById("btns").appendChild(muteBtn);
+  muteBtn.addEventListener("click", function () {
+    muted = !muted;
+    muteBtn.textContent = muted ? "\uD83D\uDD07" : "\uD83D\uDD0A";
+    save("bishopspire_mute", muted ? 1 : 0);
+    if (master) master.gain.value = muted ? 0 : 0.85;
+  });
+
+  window.addEventListener("keydown", function (e) {
+    var k = e.key.toLowerCase();
+    if (k === "m") { muteBtn.click(); }
+    else if (k === "u" || k === "z") { undoLast(); }
+    else if (k === "f") { flip = !flip; }
+    else if (k === "r") { if (state === "play" || state === "over") startGame(mode, colorPref); }
+  });
+})();
+
+syncHud();
+updateCaptured();
+showMenu(true);
+</script>
+</body>
+</html>

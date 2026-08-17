@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Nexlume</title>
+<style>
+  html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #0b0e14; font-family: system-ui, sans-serif; color: #e8eef7; }
+  canvas { display: block; position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; }
+
+  .overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(6,8,13,0.86); backdrop-filter: blur(7px); z-index: 6; transition: opacity 0.35s; }
+  .overlay.hidden { opacity: 0; pointer-events: none; }
+  .panel { background: rgba(14,17,26,0.94); border: 1px solid rgba(120,160,255,0.22); border-radius: 18px; padding: 30px 34px; max-width: 92vw; box-shadow: 0 24px 70px rgba(0,0,0,0.6); text-align: center; }
+  h1 { margin: 0 0 6px; font-size: clamp(30px, 7vw, 46px); font-weight: 900; letter-spacing: 2px; background: linear-gradient(90deg, #9ac0ff, #d2a8ff, #ffb8d6); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .tag { font-size: 11px; letter-spacing: 3px; color: #7f8db0; text-transform: uppercase; margin-bottom: 8px; }
+  .sub { font-size: 14px; line-height: 1.65; color: #9aa8c4; max-width: 430px; margin: 8px auto 20px; }
+  .hint { font-size: 12.5px; color: #6b7894; line-height: 1.7; margin-top: 16px; }
+  .btn { background: linear-gradient(180deg, #6f8dff, #4f63e0); color: #fff; border: none; border-radius: 12px; font-weight: 800; font-size: 16px; padding: 13px 30px; cursor: pointer; box-shadow: 0 8px 24px rgba(90,120,255,0.4); }
+  .btn:hover { filter: brightness(1.1); }
+  .btn.small { font-size: 13px; padding: 9px 18px; background: rgba(255,255,255,0.08); box-shadow: none; }
+  .row { display: flex; gap: 12px; justify-content: center; margin-top: 12px; }
+
+  #hud { position: absolute; top: 10px; left: 12px; z-index: 4; display: flex; gap: 10px; align-items: center; font-variant-numeric: tabular-nums; }
+  .chip { background: rgba(10,13,20,0.72); border: 1px solid rgba(120,160,255,0.2); border-radius: 10px; padding: 6px 11px; font-size: 13px; line-height: 1.35; min-width: 74px; }
+  .chip b { display: block; font-size: 15px; color: #fff; }
+  .chip span { color: #8b9ac0; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
+
+  #levelBar { position: absolute; left: 50%; transform: translateX(-50%); z-index: 4; width: min(210px, 40vw); background: rgba(10,13,20,0.72); border: 1px solid rgba(120,160,255,0.2); border-radius: 10px; padding: 6px 12px; font-size: 12px; color: #9aa8c4; text-align: center; }
+  #levelBar .fillwrap { height: 5px; background: rgba(255,255,255,0.08); border-radius: 3px; margin-top: 5px; overflow: hidden; }
+  #levelBar .fill { height: 100%; width: 0%; background: linear-gradient(90deg, #6f8dff, #d2a8ff); border-radius: 3px; transition: width 0.3s; }
+
+  #muteBtn { position: absolute; top: 12px; right: 12px; z-index: 4; background: rgba(10,13,20,0.72); border: 1px solid rgba(120,160,255,0.2); color: #fff; border-radius: 50%; width: 40px; height: 40px; font-size: 17px; cursor: pointer; }
+
+  #pad { position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%); z-index: 4; display: grid; grid-template-columns: 58px 58px 58px; grid-template-rows: 58px 58px 58px; gap: 6px; }
+  #pad .pbtn { background: rgba(14,17,26,0.88); border: 1px solid rgba(120,160,255,0.3); border-radius: 12px; color: #cdd9ff; font-size: 22px; font-weight: 900; cursor: pointer; user-select: none; -webkit-user-select: none; touch-action: none; }
+  #pad .pbtn:active { background: rgba(90,120,255,0.35); }
+  #pad .center { background: transparent; border-color: transparent; }
+
+  #toast { position: absolute; top: 62px; left: 50%; transform: translateX(-50%); z-index: 5; font-size: 19px; font-weight: 800; color: #ffd8a0; text-shadow: 0 2px 12px rgba(0,0,0,0.8); opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+
+  @media (max-height: 560px) { #pad { grid-template-columns: 46px 46px 46px; grid-template-rows: 46px 46px 46px; } #pad .pbtn { font-size: 17px; } }
+</style>
+</head>
+<body>
+  <canvas id="cv"></canvas>
+
+  <div id="hud">
+    <div class="chip"><span>Score</span><b id="score">0</b></div>
+    <div class="chip"><span>Best</span><b id="best">0</b></div>
+  </div>
+  <div id="levelBar"><span id="levelLabel">Level 1</span> · <span id="targetLabel">Clear 40</span><div class="fillwrap"><div class="fill" id="levelFill"></div></div></div>
+  <button id="muteBtn" title="Sound on/off">🔊</button>
+
+  <div id="toast"></div>
+
+  <div id="pad">
+    <div></div>
+    <button class="pbtn" id="bUp">▲</button>
+    <div></div>
+    <button class="pbtn" id="bLeft">◀</button>
+    <button class="pbtn center" id="bCenter"></button>
+    <button class="pbtn" id="bRight">▶</button>
+    <div></div>
+    <button class="pbtn" id="bDown">▼</button>
+    <div></div>
+  </div>
+
+  <div class="overlay" id="menu">
+    <div class="panel">
+      <div class="tag">Original Exclusive</div>
+      <h1>NEXLUME</h1>
+      <div class="sub">Nexlume isn't just a puzzle — it's a quiet corner of the mind. Slide glowing shards across a whispering grid, link them into soft constellations, and watch the screen bloom with light. There's no clock chasing you, no score shouting at you; just you, the hum of the grid, and the slow satisfaction of order from chaos.</div>
+      <button class="btn" id="startBtn">BEGIN THE DRIFT</button>
+      <div class="hint">Click a cell to select it · use <b>arrow keys</b> or the <b>pad</b> to rotate that row or column · link <b>3+</b> matching orbs to make them bloom</div>
+    </div>
+  </div>
+
+  <div class="overlay hidden" id="over">
+    <div class="panel">
+      <div class="tag">Finished</div>
+      <h1 id="ovTitle">Level 1</h1>
+      <div class="sub" id="ovSub">Final score 0</div>
+      <div class="row"><button class="btn" id="againBtn">PLAY AGAIN</button></div>
+      <div class="row"><button class="btn small" id="menuBtn">Main Menu</button></div>
+    </div>
+  </div>
+
+<script>
+"use strict";
+/* ==================== CANVAS ==================== */
+var cv = document.getElementById("cv");
+var ctx = cv.getContext("2d");
+var DPR = 1, W = 0, H = 0;
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 2.5);
+  W = window.innerWidth; H = window.innerHeight;
+  cv.width = Math.floor(W * DPR); cv.height = Math.floor(H * DPR);
+  if (state === "play" || state === "menu") layout();
+}
+window.addEventListener("resize", resize);
+resize();
+
+/* ==================== AUDIO ==================== */
+var AC = null, master = null, muted = false;
+try { muted = localStorage.getItem("nexlume_mute") === "1"; } catch (e) {}
+function audioInit() {
+  if (!AC) {
+    try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
+  }
+  if (AC && AC.state === "suspended") AC.resume();
+  if (AC && !master) {
+    try {
+      master = AC.createGain();
+      master.gain.value = muted ? 0 : 0.5;
+      master.connect(AC.destination);
+    } catch (e) {}
+  }
+}
+function tone(freq, dur, type, vol, slideTo) {
+  if (muted || !AC || !master) return;
+  var t0 = AC.currentTime;
+  var o = AC.createOscillator(), g = AC.createGain();
+  o.type = type || "sine"; o.frequency.value = freq;
+  if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t0 + dur);
+  g.gain.setValueAtTime(0.0001, t0);
+  g.gain.exponentialRampToValueAtTime(vol || 0.08, t0 + 0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  o.connect(g); g.connect(master);
+  o.start(t0); o.stop(t0 + dur + 0.02);
+}
+function sfxRot() { tone(300, 0.05, "sine", 0.035); }
+function sfxPop(v) { tone(500 + v * 40, 0.09, "sine", 0.09); tone(750 + v * 50, 0.1, "sine", 0.07, 1100); }
+function sfxCombo() { tone(720, 0.1, "sine", 0.09); }
+function sfxLevel() { var seq = [520, 660, 780]; for (var i = 0; i < seq.length; i++) (function (f) { setTimeout(function () { tone(f, 0.14, "sine", 0.1); }, i * 90); })(seq[i]); }
+function sfxOver() { tone(440, 0.24, "sine", 0.1, 220); }
+
+/* ==================== GAME STATE ==================== */
+var COLS = 6, ROWS = 6;
+var COLORS = ["#ff5d73", "#ffb94e", "#7ee787", "#58a6ff", "#d2a8ff", "#ff9ad5"];
+var RIM = null;
+var slot = 64, bx = 0, by = 0, padH = 0;
+var grid = [];            // 2D [gy][gx] -> orb object or null
+var orbs = [];            // active orb objects
+var state = "menu";       // menu | play | over
+var score = 0, best = 0, level = 1, cleared = 0, target = 40;
+var selR = 2, selC = 2;
+var busy = false, cascade = 0, gameOver = false;
+var tGlobal = 0;
+var parts = [];           // particles
+var floaters = [];        // floating score texts
+var toastT = 0, toastMsg = "";
+
+var bestEl = document.getElementById("best");
+var scoreEl = document.getElementById("score");
+var levelLabel = document.getElementById("levelLabel");
+var targetLabel = document.getElementById("targetLabel");
+var levelFill = document.getElementById("levelFill");
+try { best = parseInt(localStorage.getItem("nexlume-best") || "0", 10) || 0; } catch (e) {}
+
+function colorCount() { return level <= 2 ? 4 : (level <= 4 ? 5 : 6); }
+
+function newGame() {
+  score = 0; level = 1; cleared = 0; target = 40; cascade = 0; gameOver = false; busy = false;
+  grid = []; orbs = []; parts = []; floaters = [];
+  for (var gy = 0; gy < ROWS; gy++) { grid[gy] = []; for (var gx = 0; gx < COLS; gx++) grid[gy][gx] = null; }
+  fillFromTop();
+  // make sure the board is solvable: clear any pre-existing matches
+  var guard = 0;
+  while (hasMatches() && guard < 300) { guard++; scramble(); }
+  updateHUD();
+  state = "play";
+  hideAll();
+}
+
+function scramble() {
+  for (var gy = 0; gy < ROWS; gy++) for (var gx = 0; gx < COLS; gx++) {
+    if (grid[gy][gx]) grid[gy][gx].gx = gx, grid[gy][gx].gy = gy;
+  }
+  // randomize values avoiding instant matches
+  var cols = colorCount();
+  for (var y = 0; y < ROWS; y++) for (var x = 0; x < COLS; x++) {
+    var bad = {};
+    if (x >= 2 && grid[y][x - 1] && grid[y][x - 2] && grid[y][x - 1].v === grid[y][x - 2].v) bad[grid[y][x - 1].v] = 1;
+    if (y >= 2 && grid[y - 1][x] && grid[y - 2][x] && grid[y - 1][x].v === grid[y - 2][x].v) bad[grid[y - 1][x].v] = 1;
+    var v;
+    do { v = (Math.random() * cols) | 0; } while (bad[v]);
+    grid[y][x].v = v;
+  }
+}
+
+function fillFromTop() {
+  var cols = colorCount();
+  for (var gy = 0; gy < ROWS; gy++) for (var gx = 0; gx < COLS; gx++) {
+    if (grid[gy][gx]) continue;
+    var orb = { v: (Math.random() * cols) | 0, gx: gx, gy: gy, px: gx, py: gy - ROWS, popT: 0, dead: false };
+    orbs.push(orb);
+    grid[gy][gx] = orb;
+  }
+}
+
+/* ==================== ROTATION ==================== */
+function rotateRow(r, dir) {
+  var row = [];
+  for (var x = 0; x < COLS; x++) row.push(grid[r][x]);
+  var out = [];
+  for (var i = 0; i < COLS; i++) out.push(row[((i - dir) % COLS + COLS) % COLS]);
+  for (var j = 0; j < COLS; j++) {
+    grid[r][j] = out[j];
+    if (out[j]) out[j].gx = j, out[j].gy = r;
+  }
+}
+function rotateCol(c, dir) {
+  var col = [];
+  for (var y = 0; y < ROWS; y++) col.push(grid[y][c]);
+  var out = [];
+  for (var i = 0; i < ROWS; i++) out.push(col[((i - dir) % ROWS + ROWS) % ROWS]);
+  for (var j = 0; j < ROWS; j++) {
+    grid[j][c] = out[j];
+    if (out[j]) out[j].gy = j, out[j].gx = c;
+  }
+}
+
+/* ==================== MATCHES ==================== */
+function hasMatches() {
+  return findMatches().length > 0;
+}
+function findMatches() {
+  var set = [];
+  var idx = {};
+  function add(o) { if (o && !idx[o.gy * COLS + o.gx]) { idx[o.gy * COLS + o.gx] = 1; set.push(o); } }
+  // horizontal
+  for (var y = 0; y < ROWS; y++) {
+    var run = 1;
+    for (var x = 1; x <= COLS; x++) {
+      var a = grid[y][x - 1], b = (x < COLS) ? grid[y][x] : null;
+      if (a && b && a.v === b.v) { run++; continue; }
+      if (run >= 3) for (var k = x - run; k < x; k++) add(grid[y][k]);
+      run = 1;
+    }
+  }
+  // vertical
+  for (var x2 = 0; x2 < COLS; x2++) {
+    var run2 = 1;
+    for (var y2 = 1; y2 <= ROWS; y2++) {
+      var a2 = grid[y2 - 1][x2], b2 = (y2 < ROWS) ? grid[y2][x2] : null;
+      if (a2 && b2 && a2.v === b2.v) { run2++; continue; }
+      if (run2 >= 3) for (var k2 = y2 - run2; k2 < y2; k2++) add(grid[k2][x2]);
+      run2 = 1;
+    }
+  }
+  return set;
+}
+
+function resolveMove() {
+  // called after a rotation; cascade resolution
+  var done = function () { busy = false; checkGameOver(); };
+  var next = function () {
+    var m = findMatches();
+    if (!m.length) return done();
+    cascade++;
+    var mult = Math.max(1, cascade);
+    for (var i = 0; i < m.length; i++) {
+      var o = m[i];
+      o.popT = 0.001;
+      score += 10 * mult;
+      cleared++;
+      sfxPop(o.v);
+    }
+    if (cascade >= 2) sfxCombo();
+    spawnFloater(m[0].gx, m[0].gy, "+" + (10 * mult * m.length));
+    if (cascade >= 2) showToast("Combo x" + cascade);
+    updateHUD();
+    setTimeout(function () {
+      // remove matched
+      for (var j = 0; j < m.length; j++) {
+        var orb = m[j];
+        orb.dead = true;
+        grid[orb.gy][orb.gx] = null;
+      }
+      spawnDust(m);
+      orbs = orbs.filter(function (o) { return !o.dead; });
+      applyGravity();
+      fillFromTop();
+      checkLevel();
+      next();
+    }, 190);
+  };
+  next();
+}
+
+function applyGravity() {
+  for (var x = 0; x < COLS; x++) {
+    var write = ROWS - 1;
+    for (var y = ROWS - 1; y >= 0; y--) {
+      if (grid[y][x]) {
+        if (write !== y) {
+          grid[write][x] = grid[y][x];
+          grid[y][x] = null;
+          grid[write][x].gy = write;
+          grid[write][x].gx = x;
+        }
+        write--;
+      }
+    }
+  }
+}
+
+function checkLevel() {
+  if (cleared >= target) {
+    level++;
+    cleared = 0;
+    target = 30 + level * 15;
+    sfxLevel();
+    showToast("LEVEL " + level);
+    updateHUD();
+  }
+}
+
+function checkGameOver() {
+  // no matches possible at all?
+  if (hasMatches()) return;
+  var possible = false;
+  for (var y = 0; y < ROWS; y++) for (var x = 0; x < COLS; x++) {
+    if (!grid[y][x]) { possible = true; break; }
+  }
+  if (!possible) {
+    gameOver = true;
+    setTimeout(function () {
+      state = "over";
+      sfxOver();
+      if (score > best) { best = score; try { localStorage.setItem("nexlume-best", String(best)); } catch (e) {} }
+      bestEl.textContent = String(best);
+      document.getElementById("ovTitle").textContent = "Level " + level;
+      document.getElementById("ovSub").textContent = "Final score " + score + (score >= best && score > 0 ? " · New best!" : "");
+      document.getElementById("over").classList.remove("hidden");
+    }, 350);
+  }
+}
+
+/* ==================== INPUT ==================== */
+var keys = {};
+window.addEventListener("keydown", function (e) {
+  if (e.code === "Space" || e.code.indexOf("Arrow") === 0) e.preventDefault();
+  keys[e.code] = true;
+  if (e.code === "KeyM") toggleMute();
+  if (e.code === "KeyR" && (state === "play" || state === "over")) { newGame(); }
+  if (state !== "play" || busy) return;
+  if (e.code === "ArrowLeft") doMove("row", selR, -1);
+  if (e.code === "ArrowRight") doMove("row", selR, 1);
+  if (e.code === "ArrowUp") doMove("col", selC, -1);
+  if (e.code === "ArrowDown") doMove("col", selC, 1);
+});
+window.addEventListener("keyup", function (e) { keys[e.code] = false; });
+
+var hover = null;
+function canvasPos(e) {
+  var r = cv.getBoundingClientRect();
+  return { x: (e.clientX - r.left) * (W / r.width), y: (e.clientY - r.top) * (H / r.height) };
+}
+cv.addEventListener("mousemove", function (e) {
+  if (state !== "play") return;
+  var p = canvasPos(e);
+  var gx = Math.floor((p.x - bx) / slot), gy = Math.floor((p.y - by) / slot);
+  if (gx >= 0 && gx < COLS && gy >= 0 && gy < ROWS) hover = { r: gy, c: gx }; else hover = null;
+});
+cv.addEventListener("mouseleave", function () { hover = null; });
+cv.addEventListener("mousedown", function (e) {
+  if (state !== "play") return;
+  var p = canvasPos(e);
+  var gx = Math.floor((p.x - bx) / slot), gy = Math.floor((p.y - by) / slot);
+  if (gx >= 0 && gx < COLS && gy >= 0 && gy < ROWS) { selR = gy; selC = gx; audioInit(); }
+});
+cv.addEventListener("touchstart", function (e) {
+  e.preventDefault();
+  if (state !== "play") return;
+  var t = e.touches[0];
+  var p = canvasPos(t);
+  var gx = Math.floor((p.x - bx) / slot), gy = Math.floor((p.y - by) / slot);
+  if (gx >= 0 && gx < COLS && gy >= 0 && gy < ROWS) { selR = gy; selC = gx; audioInit(); }
+}, { passive: false });
+
+function bindPad(el, kind, idx, dir) {
+  el.addEventListener("pointerdown", function (e) { e.preventDefault(); audioInit(); if (state === "play" && !busy) doMove(kind, idx, dir); });
+}
+bindPad(document.getElementById("bUp"), "col", null, -1);
+bindPad(document.getElementById("bDown"), "col", null, 1);
+bindPad(document.getElementById("bLeft"), "row", null, -1);
+bindPad(document.getElementById("bRight"), "row", null, 1);
+
+function doMove(kind, idx, dir) {
+  if (state !== "play" || busy || gameOver) return;
+  if (kind === "row") { var r = (idx === null ? selR : idx); rotateRow(r, dir); selR = r; }
+  else { var c = (idx === null ? selC : idx); rotateCol(c, dir); selC = c; }
+  sfxRot();
+  cascade = 0;
+  busy = true;
+  resolveMove();
+}
+
+/* ==================== EFFECTS ==================== */
+function spawnDust(m) {
+  for (var i = 0; i < m.length; i++) {
+    var o = m[i];
+    var cx = bx + (o.gx + 0.5) * slot, cy = by + (o.gy + 0.5) * slot;
+    var col = COLORS[o.v] || "#fff";
+    for (var k = 0; k < 6; k++) {
+      var a = Math.random() * Math.PI * 2, sp = 30 + Math.random() * 90;
+      parts.push({ x: cx, y: cy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 0.5 + Math.random() * 0.3, max: 0.8, col: col, r: 2 + Math.random() * 3 });
+    }
+  }
+}
+function spawnFloater(gx, gy, txt) {
+  floaters.push({ x: bx + (gx + 0.5) * slot, y: by + (gy + 0.5) * slot, txt: txt, life: 0.9, max: 0.9 });
+}
+function showToast(msg) {
+  toastMsg = msg; toastT = 1.2;
+  var el = document.getElementById("toast");
+  el.textContent = msg; el.style.opacity = 1;
+}
+
+/* ==================== UPDATE / DRAW ==================== */
+function frame(now) {
+  requestAnimationFrame(frame);
+  if (!tGlobal) tGlobal = now;
+  var dt = Math.min(0.05, (now - tGlobal) / 1000);
+  tGlobal = now;
+  if (state === "play") update(dt);
+  render(dt);
+}
+
+function update(dt) {
+  var lerp = Math.min(1, dt * 11);
+  for (var i = 0; i < orbs.length; i++) {
+    var o = orbs[i];
+    o.px += (o.gx - o.px) * lerp;
+    o.py += (o.gy - o.py) * lerp;
+    if (o.popT > 0) o.popT += dt;
+    if (o.popT > 0.2) o.popT = 0;
+  }
+  for (var p = parts.length - 1; p >= 0; p--) {
+    var pt = parts[p];
+    pt.x += pt.vx * dt; pt.y += pt.vy * dt;
+    pt.vy += 120 * dt;
+    pt.life -= dt;
+    if (pt.life <= 0) parts.splice(p, 1);
+  }
+  for (var f = floaters.length - 1; f >= 0; f--) {
+    floaters[f].y -= 34 * dt;
+    floaters[f].life -= dt;
+    if (floaters[f].life <= 0) floaters.splice(f, 1);
+  }
+  if (toastT > 0) { toastT -= dt; if (toastT <= 0) document.getElementById("toast").style.opacity = 0; }
+}
+
+function layout() {
+  padH = 0;
+  var pad = document.getElementById("pad");
+  if (pad) padH = pad.offsetHeight || 0;
+  var topClear = 56;                              // room for score chips + mute button
+  var barH = 46;                                  // level bar height
+  var padTop = H - 18 - padH;                     // top edge of the control pad
+  var boardBottom = padTop - 8 - barH - 8;        // bottom edge of the grid
+  var maxBoardH = Math.max(0, boardBottom - topClear);
+  var board = Math.min(W, maxBoardH);
+  slot = Math.max(24, Math.floor(board / COLS));
+  var gridH = slot * ROWS;
+  if (gridH > maxBoardH) { slot = Math.max(24, Math.floor(maxBoardH / ROWS)); gridH = slot * ROWS; }
+  bx = (W - slot * COLS) / 2;
+  by = boardBottom - gridH;
+  if (by < topClear) by = topClear;
+  var lb = document.getElementById("levelBar");
+  if (lb) lb.style.top = (by + gridH + 8) + "px";
+}
+
+function render(dt) {
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  var g = ctx;
+  g.clearRect(0, 0, W, H);
+  // bg
+  var bg = g.createRadialGradient(W / 2, H * 0.4, 40, W / 2, H * 0.5, Math.max(W, H) * 0.75);
+  bg.addColorStop(0, "#10141f");
+  bg.addColorStop(1, "#07090f");
+  g.fillStyle = bg;
+  g.fillRect(0, 0, W, H);
+  // faint grid glow
+  g.save();
+  g.globalAlpha = 0.5;
+  var pulse = 0.6 + 0.4 * Math.sin(tGlobal * 0.002);
+  g.strokeStyle = "rgba(120,160,255,0.05)";
+  g.lineWidth = 1;
+  for (var x = 0; x <= COLS; x++) { g.beginPath(); g.moveTo(bx + x * slot, by); g.lineTo(bx + x * slot, by + slot * ROWS); g.stroke(); }
+  for (var y = 0; y <= ROWS; y++) { g.beginPath(); g.moveTo(bx, by + y * slot); g.lineTo(bx + slot * COLS, by + y * slot); g.stroke(); }
+  g.restore();
+
+  // selection / hover highlight
+  if (state === "play") {
+    g.fillStyle = "rgba(120,160,255,0.08)";
+    g.fillRect(bx + selC * slot, by + selR * slot, slot, slot);
+    if (hover) {
+      g.strokeStyle = "rgba(120,160,255,0.18)";
+      g.lineWidth = 2;
+      g.strokeRect(bx + hover.c * slot, by + hover.r * slot, slot, slot);
+    }
+    g.strokeStyle = "rgba(140,175,255,0.55)";
+    g.lineWidth = 2;
+    g.strokeRect(bx + selC * slot + 1, by + selR * slot + 1, slot - 2, slot - 2);
+  }
+
+  // orbs
+  for (var i = 0; i < orbs.length; i++) {
+    var o = orbs[i];
+    if (o.py < -0.4) continue;
+    drawOrb(g, bx + (o.px + 0.5) * slot, by + (o.py + 0.5) * slot, o.v, o.popT, pulse);
+  }
+
+  // particles
+  for (var p2 = 0; p2 < parts.length; p2++) {
+    var pt = parts[p2];
+    g.globalAlpha = Math.max(0, pt.life / pt.max);
+    g.fillStyle = pt.col;
+    g.beginPath(); g.arc(pt.x, pt.y, pt.r, 0, 7); g.fill();
+  }
+  g.globalAlpha = 1;
+
+  // floaters
+  for (var f = 0; f < floaters.length; f++) {
+    var fl = floaters[f];
+    g.globalAlpha = Math.max(0, fl.life / fl.max);
+    g.font = "800 17px system-ui, sans-serif";
+    g.textAlign = "center";
+    g.fillStyle = "#ffe3a8";
+    g.fillText(fl.txt, fl.x, fl.y);
+  }
+  g.globalAlpha = 1;
+
+  // vignette
+  var vg = g.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.35, W / 2, H / 2, Math.max(W, H) * 0.72);
+  vg.addColorStop(0, "rgba(0,0,0,0)");
+  vg.addColorStop(1, "rgba(0,0,0,0.5)");
+  g.fillStyle = vg;
+  g.fillRect(0, 0, W, H);
+}
+
+function hexToRgb(hex) {
+  return [parseInt(hex.substr(1, 2), 16), parseInt(hex.substr(3, 2), 16), parseInt(hex.substr(5, 2), 16)];
+}
+function shadeRgb(c, f) {
+  return "rgba(" + (c[0] * f | 0) + "," + (c[1] * f | 0) + "," + (c[2] * f | 0) + ",1)";
+}
+function prepOrbColors() {
+  RIM = [];
+  for (var i = 0; i < COLORS.length; i++) RIM.push(shadeRgb(hexToRgb(COLORS[i]), 0.55));
+}
+
+function drawOrb(g, cx, cy, v, popT, pulse) {
+  var col = COLORS[v % COLORS.length] || "#fff";
+  var rim = (RIM && RIM[v % RIM.length]) || "rgba(0,0,0,0.55)";
+  var R = slot * 0.36;
+  var a0 = 1;
+  if (popT > 0) {
+    var p = Math.min(1, popT / 0.2);
+    a0 = 1 - p;
+    var sc = 1 + 0.55 * Math.sin(p * Math.PI);
+    g.save();
+    g.translate(cx, cy);
+    g.scale(sc, sc);
+    cx = 0; cy = 0;
+  }
+  g.globalAlpha = a0;
+  // crisp dark rim edge
+  g.beginPath(); g.arc(cx, cy, R + 1, 0, 7);
+  g.fillStyle = rim; g.fill();
+  // clean sphere body
+  var gl = g.createRadialGradient(cx - R * 0.42, cy - R * 0.45, R * 0.1, cx, cy, R * 1.02);
+  gl.addColorStop(0, "#ffffff");
+  gl.addColorStop(0.16, "#ffffff");
+  gl.addColorStop(0.55, col);
+  gl.addColorStop(1, rim);
+  g.fillStyle = gl;
+  g.beginPath(); g.arc(cx, cy, R, 0, 7); g.fill();
+  // sharp specular highlight
+  g.fillStyle = "rgba(255,255,255,0.85)";
+  g.beginPath(); g.arc(cx - R * 0.4, cy - R * 0.44, R * 0.26, 0, 7); g.fill();
+  g.fillStyle = "rgba(255,255,255,0.3)";
+  g.beginPath(); g.arc(cx - R * 0.4, cy - R * 0.44, R * 0.5, 0, 7); g.fill();
+  // faint neon glow
+  g.globalAlpha = a0 * 0.09 * pulse;
+  g.fillStyle = col;
+  g.beginPath(); g.arc(cx, cy, R * 1.5, 0, 7); g.fill();
+  if (popT > 0) g.restore();
+  g.globalAlpha = 1;
+}
+
+function updateHUD() {
+  scoreEl.textContent = String(score);
+  bestEl.textContent = String(best);
+  levelLabel.textContent = "Level " + level;
+  targetLabel.textContent = "Clear " + target;
+  var frac = Math.min(1, cleared / target);
+  levelFill.style.width = (frac * 100).toFixed(1) + "%";
+}
+
+function hideAll() {
+  document.getElementById("menu").classList.add("hidden");
+  document.getElementById("over").classList.add("hidden");
+}
+
+function toggleMute() {
+  audioInit();
+  muted = !muted;
+  try { localStorage.setItem("nexlume_mute", muted ? "1" : "0"); } catch (e) {}
+  if (master) master.gain.value = muted ? 0 : 0.5;
+  var b = document.getElementById("muteBtn");
+  b.textContent = muted ? "🔇" : "🔊";
+}
+
+/* ==================== BOOT ==================== */
+document.getElementById("startBtn").addEventListener("click", function () { audioInit(); newGame(); });
+document.getElementById("againBtn").addEventListener("click", function () { audioInit(); newGame(); });
+document.getElementById("menuBtn").addEventListener("click", function () {
+  state = "menu";
+  hideAll();
+  document.getElementById("menu").classList.remove("hidden");
+});
+document.getElementById("muteBtn").addEventListener("click", function () { audioInit(); toggleMute(); });
+document.getElementById("muteBtn").textContent = muted ? "🔇" : "🔊";
+
+function audioBoot() {
+  if (!AC) {
+    try {
+      AC = new (window.AudioContext || window.webkitAudioContext)();
+      master = AC.createGain();
+      master.gain.value = muted ? 0 : 0.5;
+      master.connect(AC.destination);
+    } catch (e) {}
+  }
+}
+audioBoot();
+prepOrbColors();
+updateHUD();
+layout();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

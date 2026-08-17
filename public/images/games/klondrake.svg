@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="640" viewBox="0 0 640 640">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="38%" r="75%">
+      <stop offset="0%" stop-color="#1b2338"/>
+      <stop offset="100%" stop-color="#080a12"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffd76a"/>
+      <stop offset="55%" stop-color="#e0b15c"/>
+      <stop offset="100%" stop-color="#b98a35"/>
+    </linearGradient>
+    <linearGradient id="ivory" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fffdf6"/>
+      <stop offset="100%" stop-color="#e6dfc9"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="640" height="640" fill="url(#bg)"/>
+  <circle cx="320" cy="300" r="252" fill="none" stroke="#2a3552" stroke-width="2" opacity="0.5"/>
+  <circle cx="320" cy="300" r="226" fill="none" stroke="#2a3552" stroke-width="1.5" opacity="0.35"/>
+
+  <g transform="translate(320,300) rotate(-9)">
+    <g transform="translate(-92,-8) rotate(-12)">
+      <rect x="0" y="0" width="132" height="188" rx="12" fill="#1d2742" stroke="#e0b15c" stroke-width="3"/>
+      <rect x="8" y="8" width="116" height="172" rx="8" fill="none" stroke="#e0b15c" stroke-width="1.5" opacity="0.6"/>
+      <text x="66" y="106" font-family="Georgia,serif" font-size="62" font-weight="bold" fill="#ffd76a" text-anchor="middle" dominant-baseline="central">K</text>
+      <path d="M46 138 L66 152 L86 138" fill="none" stroke="#ffd76a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <g transform="translate(92,14) rotate(8)">
+      <rect x="0" y="0" width="132" height="188" rx="12" fill="url(#ivory)" stroke="#cbbf9f" stroke-width="3"/>
+      <text x="18" y="34" font-family="Georgia,serif" font-size="34" font-weight="bold" fill="#e5484d">A</text>
+      <text x="66" y="112" font-family="Georgia,serif" font-size="96" fill="#e5484d" text-anchor="middle" dominant-baseline="central">♥</text>
+    </g>
+    <g transform="translate(132,12) rotate(16)">
+      <rect x="0" y="0" width="132" height="188" rx="12" fill="url(#ivory)" stroke="#cbbf9f" stroke-width="3"/>
+      <text x="18" y="34" font-family="Georgia,serif" font-size="34" font-weight="bold" fill="#1b2333">A</text>
+      <text x="66" y="112" font-family="Georgia,serif" font-size="96" fill="#1b2333" text-anchor="middle" dominant-baseline="central">♠</text>
+    </g>
+    <g transform="translate(14,118) rotate(6)">
+      <rect x="0" y="0" width="132" height="188" rx="12" fill="url(#ivory)" stroke="#cbbf9f" stroke-width="3"/>
+      <text x="18" y="34" font-family="Georgia,serif" font-size="34" font-weight="bold" fill="#e5484d">A</text>
+      <text x="66" y="112" font-family="Georgia,serif" font-size="96" fill="#e5484d" text-anchor="middle" dominant-baseline="central">♦</text>
+    </g>
+  </g>
+
+  <g transform="translate(320,86)">
+    <path d="M0 -34 L22 -6 L44 -34 L66 -6 L88 -34 L98 0 H-98 L-88 -34 L-66 -6 L-44 -34 L-22 -6 Z" fill="url(#gold)"/>
+    <text x="0" y="24" font-family="Georgia,serif" font-size="30" font-weight="bold" fill="#141008" text-anchor="middle">KLONDRAKE</text>
+  </g>
+
+  <g transform="translate(320,600)">
+    <rect x="-86" y="-20" width="172" height="26" rx="13" fill="#141a2e" stroke="#e0b15c" stroke-width="1.5"/>
+    <text x="0" y="-3" font-family="Arial,sans-serif" font-size="12" font-weight="bold" fill="#ffd76a" text-anchor="middle">GAMEVERSE</text>
+  </g>
+</svg>
