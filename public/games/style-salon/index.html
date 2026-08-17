@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Style Salon</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:100%;height:100%;overflow:hidden;background:#0f172a;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;touch-action:none;user-select:none;-webkit-user-select:none}
+  canvas{display:block;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
+</style>
+</head>
+<body>
+<canvas id="gameCanvas"></canvas>
+<script>
+(function(){
+"use strict";
+
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+let W, H, dpr;
+function resize(){
+  dpr = window.devicePixelRatio || 1;
+  W = window.innerWidth;
+  H = window.innerHeight;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W + "px";
+  canvas.style.height = H + "px";
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+resize();
+window.addEventListener("resize", resize);
+
+const COLORS = {
+  bg: "#0f172a",
+  pink1: "#f9a8d4", pink2: "#f472b6", pink3: "#ec4899",
+  purple1: "#c4b5fd", purple2: "#a78bfa", purple3: "#8b5cf6",
+  blue1: "#93c5fd", blue2: "#60a5fa",
+  gold: "#fbbf24", goldDark: "#d97706",
+  white: "#ffffff", whiteAlpha: "rgba(255,255,255,0.15)",
+  skinLight: "#fde0c8", skinMedium: "#e8b892", skinDark: "#c68c5c",
+  text: "#e2e8f0", textDim: "#94a3b8"
+};
+
+let audioCtx = null;
+function ensureAudio(){
+  if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if(audioCtx.state === "suspended") audioCtx.resume();
+}
+function playClick(){
+  if(!soundOn) return; ensureAudio();
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o.type = "sine"; o.frequency.value = 880;
+  g.gain.setValueAtTime(0.15, audioCtx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+  o.connect(g); g.connect(audioCtx.destination);
+  o.start(); o.stop(audioCtx.currentTime + 0.08);
+}
+function playSparkle(){
+  if(!soundOn) return; ensureAudio();
+  const notes = [1200, 1500, 1800, 2200];
+  notes.forEach((f,i)=>{
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = "sine"; o.frequency.value = f;
+    g.gain.setValueAtTime(0.1, audioCtx.currentTime + i*0.06);
+    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + i*0.06 + 0.15);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(audioCtx.currentTime + i*0.06);
+    o.stop(audioCtx.currentTime + i*0.06 + 0.15);
+  });
+}
+function playBigSparkle(){
+  if(!soundOn) return; ensureAudio();
+  const notes = [800,1000,1200,1500,1800,2200,2600];
+  notes.forEach((f,i)=>{
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = "sine"; o.frequency.value = f;
+    g.gain.setValueAtTime(0.12, audioCtx.currentTime + i*0.05);
+    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + i*0.05 + 0.25);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(audioCtx.currentTime + i*0.05);
+    o.stop(audioCtx.currentTime + i*0.05 + 0.25);
+  });
+}
+
+let soundOn = true;
+try{ if(localStorage.getItem("salonSound") === "off") soundOn = false; }catch(e){}
+function toggleSound(){
+  soundOn = !soundOn;
+  try{ localStorage.setItem("salonSound", soundOn ? "on" : "off"); }catch(e){}
+}
+
+const HAIR_STYLES = [
+  { name:"Long Flowing", color:"#2c1810", colorName:"Dark Brown" },
+  { name:"Pixie Cut", color:"#d4a24e", colorName:"Blonde" },
+  { name:"Curly Bob", color:"#8b2500", colorName:"Auburn" },
+  { name:"Straight Sleek", color:"#1a1a2e", colorName:"Black" },
+  { name:"Wavy Lob", color:"#c0392b", colorName:"Red" },
+  { name:"Afro Puff", color:"#5c3317", colorName:"Chestnut" },
+  { name:"Twin Tails", color:"#f5e6ca", colorName:"Platinum" },
+];
+
+const TOPS = [
+  { name:"Crop Top", color:"#f9a8d4", pattern:"solid" },
+  { name:"Blouse", color:"#c4b5fd", pattern:"solid" },
+  { name:"Striped Tee", color:"#93c5fd", pattern:"stripes" },
+  { name:"Polka Dot", color:"#fbbf24", pattern:"dots" },
+  { name:"Floral Top", color:"#f472b6", pattern:"floral" },
+  { name:"Halter", color:"#8b5cf6", pattern:"solid" },
+  { name:"Bomber Jacket", color:"#34d399", pattern:"solid" },
+];
+
+const BOTTOMS = [
+  { name:"Mini Skirt", color:"#ec4899", type:"skirt" },
+  { name:"High Waist Jeans", color:"#3b82f6", type:"jeans" },
+  { name:"Pleated Skirt", color:"#a78bfa", type:"skirt" },
+  { name:"Wide Leg Pants", color:"#1e293b", type:"pants" },
+  { name:"Culottes", color:"#f59e0b", type:"pants" },
+  { name:"Denim Skirt", color:"#60a5fa", type:"skirt" },
+  { name:"Track Pants", color:"#10b981", type:"pants" },
+];
+
+const ACCESSORIES = [
+  { name:"None", type:"none" },
+  { name:"Cat Eye Glasses", type:"glasses", color:"#ec4899" },
+  { name:"Round Glasses", type:"glasses", color:"#fbbf24" },
+  { name:"Sun Hat", type:"hat", color:"#fde68a" },
+  { name:"Beret", type:"hat", color:"#ef4444" },
+  { name:"Pearl Necklace", type:"necklace", color:"#f0f0f0" },
+  { name:"Choker", type:"necklace", color:"#1a1a2e" },
+  { name:"Bow Headband", type:"headband", color:"#f472b6" },
+];
+
+let state = "start";
+let stylePoints = 0;
+let bestScore = 0;
+try{ bestScore = parseInt(localStorage.getItem("salonBest")) || 0; }catch(e){}
+
+let hairIdx = 0, topIdx = 0, bottomIdx = 0, accessoryIdx = 0;
+let categorySelect = 0; // 0=hair, 1=top, 2=bottom, 3=accessory
+
+let animTime = 0;
+let sparkleParticles = [];
+let floatingHearts = [];
+
+let buttons = [];
+let catButtons = [];
+let soundBtn = {x:0,y:0,w:0,h:0};
+let startBtn = {x:0,y:0,w:0,h:0};
+let shuffleBtn = {x:0,y:0,w:0,h:0};
+let resetBtn = {x:0,y:0,w:0,h:0};
+
+let comboCount = 0;
+let lastComboTime = 0;
+let comboDisplay = 0;
+
+function addSparkles(x, y, count, colors){
+  for(let i=0;i<count;i++){
+    sparkleParticles.push({
+      x, y,
+      vx: (Math.random()-0.5)*4,
+      vy: (Math.random()-0.5)*4 - 1,
+      life: 1,
+      decay: 0.015 + Math.random()*0.01,
+      size: 2 + Math.random()*4,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      rotation: Math.random()*Math.PI*2
+    });
+  }
+}
+function addHeart(x,y){
+  floatingHearts.push({
+    x, y, vy:-1-Math.random(), life:1, decay:0.012, size:10+Math.random()*8,
+    color: [COLORS.pink1,COLORS.pink2,COLORS.purple1][Math.floor(Math.random()*3)],
+    wobble: Math.random()*Math.PI*2
+  });
+}
+
+function drawHeart(cx, cy, size, color){
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.moveTo(0, size*0.3);
+  ctx.bezierCurveTo(-size*0.5,-size*0.3, -size, size*0.1, 0, size);
+  ctx.bezierCurveTo(size, size*0.1, size*0.5,-size*0.3, 0, size*0.3);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawStar(cx, cy, size, color, rot){
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(rot);
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  for(let i=0;i<5;i++){
+    const a = (i*4*Math.PI/5) - Math.PI/2;
+    const r = i===0 ? size : size;
+    if(i===0) ctx.moveTo(Math.cos(a)*size, Math.sin(a)*size);
+    else ctx.lineTo(Math.cos(a)*size, Math.sin(a)*size);
+    const a2 = a + 2*Math.PI/5;
+    ctx.lineTo(Math.cos(a2)*size*0.4, Math.sin(a2)*size*0.4);
+  }
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawCharacter(cx, cy, scale){
+  const s = scale;
+  const skinColor = COLORS.skinLight;
+
+  // Body / torso
+  ctx.fillStyle = skinColor;
+  ctx.beginPath();
+  ctx.ellipse(cx, cy+30*s, 42*s, 55*s, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Neck
+  ctx.fillStyle = skinColor;
+  ctx.fillRect(cx-10*s, cy-25*s, 20*s, 35*s);
+
+  // Head
+  ctx.fillStyle = skinColor;
+  ctx.beginPath();
+  ctx.ellipse(cx, cy-60*s, 38*s, 42*s, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Eyes
+  const eyeY = cy-58*s;
+  const eyeSpread = 16*s;
+  ctx.fillStyle = "#fff";
+  ctx.beginPath();
+  ctx.ellipse(cx-eyeSpread, eyeY, 8*s, 7*s, 0, 0, Math.PI*2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(cx+eyeSpread, eyeY, 8*s, 7*s, 0, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle = "#2d1b69";
+  ctx.beginPath();
+  ctx.ellipse(cx-eyeSpread, eyeY+1*s, 4.5*s, 5*s, 0, 0, Math.PI*2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(cx+eyeSpread, eyeY+1*s, 4.5*s, 5*s, 0, 0, Math.PI*2);
+  ctx.fill();
+  // Eye shine
+  ctx.fillStyle = "#fff";
+  ctx.beginPath();
+  ctx.arc(cx-eyeSpread+2*s, eyeY-2*s, 2*s, 0, Math.PI*2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(cx+eyeSpread+2*s, eyeY-2*s, 2*s, 0, Math.PI*2);
+  ctx.fill();
+
+  // Eyelashes
+  ctx.strokeStyle = "#1a1a2e";
+  ctx.lineWidth = 1.5*s;
+  for(let side = -1; side <= 1; side += 2){
+    const ex = cx + side*eyeSpread;
+    ctx.beginPath();
+    ctx.moveTo(ex-8*s, eyeY-4*s);
+    ctx.quadraticCurveTo(ex-10*s, eyeY-10*s, ex-6*s, eyeY-8*s);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(ex+8*s, eyeY-4*s);
+    ctx.quadraticCurveTo(ex+10*s, eyeY-10*s, ex+6*s, eyeY-8*s);
+    ctx.stroke();
+  }
+
+  // Blush
+  ctx.fillStyle = "rgba(244,114,182,0.25)";
+  ctx.beginPath();
+  ctx.ellipse(cx-22*s, eyeY+12*s, 8*s, 5*s, 0, 0, Math.PI*2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(cx+22*s, eyeY+12*s, 8*s, 5*s, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Mouth
+  ctx.strokeStyle = "#e07070";
+  ctx.lineWidth = 2*s;
+  ctx.lineCap = "round";
+  ctx.beginPath();
+  ctx.arc(cx, eyeY+18*s, 7*s, 0.2, Math.PI-0.2);
+  ctx.stroke();
+
+  // Legs
+  ctx.fillStyle = skinColor;
+  ctx.fillRect(cx-18*s, cy+75*s, 14*s, 55*s);
+  ctx.fillRect(cx+4*s, cy+75*s, 14*s, 55*s);
+
+  // Arms
+  ctx.fillStyle = skinColor;
+  ctx.save();
+  ctx.translate(cx-42*s, cy+10*s);
+  ctx.rotate(-0.15 + Math.sin(animTime*0.8)*0.05);
+  ctx.fillRect(-6*s, 0, 12*s, 50*s);
+  ctx.beginPath();
+  ctx.ellipse(0, 53*s, 7*s, 6*s, 0, 0, Math.PI*2);
+  ctx.fill();
+  ctx.restore();
+  ctx.save();
+  ctx.translate(cx+42*s, cy+10*s);
+  ctx.rotate(0.15 - Math.sin(animTime*0.8)*0.05);
+  ctx.fillRect(-6*s, 0, 12*s, 50*s);
+  ctx.beginPath();
+  ctx.ellipse(0, 53*s, 7*s, 6*s, 0, 0, Math.PI*2);
+  ctx.fill();
+  ctx.restore();
+
+  // Shoes
+  ctx.fillStyle = "#1a1a2e";
+  roundRect(cx-20*s, cy+125*s, 18*s, 10*s, 4*s);
+  roundRect(cx+2*s, cy+125*s, 18*s, 10*s, 4*s);
+}
+
+function drawHair(cx, cy, s, hair){
+  ctx.save();
+  const c = hair.color;
+  ctx.fillStyle = c;
+
+  switch(hair.name){
+    case "Long Flowing":
+      ctx.beginPath();
+      ctx.ellipse(cx, cy-65*s, 42*s, 35*s, 0, 0, Math.PI*2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(cx-38*s, cy-55*s);
+      ctx.quadraticCurveTo(cx-50*s, cy+20*s, cx-35*s, cy+70*s);
+      ctx.lineTo(cx-20*s, cy+60*s);
+      ctx.quadraticCurveTo(cx-30*s, cy+10*s, cx-35*s, cy-40*s);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(cx+38*s, cy-55*s);
+      ctx.quadraticCurveTo(cx+50*s, cy+20*s, cx+35*s, cy+70*s);
+      ctx.lineTo(cx+20*s, cy+60*s);
+      ctx.quadraticCurveTo(cx+30*s, cy+10*s, cx+35*s, cy-40*s);
+      ctx.fill();
+      // Bangs
+      ctx.beginPath();
+      ctx.moveTo(cx-30*s, cy-85*s);
+      ctx.quadraticCurveTo(cx-20*s, cy-65*s, cx-5*s, cy-70*s);
+      ctx.quadraticCurveTo(cx, cy-95*s, cx+15*s, cy-85*s);
+      ctx.quadraticCurveTo(cx+25*s, cy-65*s, cx+35*s, cy-80*s);
+      ctx.lineTo(cx+38*s, cy-90*s);
+      ctx.quadraticCurveTo(cx, cy-105*s, cx-35*s, cy-90*s);
+      ctx.fill();
+      break;
+
+    case "Pixie Cut":
+      ctx.beginPath();
+      ctx.ellipse(cx, cy-68*s, 44*s, 30*s, 0, 0, Math.PI*2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(cx-40*s, cy-65*s);
+      ctx.quadraticCurveTo(cx-45*s, cy-40*s, cx-30*s, cy-35*s);
+      ctx.lineTo(cx-25*s, cy-45*s);
+      ctx.quadraticCurveTo(cx-35*s, cy-55*s, cx-35*s, cy-65*s);
+      ctx.fill();
+      // Side swept bangs
+      ctx.beginPath();
+      ctx.moveTo(cx+35*s, cy-80*s);
+      ctx.quadraticCurveTo(cx+10*s, cy-75*s, cx-20*s, cy-65*s);
+      ctx.lineTo(cx-15*s, cy-58*s);
+      ctx.quadraticCurveTo(cx+10*s, cy-65*s, cx+30*s, cy-70*s);
+      ctx.fill();
+      break;
+
+    case "Curly Bob":
+      // Base
+      ctx.beginPath();
+      ctx.ellipse(cx, cy-62*s, 43*s, 34*s, 0, 0, Math.PI*2);
+      ctx.fill();
+      // Curls
+      for(let i=0; i<12; i++){
+        const angle = (i/12)*Math.PI*2;
+        const rx = 44*s;
+        const ry = 35*s;
+        const px = cx + Math.cos(angle)*rx;
+        const py = cy-62*s + Math.sin(angle)*ry;
+        if(Math.sin(angle) > -0.3){
+          ctx.beginPath();
+          ctx.arc(px, py + (Math.sin(angle)>0?15*s:0), 12*s + Math.sin(i)*3*s, 0, Math.PI*2);
+          ctx.fill();
+        }
+      }
+      // Bangs
+      ctx.beginPath();
+      ctx.ellipse(cx, cy-92*s, 30*s, 12*s, 0, 0, Math.PI);
+      ctx.fill();
+      break;
+
+    case "Straight Sleek":
+      ctx.beginPath();
+      ctx.ellipse(cx, cy-64*s, 41*s, 33*s, 0, 0, Math.PI*2);
+      ctx.fill();
+      // Straight sides
+      ctx.fillRect(cx-42*s, cy-60*s, 12*s, 80*s);
+      ctx.fillRect(cx+30*s, cy-60*s, 12*s, 80*s);
+      // Bangs - blunt cut
+      ctx.fillRect(cx-32*s, cy-92*s, 64*s, 18*s);
+      ctx.beginPath();
+      ctx.ellipse(cx, cy-74*s, 32*s, 6*s, 0, 0, Math.PI);
+      ctx.fill();
+      break;
+
+    case "Wavy Lob":
+      ctx.beginPath();
+      ctx.ellipse(cx, cy-64*s, 43*s, 33*s, 0, 0, Math.PI*2);
+      ctx.fill();
+      // Wavy sides
+      for(let side=-1; side<=1; side+=2){
+        ctx.beginPath();
+        const sx = cx + side*38*s;
+        ctx.moveTo(sx, cy-55*s);
+        for(let j=0; j<4; j++){
+          const py = cy-55*s + j*22*s;
+          const px = sx + side*8*s*Math.sin(j*1.5+animTime*0.5);
+          ctx.quadraticCurveTo(sx+side*10*s*Math.sin((j+0.5)*1.5), py+11*s, px, py+22*s);
+        }
+        ctx.lineTo(sx-side*10*s, cy+30*s);
+        ctx.quadraticCurveTo(sx-side*5*s, cy-10*s, sx, cy-55*s);
+        ctx.fill();
+      }
+      // Side parted bangs
+      ctx.beginPath();
+      ctx.moveTo(cx-35*s, cy-85*s);
+      ctx.quadraticCurveTo(cx+15*s, cy-75*s, cx+35*s, cy-88*s);
+      ctx.quadraticCurveTo(cx+40*s, cy-95*s, cx+20*s, cy-98*s);
+      ctx.quadraticCurveTo(cx-10*s, cy-100*s, cx-40*s, cy-90*s);
+      ctx.fill();
+      break;
+
+    case "Afro Puff":
+      ctx.beginPath();
+      ctx.ellipse(cx, cy-95*s, 32*s, 28*s, 0, 0, Math.PI*2);
+      ctx.fill();
+      for(let i=0;i<8;i++){
+        const a = (i/8)*Math.PI*2;
+        ctx.beginPath();
+        ctx.arc(cx+Math.cos(a)*28*s, cy-95*s+Math.sin(a)*24*s, 14*s, 0, Math.PI*2);
+        ctx.fill();
+      }
+      ctx.beginPath();
+      ctx.ellipse(cx, cy-67*s, 40*s, 12*s, 0, 0, Math.PI);
+      ctx.fill();
+      break;
+
+    case "Twin Tails":
+      ctx.beginPath();
+      ctx.ellipse(cx, cy-64*s, 42*s, 34*s, 0, 0, Math.PI*2);
+      ctx.fill();
+      // Bangs
+      ctx.beginPath();
+      ctx.moveTo(cx-30*s, cy-85*s);
+      ctx.quadraticCurveTo(cx, cy-100*s, cx+30*s, cy-85*s);
+      ctx.quadraticCurveTo(cx+20*s, cy-75*s, cx, cy-78*s);
+      ctx.quadraticCurveTo(cx-20*s, cy-75*s, cx-30*s, cy-85*s);
+      ctx.fill();
+      // Twin tails
+      for(let side=-1; side<=1; side+=2){
+        const bx = cx + side*35*s;
+        ctx.beginPath();
+        ctx.moveTo(bx, cy-50*s);
+        ctx.quadraticCurveTo(bx+side*15*s, cy-20*s, bx+side*10*s, cy+30*s);
+        ctx.quadraticCurveTo(bx+side*5*s, cy+40*s, bx+side*15*s, cy+55*s);
+        ctx.lineTo(bx+side*5*s, cy+50*s);
+        ctx.quadraticCurveTo(bx-side*5*s, cy+20*s, bx-side*5*s, cy-40*s);
+        ctx.fill();
+        // Tie
+        ctx.fillStyle = COLORS.pink2;
+        ctx.beginPath();
+        ctx.ellipse(bx+side*2*s, cy-48*s, 5*s, 4*s, side*0.3, 0, Math.PI*2);
+        ctx.fill();
+        ctx.fillStyle = hair.color;
+      }
+      break;
+  }
+  ctx.restore();
+}
+
+function drawTop(cx, cy, s, top){
+  ctx.save();
+  ctx.fillStyle = top.color;
+  if(top.pattern === "stripes"){
+    ctx.beginPath();
+    ctx.moveTo(cx-40*s, cy+0*s);
+    ctx.lineTo(cx-38*s, cy+55*s);
+    ctx.lineTo(cx+38*s, cy+55*s);
+    ctx.lineTo(cx+40*s, cy+0*s);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = "#fff";
+    for(let i=0;i<6;i++){
+      const y1 = cy+5*s + i*9*s;
+      ctx.fillRect(cx-38*s, y1, 76*s, 3*s);
+    }
+  } else if(top.pattern === "dots"){
+    ctx.beginPath();
+    ctx.moveTo(cx-40*s, cy+0*s);
+    ctx.lineTo(cx-38*s, cy+55*s);
+    ctx.lineTo(cx+38*s, cy+55*s);
+    ctx.lineTo(cx+40*s, cy+0*s);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = "rgba(255,255,255,0.6)";
+    for(let i=0;i<5;i++){
+      for(let j=0;j<3;j++){
+        const px = cx-25*s + j*25*s + (i%2)*12*s;
+        const py = cy+8*s + i*10*s;
+        ctx.beginPath();
+        ctx.arc(px, py, 3*s, 0, Math.PI*2);
+        ctx.fill();
+      }
+    }
+  } else if(top.pattern === "floral"){
+    ctx.beginPath();
+    ctx.moveTo(cx-40*s, cy+0*s);
+    ctx.lineTo(cx-38*s, cy+55*s);
+    ctx.lineTo(cx+38*s, cy+55*s);
+    ctx.lineTo(cx+40*s, cy+0*s);
+    ctx.closePath();
+    ctx.fill();
+    const flowerColors = ["#fff","#fde68a","#c4b5fd"];
+    for(let i=0;i<4;i++){
+      const fx = cx-20*s + (i%2)*40*s;
+      const fy = cy+10*s + Math.floor(i/2)*22*s;
+      for(let p=0;p<5;p++){
+        const a = (p/5)*Math.PI*2 + i;
+        ctx.fillStyle = flowerColors[i%3];
+        ctx.beginPath();
+        ctx.ellipse(fx+Math.cos(a)*5*s, fy+Math.sin(a)*5*s, 3*s, 3*s, a, 0, Math.PI*2);
+        ctx.fill();
+      }
+      ctx.fillStyle = "#fbbf24";
+      ctx.beginPath();
+      ctx.arc(fx, fy, 2.5*s, 0, Math.PI*2);
+      ctx.fill();
+    }
+  } else {
+    // Solid
+    if(top.name === "Crop Top"){
+      ctx.beginPath();
+      ctx.moveTo(cx-40*s, cy+5*s);
+      ctx.lineTo(cx-36*s, cy+25*s);
+      ctx.lineTo(cx+36*s, cy+25*s);
+      ctx.lineTo(cx+40*s, cy+5*s);
+      ctx.closePath();
+      ctx.fill();
+    } else if(top.name === "Halter"){
+      ctx.beginPath();
+      ctx.moveTo(cx-10*s, cy-18*s);
+      ctx.lineTo(cx-38*s, cy+20*s);
+      ctx.lineTo(cx-30*s, cy+45*s);
+      ctx.lineTo(cx+30*s, cy+45*s);
+      ctx.lineTo(cx+38*s, cy+20*s);
+      ctx.lineTo(cx+10*s, cy-18*s);
+      ctx.closePath();
+      ctx.fill();
+    } else {
+      ctx.beginPath();
+      ctx.moveTo(cx-40*s, cy+0*s);
+      ctx.lineTo(cx-38*s, cy+55*s);
+      ctx.lineTo(cx+38*s, cy+55*s);
+      ctx.lineTo(cx+40*s, cy+0*s);
+      ctx.closePath();
+      ctx.fill();
+    }
+  }
+  ctx.restore();
+}
+
+function drawBottom(cx, cy, s, bottom){
+  ctx.save();
+  ctx.fillStyle = bottom.color;
+  if(bottom.type === "skirt"){
+    ctx.beginPath();
+    ctx.moveTo(cx-32*s, cy+52*s);
+    ctx.quadraticCurveTo(cx-45*s, cy+80*s, cx-40*s, cy+100*s);
+    ctx.lineTo(cx+40*s, cy+100*s);
+    ctx.quadraticCurveTo(cx+45*s, cy+80*s, cx+32*s, cy+52*s);
+    ctx.closePath();
+    ctx.fill();
+    if(bottom.name === "Pleated Skirt"){
+      ctx.strokeStyle = "rgba(0,0,0,0.15)";
+      ctx.lineWidth = 1*s;
+      for(let i=-3;i<=3;i++){
+        ctx.beginPath();
+        ctx.moveTo(cx+i*9*s, cy+55*s);
+        ctx.lineTo(cx+i*11*s, cy+98*s);
+        ctx.stroke();
+      }
+    }
+  } else if(bottom.type === "jeans" || bottom.type === "pants"){
+    // Left leg
+    ctx.beginPath();
+    ctx.moveTo(cx-30*s, cy+52*s);
+    ctx.lineTo(cx-34*s, cy+125*s);
+    ctx.lineTo(cx-2*s, cy+125*s);
+    ctx.lineTo(cx-2*s, cy+52*s);
+    ctx.closePath();
+    ctx.fill();
+    // Right leg
+    ctx.beginPath();
+    ctx.moveTo(cx+2*s, cy+52*s);
+    ctx.lineTo(cx+2*s, cy+125*s);
+    ctx.lineTo(cx+34*s, cy+125*s);
+    ctx.lineTo(cx+30*s, cy+52*s);
+    ctx.closePath();
+    ctx.fill();
+    if(bottom.name === "High Waist Jeans"){
+      ctx.strokeStyle = "rgba(255,255,255,0.2)";
+      ctx.lineWidth = 1.5*s;
+      ctx.beginPath();
+      ctx.moveTo(cx-25*s, cy+58*s);
+      ctx.lineTo(cx-25*s, cy+80*s);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx+25*s, cy+58*s);
+      ctx.lineTo(cx+25*s, cy+80*s);
+      ctx.stroke();
+    }
+  }
+  ctx.restore();
+}
+
+function drawAccessory(cx, cy, s, acc){
+  ctx.save();
+  switch(acc.type){
+    case "glasses":
+      ctx.strokeStyle = acc.color;
+      ctx.lineWidth = 2.5*s;
+      const gy = cy-58*s;
+      const gspread = 16*s;
+      // Left frame
+      ctx.beginPath();
+      ctx.ellipse(cx-gspread, gy, 12*s, 10*s, 0, 0, Math.PI*2);
+      ctx.stroke();
+      // Right frame
+      ctx.beginPath();
+      ctx.ellipse(cx+gspread, gy, 12*s, 10*s, 0, 0, Math.PI*2);
+      ctx.stroke();
+      // Bridge
+      ctx.beginPath();
+      ctx.moveTo(cx-gspread+12*s, gy);
+      ctx.lineTo(cx+gspread-12*s, gy);
+      ctx.stroke();
+      // Temples
+      ctx.beginPath();
+      ctx.moveTo(cx-gspread-12*s, gy);
+      ctx.lineTo(cx-gspread-22*s, gy-5*s);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx+gspread+12*s, gy);
+      ctx.lineTo(cx+gspread+22*s, gy-5*s);
+      ctx.stroke();
+      break;
+
+    case "hat":
+      const hy = cy-90*s;
+      if(acc.name === "Sun Hat"){
+        ctx.fillStyle = acc.color;
+        ctx.beginPath();
+        ctx.ellipse(cx, hy+10*s, 55*s, 10*s, 0, 0, Math.PI*2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(cx, hy-5*s, 35*s, 22*s, 0, Math.PI, 0);
+        ctx.fill();
+        ctx.fillStyle = COLORS.pink2;
+        ctx.fillRect(cx-33*s, hy+5*s, 66*s, 6*s);
+      } else if(acc.name === "Beret"){
+        ctx.fillStyle = acc.color;
+        ctx.beginPath();
+        ctx.ellipse(cx+5*s, cy-92*s, 35*s, 18*s, -0.2, 0, Math.PI*2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(cx+5*s, cy-108*s, 4*s, 0, Math.PI*2);
+        ctx.fill();
+      }
+      break;
+
+    case "necklace":
+      const ny = cy-22*s;
+      ctx.strokeStyle = acc.color;
+      ctx.lineWidth = acc.name === "Pearl Necklace" ? 3*s : 2*s;
+      if(acc.name === "Pearl Necklace"){
+        for(let i=0;i<9;i++){
+          const a = Math.PI*0.15 + (i/8)*Math.PI*0.7;
+          const px = cx + Math.cos(a)*28*s;
+          const py = ny + 20*s + Math.sin(a)*12*s;
+          ctx.fillStyle = "#f0f0f0";
+          ctx.beginPath();
+          ctx.arc(px, py, 3*s, 0, Math.PI*2);
+          ctx.fill();
+          ctx.strokeStyle = "rgba(200,200,200,0.5)";
+          ctx.lineWidth = 0.5*s;
+          ctx.beginPath();
+          ctx.arc(px-1*s, py-1*s, 1*s, 0, Math.PI*2);
+          ctx.stroke();
+        }
+      } else {
+        ctx.beginPath();
+        ctx.moveTo(cx-20*s, ny+15*s);
+        ctx.quadraticCurveTo(cx, ny+28*s, cx+20*s, ny+15*s);
+        ctx.stroke();
+      }
+      break;
+
+    case "headband":
+      ctx.strokeStyle = acc.color;
+      ctx.lineWidth = 6*s;
+      ctx.beginPath();
+      ctx.arc(cx, cy-62*s, 40*s, Math.PI+0.4, -0.4);
+      ctx.stroke();
+      // Bow
+      const bx = cx+28*s, by = cy-90*s;
+      ctx.fillStyle = acc.color;
+      ctx.beginPath();
+      ctx.ellipse(bx-6*s, by, 8*s, 5*s, -0.3, 0, Math.PI*2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(bx+6*s, by, 8*s, 5*s, 0.3, 0, Math.PI*2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(bx, by, 3*s, 0, Math.PI*2);
+      ctx.fill();
+      break;
+  }
+  ctx.restore();
+}
+
+function roundRect(x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.lineTo(x+w-r,y);
+  ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);
+  ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);
+  ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);
+  ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+  ctx.fill();
+}
+
+function drawButton(btn, text, active, small){
+  const hover = mouseX >= btn.x && mouseX <= btn.x+btn.w && mouseY >= btn.y && mouseY <= btn.y+btn.h;
+
+  if(active){
+    const grad = ctx.createLinearGradient(btn.x, btn.y, btn.x, btn.y+btn.h);
+    grad.addColorStop(0, COLORS.pink2);
+    grad.addColorStop(1, COLORS.purple3);
+    ctx.fillStyle = grad;
+  } else if(hover){
+    ctx.fillStyle = "rgba(255,255,255,0.15)";
+  } else {
+    ctx.fillStyle = "rgba(255,255,255,0.08)";
+  }
+  roundRect(btn.x, btn.y, btn.w, btn.h, 10);
+
+  if(active){
+    ctx.strokeStyle = COLORS.pink1;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    const r = 10;
+    ctx.moveTo(btn.x+r,btn.y);
+    ctx.lineTo(btn.x+btn.w-r,btn.y);
+    ctx.quadraticCurveTo(btn.x+btn.w,btn.y,btn.x+btn.w,btn.y+r);
+    ctx.lineTo(btn.x+btn.w,btn.y+btn.h-r);
+    ctx.quadraticCurveTo(btn.x+btn.w,btn.y+btn.h,btn.x+btn.w-r,btn.y+btn.h);
+    ctx.lineTo(btn.x+r,btn.y+btn.h);
+    ctx.quadraticCurveTo(btn.x,btn.y+btn.h,btn.x,btn.y+btn.h-r);
+    ctx.lineTo(btn.x,btn.y+r);
+    ctx.quadraticCurveTo(btn.x,btn.y,btn.x+r,btn.y);
+    ctx.closePath();
+    ctx.stroke();
+  }
+
+  ctx.fillStyle = active ? COLORS.white : (hover ? COLORS.white : COLORS.textDim);
+  ctx.font = small ? "bold 11px 'Segoe UI',sans-serif" : "bold 13px 'Segoe UI',sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(text, btn.x+btn.w/2, btn.y+btn.h/2);
+}
+
+let mouseX = -1, mouseY = -1;
+let clicked = false;
+
+function getEventPos(e){
+  if(e.touches && e.touches.length > 0) return {x:e.touches[0].clientX, y:e.touches[0].clientY};
+  return {x:e.clientX, y:e.clientY};
+}
+
+function onPointerMove(e){
+  const p = getEventPos(e);
+  mouseX = p.x; mouseY = p.y;
+}
+function onPointerDown(e){
+  const p = getEventPos(e);
+  mouseX = p.x; mouseY = p.y;
+  clicked = true;
+  e.preventDefault();
+}
+function onPointerUp(e){
+  e.preventDefault();
+}
+
+canvas.addEventListener("mousemove", onPointerMove);
+canvas.addEventListener("mousedown", onPointerDown);
+canvas.addEventListener("mouseup", onPointerUp);
+canvas.addEventListener("touchmove", onPointerMove, {passive:false});
+canvas.addEventListener("touchstart", onPointerDown, {passive:false});
+canvas.addEventListener("touchend", onPointerUp, {passive:false});
+
+function checkBtn(btn){
+  return mouseX >= btn.x && mouseX <= btn.x+btn.w && mouseY >= btn.y && mouseY <= btn.y+btn.h;
+}
+
+function getScoreForCombo(){
+  let base = 10;
+  // Unique items bonus
+  const hair = HAIR_STYLES[hairIdx];
+  const top = TOPS[topIdx];
+  const bottom = BOTTOMS[bottomIdx];
+  const acc = ACCESSORIES[accessoryIdx];
+
+  // Color harmony bonus
+  if(top.color === bottom.color) base += 5;
+  if(hair.color === acc.color) base += 5;
+  if(acc.type === "none") base += 2;
+
+  // Pattern + accessory bonus
+  if(top.pattern !== "solid" && acc.type !== "none") base += 5;
+
+  return base;
+}
+
+function incrementStyle(){
+  const pts = getScoreForCombo();
+  stylePoints += pts;
+  comboDisplay = pts;
+  lastComboTime = animTime;
+
+  if(stylePoints > bestScore){
+    bestScore = stylePoints;
+    try{ localStorage.setItem("salonBest", bestScore.toString()); }catch(e){}
+  }
+
+  playSparkle();
+  addSparkles(W/2, H/2 - 60, 12, [COLORS.pink1,COLORS.purple1,COLORS.gold,COLORS.white]);
+  for(let i=0;i<3;i++) addHeart(W/2 + (Math.random()-0.5)*120, H/2 - 40);
+}
+
+function shuffleRandom(){
+  hairIdx = Math.floor(Math.random()*HAIR_STYLES.length);
+  topIdx = Math.floor(Math.random()*TOPS.length);
+  bottomIdx = Math.floor(Math.random()*BOTTOMS.length);
+  accessoryIdx = Math.floor(Math.random()*ACCESSORIES.length);
+  incrementStyle();
+  playBigSparkle();
+}
+
+function resetOutfit(){
+  hairIdx = 0; topIdx = 0; bottomIdx = 0; accessoryIdx = 0;
+  playClick();
+}
+
+let lastTime = 0;
+function update(dt){
+  animTime += dt;
+
+  for(let i=sparkleParticles.length-1;i>=0;i--){
+    const p = sparkleParticles[i];
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.03;
+    p.life -= p.decay;
+    p.rotation += 0.05;
+    if(p.life <= 0) sparkleParticles.splice(i,1);
+  }
+  for(let i=floatingHearts.length-1;i>=0;i--){
+    const h = floatingHearts[i];
+    h.y += h.vy;
+    h.x += Math.sin(h.wobble+animTime*3)*0.5;
+    h.life -= h.decay;
+    if(h.life <= 0) floatingHearts.splice(i,1);
+  }
+}
+
+function drawParticles(){
+  sparkleParticles.forEach(p=>{
+    ctx.save();
+    ctx.globalAlpha = p.life;
+    drawStar(p.x, p.y, p.size, p.color, p.rotation);
+    ctx.restore();
+  });
+  floatingHearts.forEach(h=>{
+    ctx.save();
+    ctx.globalAlpha = h.life;
+    drawHeart(h.x, h.y, h.size, h.color);
+    ctx.restore();
+  });
+}
+
+function drawStartScreen(){
+  ctx.fillStyle = COLORS.bg;
+  ctx.fillRect(0,0,W,H);
+
+  // Decorative circles
+  const t = animTime;
+  ctx.globalAlpha = 0.08;
+  ctx.fillStyle = COLORS.pink2;
+  ctx.beginPath();
+  ctx.arc(W*0.2, H*0.3, 120+Math.sin(t)*20, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle = COLORS.purple3;
+  ctx.beginPath();
+  ctx.arc(W*0.8, H*0.6, 100+Math.cos(t*0.7)*15, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle = COLORS.blue1;
+  ctx.beginPath();
+  ctx.arc(W*0.5, H*0.8, 80+Math.sin(t*1.2)*10, 0, Math.PI*2);
+  ctx.fill();
+  ctx.globalAlpha = 1;
+
+  // Mini character preview
+  drawCharacter(W/2, H*0.35, Math.min(W,H)*0.0028);
+  drawHair(W/2, H*0.35, Math.min(W,H)*0.0028, HAIR_STYLES[2]);
+  drawTop(W/2, H*0.35, Math.min(W,H)*0.0028, TOPS[0]);
+  drawBottom(W/2, H*0.35, Math.min(W,H)*0.0028, BOTTOMS[0]);
+  drawAccessory(W/2, H*0.35, Math.min(W,H)*0.0028, ACCESSORIES[3]);
+
+  // Title
+  const titleY = H*0.6;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+
+  // Title glow
+  ctx.shadowColor = COLORS.pink2;
+  ctx.shadowBlur = 30;
+  ctx.fillStyle = COLORS.pink1;
+  ctx.font = "bold " + Math.min(W*0.1, 56) + "px 'Segoe UI',sans-serif";
+  ctx.fillText("Style Salon", W/2, titleY);
+  ctx.shadowBlur = 0;
+
+  ctx.fillStyle = COLORS.textDim;
+  ctx.font = "" + Math.min(W*0.035, 18) + "px 'Segoe UI',sans-serif";
+  ctx.fillText("Dress Up & Makeover", W/2, titleY + 35);
+
+  // Play button
+  const bw = Math.min(220, W*0.5);
+  const bh = 55;
+  startBtn = {x:W/2-bw/2, y:titleY+60, w:bw, h:bh};
+
+  const hover = mouseX >= startBtn.x && mouseX <= startBtn.x+bw && mouseY >= startBtn.y && mouseY <= startBtn.y+bh;
+  const grad = ctx.createLinearGradient(startBtn.x, startBtn.y, startBtn.x, startBtn.y+bh);
+  grad.addColorStop(0, COLORS.pink2);
+  grad.addColorStop(1, COLORS.purple3);
+  ctx.fillStyle = grad;
+  roundRect(startBtn.x, startBtn.y, bw, bh, 14);
+
+  if(hover){
+    ctx.strokeStyle = COLORS.white;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(startBtn.x+14,startBtn.y);
+    ctx.lineTo(startBtn.x+bw-14,startBtn.y);
+    ctx.quadraticCurveTo(startBtn.x+bw,startBtn.y,startBtn.x+bw,startBtn.y+14);
+    ctx.lineTo(startBtn.x+bw,startBtn.y+bh-14);
+    ctx.quadraticCurveTo(startBtn.x+bw,startBtn.y+bh,startBtn.x+bw-14,startBtn.y+bh);
+    ctx.lineTo(startBtn.x+14,startBtn.y+bh);
+    ctx.quadraticCurveTo(startBtn.x,startBtn.y+bh,startBtn.x,startBtn.y+bh-14);
+    ctx.lineTo(startBtn.x,startBtn.y+14);
+    ctx.quadraticCurveTo(startBtn.x,startBtn.y,startBtn.x+14,startBtn.y);
+    ctx.closePath();
+    ctx.stroke();
+  }
+
+  ctx.fillStyle = COLORS.white;
+  ctx.font = "bold " + Math.min(W*0.05, 26) + "px 'Segoe UI',sans-serif";
+  ctx.fillText("PLAY", W/2, startBtn.y+bh/2);
+
+  // Best score
+  if(bestScore > 0){
+    ctx.fillStyle = COLORS.gold;
+    ctx.font = "bold " + Math.min(W*0.03, 16) + "px 'Segoe UI',sans-serif";
+    ctx.fillText("Best Score: " + bestScore, W/2, startBtn.y+bh+30);
+  }
+
+  // Sound toggle on start
+  soundBtn = {x:W-50, y:10, w:40, h:40};
+  ctx.fillStyle = "rgba(255,255,255,0.1)";
+  roundRect(soundBtn.x, soundBtn.y, soundBtn.w, soundBtn.h, 8);
+  ctx.font = "20px 'Segoe UI',sans-serif";
+  ctx.fillStyle = COLORS.white;
+  ctx.textAlign = "center";
+  ctx.fillText(soundOn ? "\u{1F50A}" : "\u{1F507}", soundBtn.x+20, soundBtn.y+22);
+}
+
+function drawGameScreen(){
+  ctx.fillStyle = COLORS.bg;
+  ctx.fillRect(0,0,W,H);
+
+  // Background decorative elements
+  ctx.globalAlpha = 0.04;
+  ctx.fillStyle = COLORS.pink2;
+  ctx.beginPath();
+  ctx.arc(W*0.1, H*0.2, 80, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle = COLORS.purple3;
+  ctx.beginPath();
+  ctx.arc(W*0.9, H*0.4, 60, 0, Math.PI*2);
+  ctx.fill();
+  ctx.globalAlpha = 1;
+
+  const charScale = Math.min(W,H) * 0.0028;
+  const charX = W/2;
+  const charY = H*0.38;
+
+  // Platform / stage
+  ctx.fillStyle = "rgba(255,255,255,0.03)";
+  ctx.beginPath();
+  ctx.ellipse(charX, charY + 140*charScale, 80*charScale, 15*charScale, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Draw character
+  drawCharacter(charX, charY, charScale);
+
+  // Draw outfit (back to front layering)
+  drawBottom(charX, charY, charScale, BOTTOMS[bottomIdx]);
+  drawTop(charX, charY, charScale, TOPS[topIdx]);
+  drawHair(charX, charY, charScale, HAIR_STYLES[hairIdx]);
+  drawAccessory(charX, charY, charScale, ACCESSORIES[accessoryIdx]);
+
+  drawParticles();
+
+  // HUD
+  const hudH = 50;
+  ctx.fillStyle = "rgba(15,23,42,0.85)";
+  ctx.fillRect(0, 0, W, hudH);
+
+  // Style points
+  ctx.textAlign = "left";
+  ctx.textBaseline = "middle";
+  ctx.fillStyle = COLORS.gold;
+  ctx.font = "bold " + Math.min(W*0.04, 22) + "px 'Segoe UI',sans-serif";
+  ctx.fillText("\u2605 " + stylePoints, 15, hudH/2);
+
+  // Combo display
+  if(animTime - lastComboTime < 1.5 && lastComboTime > 0){
+    const alpha = 1 - (animTime - lastComboTime)/1.5;
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = COLORS.pink1;
+    ctx.font = "bold " + Math.min(W*0.04, 20) + "px 'Segoe UI',sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("+" + comboDisplay + " Style!", W/2, hudH/2 + Math.sin((animTime-lastComboTime)*4)*5);
+    ctx.globalAlpha = 1;
+  }
+
+  // Best score
+  ctx.textAlign = "right";
+  ctx.fillStyle = COLORS.textDim;
+  ctx.font = "" + Math.min(W*0.03, 14) + "px 'Segoe UI',sans-serif";
+  ctx.fillText("Best: " + bestScore, W-55, hudH/2);
+
+  // Sound button
+  soundBtn = {x:W-45, y:5, w:40, h:40};
+  ctx.fillStyle = "rgba(255,255,255,0.08)";
+  roundRect(soundBtn.x, soundBtn.y, soundBtn.w, soundBtn.h, 8);
+  ctx.font = "18px 'Segoe UI',sans-serif";
+  ctx.fillStyle = COLORS.white;
+  ctx.textAlign = "center";
+  ctx.fillText(soundOn ? "\u{1F50A}" : "\u{1F507}", soundBtn.x+20, soundBtn.y+21);
+
+  // Bottom panel
+  const panelTop = H*0.72;
+  const panelH = H - panelTop;
+
+  ctx.fillStyle = "rgba(15,23,42,0.9)";
+  ctx.fillRect(0, panelTop-1, W, panelH+1);
+
+  // Category tabs
+  const categories = ["Hair", "Tops", "Bottoms", "Acc."];
+  const catW = Math.min(90, (W-20)/4);
+  const catH = 36;
+  const catY = panelTop + 8;
+  catButtons = [];
+  categories.forEach((cat,i)=>{
+    const cx2 = 10 + i*(catW+4);
+    catButtons.push({x:cx2, y:catY, w:catW, h:catH});
+    drawButton({x:cx2, y:catY, w:catW, h:catH}, cat, categorySelect===i, true);
+  });
+
+  // Item buttons
+  let items;
+  let currentIdx;
+  switch(categorySelect){
+    case 0: items = HAIR_STYLES; currentIdx = hairIdx; break;
+    case 1: items = TOPS; currentIdx = topIdx; break;
+    case 2: items = BOTTOMS; currentIdx = bottomIdx; break;
+    case 3: items = ACCESSORIES; currentIdx = accessoryIdx; break;
+  }
+
+  const itemY = catY + catH + 10;
+  const itemH = 38;
+  const gap = 5;
+  const totalW = W - 20;
+  const itemW = Math.min(120, (totalW - gap*(items.length-1))/items.length);
+  const startX = (W - (items.length*(itemW+gap)-gap))/2;
+
+  buttons = [];
+  items.forEach((item,i)=>{
+    const bx = startX + i*(itemW+gap);
+    buttons.push({x:bx, y:itemY, w:itemW, h:itemH});
+    drawButton({x:bx, y:itemY, w:itemW, h:itemH}, item.name.split(" ")[0], currentIdx===i, true);
+  });
+
+  // Item color preview
+  const previewY = itemY + itemH + 8;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillStyle = COLORS.textDim;
+  ctx.font = "" + Math.min(W*0.025, 12) + "px 'Segoe UI',sans-serif";
+  const selectedItem = items[currentIdx];
+  let label = selectedItem.name;
+  if(selectedItem.colorName) label += " - " + selectedItem.colorName;
+  ctx.fillText(label, W/2, previewY + 5);
+
+  // Shuffle & Reset buttons
+  const actionY = previewY + 22;
+  const actionW = Math.min(100, W*0.22);
+  const actionH = 34;
+  shuffleBtn = {x:W/2-actionW-5, y:actionY, w:actionW, h:actionH};
+  resetBtn = {x:W/2+5, y:actionY, w:actionW, h:actionH};
+  drawButton(shuffleBtn, "Shuffle", false, true);
+  drawButton(resetBtn, "Reset", false, true);
+
+  // Style me button
+  const styleBtnW = Math.min(180, W*0.4);
+  const styleBtnH = 40;
+  const styleBtnY = actionY + actionH + 10;
+  const styleBtn = {x:W/2-styleBtnW/2, y:styleBtnY, w:styleBtnW, h:styleBtnH};
+  const sHover = mouseX >= styleBtn.x && mouseX <= styleBtn.x+styleBtn.w && mouseY >= styleBtn.y && mouseY <= styleBtn.y+styleBtn.h;
+  const sGrad = ctx.createLinearGradient(styleBtn.x, styleBtn.y, styleBtn.x, styleBtn.y+styleBtn.h);
+  sGrad.addColorStop(0, COLORS.gold);
+  sGrad.addColorStop(1, COLORS.goldDark);
+  ctx.fillStyle = sGrad;
+  roundRect(styleBtn.x, styleBtn.y, styleBtnW, styleBtnH, 10);
+  ctx.fillStyle = "#1a1a2e";
+  ctx.font = "bold " + Math.min(W*0.035, 18) + "px 'Segoe UI',sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("\u2728 Style Me! \u2728", W/2, styleBtnY+styleBtnH/2);
+
+  // Store for click detection
+  window._styleMeBtn = styleBtn;
+
+  // Stars decoration around character
+  const starT = animTime;
+  ctx.globalAlpha = 0.3;
+  for(let i=0;i<5;i++){
+    const a = starT*0.3 + i*(Math.PI*2/5);
+    const r = 100 + Math.sin(starT+i)*20;
+    const sx = charX + Math.cos(a)*r;
+    const sy = charY - 30 + Math.sin(a)*r*0.5;
+    drawStar(sx, sy, 4+Math.sin(starT*2+i)*2, COLORS.gold, starT+i);
+  }
+  ctx.globalAlpha = 1;
+}
+
+function handleClick(){
+  if(!clicked) return;
+  clicked = false;
+
+  if(state === "start"){
+    if(checkBtn(soundBtn)){
+      toggleSound();
+      playClick();
+      return;
+    }
+    if(checkBtn(startBtn)){
+      state = "game";
+      playBigSparkle();
+      addSparkles(W/2, startBtn.y, 20, [COLORS.pink1,COLORS.pink2,COLORS.purple1,COLORS.purple2,COLORS.gold]);
+      return;
+    }
+    return;
+  }
+
+  // Game state
+  if(checkBtn(soundBtn)){
+    toggleSound();
+    playClick();
+    return;
+  }
+
+  // Category buttons
+  for(let i=0;i<catButtons.length;i++){
+    if(checkBtn(catButtons[i])){
+      categorySelect = i;
+      playClick();
+      return;
+    }
+  }
+
+  // Item buttons
+  for(let i=0;i<buttons.length;i++){
+    if(checkBtn(buttons[i])){
+      switch(categorySelect){
+        case 0: hairIdx = i; break;
+        case 1: topIdx = i; break;
+        case 2: bottomIdx = i; break;
+        case 3: accessoryIdx = i; break;
+      }
+      playClick();
+      addSparkles(buttons[i].x+buttons[i].w/2, buttons[i].y+buttons[i].h/2, 5, [COLORS.pink1,COLORS.purple1]);
+      return;
+    }
+  }
+
+  // Shuffle
+  if(checkBtn(shuffleBtn)){
+    shuffleRandom();
+    return;
+  }
+
+  // Reset
+  if(checkBtn(resetBtn)){
+    resetOutfit();
+    return;
+  }
+
+  // Style me
+  if(window._styleMeBtn && checkBtn(window._styleMeBtn)){
+    incrementStyle();
+    return;
+  }
+}
+
+function gameLoop(timestamp){
+  const dt = Math.min((timestamp - lastTime)/1000, 0.05);
+  lastTime = timestamp;
+
+  update(dt);
+
+  if(state === "start"){
+    drawStartScreen();
+  } else {
+    drawGameScreen();
+  }
+
+  handleClick();
+
+  requestAnimationFrame(gameLoop);
+}
+
+requestAnimationFrame(gameLoop);
+
+})();
+</script>
+</body>
+</html>

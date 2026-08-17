@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>Racket Rumble</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#0a0a0a;font-family:'Segoe UI',Arial,sans-serif;touch-action:none;user-select:none;-webkit-user-select:none}
+#gameCanvas{display:block;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
+#overlay{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10}
+#overlay.hidden{display:none}
+#overlay .bg{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:0}
+#overlay .content{position:relative;z-index:1;text-align:center;color:#fff;padding:20px}
+#overlay h1{font-size:clamp(2rem,8vw,5rem);font-weight:900;background:linear-gradient(135deg,#4ade80,#22d3ee,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;letter-spacing:2px}
+#overlay .subtitle{font-size:clamp(0.8rem,2.5vw,1.3rem);color:#94a3b8;margin-bottom:40px;font-weight:300}
+#overlay .play-btn{padding:16px 60px;font-size:clamp(1rem,3vw,1.4rem);font-weight:700;border:none;border-radius:50px;cursor:pointer;background:linear-gradient(135deg,#4ade80,#22d3ee);color:#0a0a0a;transition:transform .15s,box-shadow .15s;box-shadow:0 0 30px rgba(74,222,128,0.3);letter-spacing:1px}
+#overlay .play-btn:hover{transform:scale(1.05);box-shadow:0 0 50px rgba(74,222,128,0.5)}
+#overlay .play-btn:active{transform:scale(0.97)}
+#overlay .stats{margin-top:30px;font-size:clamp(0.7rem,2vw,0.95rem);color:#64748b}
+#overlay .controls-info{margin-top:20px;font-size:clamp(0.65rem,1.8vw,0.85rem);color:#475569;max-width:400px;line-height:1.6}
+#winOverlay{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:20}
+#winOverlay.hidden{display:none}
+#winOverlay .bg{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:0}
+#winOverlay .content{position:relative;z-index:1;text-align:center;color:#fff;padding:20px}
+#winOverlay h1{font-size:clamp(1.8rem,7vw,4rem);font-weight:900;margin-bottom:10px}
+#winOverlay .score-line{font-size:clamp(1rem,3vw,1.6rem);color:#94a3b8;margin-bottom:30px}
+#winOverlay .play-btn{padding:14px 50px;font-size:clamp(0.9rem,2.5vw,1.2rem);font-weight:700;border:none;border-radius:50px;cursor:pointer;background:linear-gradient(135deg,#4ade80,#22d3ee);color:#0a0a0a;transition:transform .15s}
+#winOverlay .play-btn:hover{transform:scale(1.05)}
+</style>
+</head>
+<body>
+<canvas id="gameCanvas"></canvas>
+<div id="overlay">
+  <div class="bg"></div>
+  <div class="content">
+    <h1>RACKET RUMBLE</h1>
+    <p class="subtitle">Fast-Paced Tennis Showdown</p>
+    <button class="play-btn" id="playBtn">PLAY</button>
+    <p class="stats" id="matchStats"></p>
+    <p class="controls-info">Mouse / Touch to move racket<br>Double-tap for Power Smash<br>First to 7 points wins a set</p>
+  </div>
+</div>
+<div id="winOverlay" class="hidden">
+  <div class="bg"></div>
+  <div class="content">
+    <h1 id="winTitle"></h1>
+    <p class="score-line" id="winScore"></p>
+    <button class="play-btn" id="replayBtn">PLAY AGAIN</button>
+  </div>
+</div>
+<script>
+(function(){
+"use strict";
+var canvas=document.getElementById("gameCanvas");
+var ctx=canvas.getContext("2d");
+var overlayEl=document.getElementById("overlay");
+var winOverlayEl=document.getElementById("winOverlay");
+var playBtn=document.getElementById("playBtn");
+var replayBtn=document.getElementById("replayBtn");
+var matchStatsEl=document.getElementById("matchStats");
+var winTitleEl=document.getElementById("winTitle");
+var winScoreEl=document.getElementById("winScore");
+
+var dpr=window.devicePixelRatio||1;
+var W=0,H=0;
+var courtTop=0,courtBot=0,courtLeft=0,courtRight=0;
+var courtW=0,courtH=0;
+var netY=0;
+var racketW=0,racketH=0;
+var ballRadius=0,fontSize=0;
+
+function resize(){
+  var w=window.innerWidth,h=window.innerHeight;
+  var aspect=0.55;
+  if(w/h<aspect){W=w;H=w/aspect}else{H=h;W=h*aspect}
+  canvas.style.width=W+"px";canvas.style.height=H+"px";
+  canvas.width=W*dpr;canvas.height=H*dpr;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  courtTop=H*0.06;courtBot=H*0.94;
+  courtLeft=W*0.05;courtRight=W*0.95;
+  courtW=courtRight-courtLeft;courtH=courtBot-courtTop;
+  netY=H*0.5;
+  racketW=W*0.18;racketH=H*0.025;
+  ballRadius=W*0.015;fontSize=W*0.035;
+}
+
+var audioCtx=null;
+function initAudio(){
+  if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+}
+function playTone(freq,dur,type,vol){
+  if(!audioCtx)return;
+  try{
+    var o=audioCtx.createOscillator(),g=audioCtx.createGain();
+    o.type=type||"sine";o.frequency.value=freq;
+    g.gain.setValueAtTime(vol||0.15,audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+dur);
+    o.connect(g);g.connect(audioCtx.destination);
+    o.start();o.stop(audioCtx.currentTime+dur);
+  }catch(e){}
+}
+function sfxHit(power){
+  playTone(power?880:520,0.1,"triangle",0.2);
+  playTone(power?1320:660,0.08,"sine",0.1);
+}
+function sfxBounce(){playTone(300,0.06,"square",0.08)}
+function sfxScore(){
+  playTone(523,0.15,"sine",0.15);
+  setTimeout(function(){playTone(659,0.15,"sine",0.15)},100);
+  setTimeout(function(){playTone(784,0.2,"sine",0.18)},200);
+}
+function sfxWin(){
+  [523,659,784,1047].forEach(function(f,i){
+    setTimeout(function(){playTone(f,0.25,"sine",0.18)},i*120);
+  });
+}
+function sfxPower(){
+  playTone(200,0.15,"sawtooth",0.12);
+  playTone(400,0.12,"triangle",0.15);
+}
+function sfxWall(){playTone(220,0.04,"square",0.06)}
+
+var STATE={MENU:0,PLAYING:1,POINT_OVER:2,SET_OVER:3,GAME_OVER:4};
+var state=STATE.MENU;
+var soundOn=true;
+var lastPointWinner="";
+var matchWinner="";
+
+var playerScore=0,aiScore=0;
+var playerSets=0,aiSets=0;
+var rallyCount=0;
+var powerCharges=3,maxPowerCharges=3;
+var powerRegenTimer=0;
+var aiDifficulty=1;
+
+var ball={x:0,y:0,vx:0,vy:0,speed:0,active:false,trail:[]};
+var playerRacket={x:0,y:0};
+var aiRacket={x:0,y:0};
+var mouseX=0,mouseY=0;
+var pointOverTimer=0;
+
+var particles=[];
+function spawnParticles(x,y,color,count){
+  for(var i=0;i<count;i++){
+    particles.push({x:x,y:y,vx:(Math.random()-0.5)*6,vy:(Math.random()-0.5)*6,
+      life:1,decay:0.02+Math.random()*0.03,r:2+Math.random()*3,color:color});
+  }
+}
+function updateParticles(){
+  for(var i=particles.length-1;i>=0;i--){
+    var p=particles[i];p.x+=p.vx;p.y+=p.vy;p.vx*=0.96;p.vy*=0.96;p.life-=p.decay;
+    if(p.life<=0)particles.splice(i,1);
+  }
+}
+function drawParticles(){
+  for(var i=0;i<particles.length;i++){
+    var p=particles[i];ctx.globalAlpha=p.life;ctx.fillStyle=p.color;
+    ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();
+  }
+  ctx.globalAlpha=1;
+}
+
+var lastTapTime=0;
+function handleDoubleTap(){
+  var now=Date.now();
+  if(now-lastTapTime<300&&powerCharges>0){lastTapTime=0;return true}
+  lastTapTime=now;return false;
+}
+
+function resetBall(dir){
+  ball.x=W/2;ball.y=netY;
+  var sp=W*0.006;ball.speed=sp;
+  ball.vx=(Math.random()-0.5)*sp*0.5;
+  ball.vy=dir*sp;ball.active=true;ball.trail=[];
+  rallyCount=0;
+}
+function resetMatch(){
+  playerScore=0;aiScore=0;playerSets=0;aiSets=0;
+  aiDifficulty=1;powerCharges=maxPowerCharges;powerRegenTimer=0;
+  particles=[];
+  startPoint();
+}
+function startPoint(){
+  playerRacket.x=W/2;playerRacket.y=courtBot-H*0.07;
+  aiRacket.x=W/2;aiRacket.y=courtTop+H*0.07;
+  mouseX=W/2;mouseY=playerRacket.y;
+  resetBall(Math.random()>0.5?1:-1);
+  state=STATE.PLAYING;
+}
+
+function winPoint(winner){
+  state=STATE.POINT_OVER;
+  ball.active=false;pointOverTimer=90;
+  lastPointWinner=winner;
+  if(winner==="player"){
+    playerScore++;sfxScore();
+    spawnParticles(W/2,netY,"#4ade80",30);
+  }else{
+    aiScore++;sfxScore();
+    spawnParticles(W/2,netY,"#f87171",30);
+  }
+  aiDifficulty+=0.12;
+}
+
+function checkSetWin(){
+  if(playerScore>=7||aiScore>=7){
+    if(playerScore>=7)playerSets++;else aiSets++;
+    if(playerSets>=2||aiSets>=2){
+      state=STATE.GAME_OVER;
+      matchWinner=playerSets>=2?"player":"ai";
+      pointOverTimer=120;
+    }else{
+      state=STATE.SET_OVER;pointOverTimer=120;
+    }
+  }
+}
+
+var aiTargetX=W/2,aiReactionTimer=0;
+function updateAI(){
+  aiReactionTimer--;
+  if(aiReactionTimer<=0){
+    aiReactionTimer=8+Math.floor(Math.random()*6);
+    if(ball.active&&ball.vy<0){
+      var predictX=ball.x+ball.vx*Math.abs((aiRacket.y-ball.y)/(ball.vy||1));
+      predictX=Math.max(courtLeft+racketW/2,Math.min(courtRight-racketW/2,predictX));
+      var jitter=(Math.random()-0.5)*courtW*0.15/Math.max(aiDifficulty,1);
+      aiTargetX=predictX+jitter;
+    }else{aiTargetX=W/2}
+  }
+  var spd=W*0.008*(0.7+aiDifficulty*0.25);
+  var dx=aiTargetX-aiRacket.x;
+  if(Math.abs(dx)>2)aiRacket.x+=Math.sign(dx)*Math.min(Math.abs(dx),spd);
+  aiRacket.x=Math.max(courtLeft+racketW/2,Math.min(courtRight-racketW/2,aiRacket.x));
+}
+
+function hitBall(rx,ry,isPlayer,power){
+  var dx=ball.x-rx;
+  var relX=dx/(racketW/2);
+  var base=W*0.006;
+  var bonus=rallyCount*W*0.00025;
+  var sp=(base+bonus)*(power?2.8:1);
+  var angle=relX*0.7;
+  ball.vx=Math.sin(angle)*sp;
+  ball.vy=(isPlayer?-1:1)*Math.cos(angle)*sp;
+  ball.speed=sp;rallyCount++;
+  sfxHit(power);
+  spawnParticles(ball.x,ball.y,isPlayer?"#22d3ee":"#fb923c",power?20:10);
+}
+
+function checkRacketCollision(rx,ry,isPlayer){
+  var dx=ball.x-rx,dy=ball.y-ry;
+  if(Math.abs(dx)<racketW/2+ballRadius&&Math.abs(dy)<racketH/2+ballRadius){
+    if(isPlayer&&ball.vy>0)return true;
+    if(!isPlayer&&ball.vy<0)return true;
+  }
+  return false;
+}
+
+function update(){
+  if(state===STATE.PLAYING){
+    powerRegenTimer++;
+    if(powerRegenTimer>=300){powerRegenTimer=0;if(powerCharges<maxPowerCharges)powerCharges++}
+    updateAI();
+    if(ball.active){
+      ball.x+=ball.vx;ball.y+=ball.vy;
+      ball.trail.push({x:ball.x,y:ball.y});
+      if(ball.trail.length>25)ball.trail.shift();
+      if(ball.x-ballRadius<courtLeft){ball.x=courtLeft+ballRadius;ball.vx=Math.abs(ball.vx);sfxWall()}
+      if(ball.x+ballRadius>courtRight){ball.x=courtRight-ballRadius;ball.vx=-Math.abs(ball.vx);sfxWall()}
+      if(checkRacketCollision(playerRacket.x,playerRacket.y,true)){
+        hitBall(playerRacket.x,playerRacket.y,true,false);
+      }else if(checkRacketCollision(aiRacket.x,aiRacket.y,false)){
+        hitBall(aiRacket.x,aiRacket.y,false,false);
+      }
+      if(ball.y-ballRadius<courtTop-20){winPoint("player")}
+      else if(ball.y+ballRadius>courtBot+20){winPoint("ai")}
+    }
+    playerRacket.x+=(mouseX-playerRacket.x)*0.25;
+    if(Math.abs(mouseX-playerRacket.x)<1)playerRacket.x=mouseX;
+    playerRacket.x=Math.max(courtLeft+racketW/2,Math.min(courtRight-racketW/2,playerRacket.x));
+  }else if(state===STATE.POINT_OVER){
+    pointOverTimer--;
+    if(pointOverTimer<=0){
+      checkSetWin();
+      if(state===STATE.PLAYING||state===STATE.MENU){/* shouldn't happen but guard */}
+      if(state!==STATE.SET_OVER&&state!==STATE.GAME_OVER)startPoint();
+    }
+  }else if(state===STATE.SET_OVER){
+    pointOverTimer--;
+    if(pointOverTimer<=0){
+      playerScore=0;aiScore=0;
+      startPoint();
+    }
+  }else if(state===STATE.GAME_OVER){
+    pointOverTimer--;
+    if(pointOverTimer<=0){
+      var isP=matchWinner==="player";
+      winTitleEl.textContent=isP?"You Win the Match!":"CPU Wins the Match!";
+      winTitleEl.style.color=isP?"#4ade80":"#f87171";
+      winScoreEl.textContent=playerSets+" - "+aiSets+" sets";
+      winOverlayEl.classList.remove("hidden");
+      overlayEl.classList.add("hidden");
+      sfxWin();
+      var wins=parseInt(localStorage.getItem("rr_wins")||"0");
+      if(isP)wins++;
+      localStorage.setItem("rr_wins",wins);
+      state=STATE.MENU;
+    }
+  }
+  updateParticles();
+}
+
+function drawCourt(){
+  ctx.fillStyle="#1a472a";
+  ctx.fillRect(courtLeft,courtTop,courtW,courtH);
+  ctx.fillStyle="#1e5233";
+  var m=W*0.02;
+  ctx.fillRect(courtLeft+m,courtTop+m,courtW-m*2,courtH-m*2);
+  ctx.strokeStyle="rgba(255,255,255,0.6)";ctx.lineWidth=2;
+  ctx.strokeRect(courtLeft+m,courtTop+m,courtW-m*2,courtH-m*2);
+  var sv=courtW*0.2;
+  ctx.beginPath();
+  ctx.moveTo(courtLeft+sv,courtTop+m);ctx.lineTo(courtLeft+sv,courtBot-m);
+  ctx.moveTo(courtRight-sv,courtTop+m);ctx.lineTo(courtRight-sv,courtBot-m);
+  ctx.stroke();
+  ctx.strokeStyle="rgba(255,255,255,0.35)";ctx.setLineDash([6,4]);
+  ctx.beginPath();ctx.moveTo(courtLeft,netY);ctx.lineTo(courtRight,netY);ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.strokeStyle="rgba(255,255,255,0.15)";ctx.lineWidth=1;
+  ctx.beginPath();
+  ctx.moveTo(courtLeft,courtTop);ctx.lineTo(courtRight,courtTop);
+  ctx.moveTo(courtLeft,courtBot);ctx.lineTo(courtRight,courtBot);
+  ctx.moveTo(courtLeft,courtTop);ctx.lineTo(courtLeft,courtBot);
+  ctx.moveTo(courtRight,courtTop);ctx.lineTo(courtRight,courtBot);
+  ctx.stroke();
+}
+
+function drawRacket(x,y,color){
+  ctx.save();ctx.translate(x,y);
+  var gw=ctx.createRadialGradient(0,0,racketW*0.1,0,0,racketW*0.6);
+  gw.addColorStop(0,color+"44");gw.addColorStop(1,"transparent");
+  ctx.fillStyle=gw;
+  ctx.fillRect(-racketW*0.6,-racketH*3,racketW*1.2,racketH*6);
+  ctx.fillStyle=color;ctx.shadowColor=color;ctx.shadowBlur=12;
+  var rw=racketW*0.9,rh=racketH;
+  ctx.beginPath();ctx.roundRect(-rw/2,-rh/2,rw,rh,rh/2);ctx.fill();
+  ctx.strokeStyle="#fff";ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.roundRect(-rw/2,-rh/2,rw,rh,rh/2);ctx.stroke();
+  ctx.shadowBlur=0;
+  ctx.fillStyle="#555";ctx.fillRect(-2,rh/2,4,racketW*0.08);
+  ctx.restore();
+}
+
+function drawBall(){
+  if(!ball.active&&state!==STATE.POINT_OVER)return;
+  for(var i=0;i<ball.trail.length;i++){
+    var t=ball.trail[i],a=(i/ball.trail.length)*0.4,sz=ballRadius*(i/ball.trail.length)*0.7;
+    ctx.fillStyle="rgba(255,255,100,"+a+")";
+    ctx.beginPath();ctx.arc(t.x,t.y,sz,0,Math.PI*2);ctx.fill();
+  }
+  if(!ball.active)return;
+  ctx.save();ctx.shadowColor="#ffeb3b";ctx.shadowBlur=15;
+  var g=ctx.createRadialGradient(ball.x-ballRadius*0.3,ball.y-ballRadius*0.3,0,ball.x,ball.y,ballRadius);
+  g.addColorStop(0,"#fff9c4");g.addColorStop(0.5,"#ffeb3b");g.addColorStop(1,"#f59e0b");
+  ctx.fillStyle=g;ctx.beginPath();ctx.arc(ball.x,ball.y,ballRadius,0,Math.PI*2);ctx.fill();
+  ctx.shadowBlur=0;ctx.restore();
+}
+
+var soundBtnRect={x:0,y:0,w:0,h:0};
+function drawHUD(){
+  ctx.save();ctx.textAlign="center";ctx.textBaseline="top";
+  var sy=6;
+  ctx.fillStyle="rgba(0,0,0,0.5)";ctx.fillRect(W*0.15,sy,W*0.7,fontSize*2.2+8);
+  ctx.font="bold "+fontSize*0.75+"px 'Segoe UI',Arial,sans-serif";
+  ctx.fillStyle="#94a3b8";
+  ctx.fillText("YOU  "+playerSets,W*0.28,sy+4);
+  ctx.fillText(aiSets+"  CPU",W*0.72,sy+4);
+  ctx.font="bold "+fontSize*1.1+"px 'Segoe UI',Arial,sans-serif";
+  ctx.fillStyle="#4ade80";ctx.fillText(""+playerScore,W*0.38,sy+4+fontSize*0.8);
+  ctx.fillStyle="#f87171";ctx.fillText(""+aiScore,W*0.62,sy+4+fontSize*0.8);
+  ctx.font="bold "+fontSize*0.45+"px 'Segoe UI',Arial,sans-serif";
+  ctx.fillStyle="#64748b";
+  ctx.fillText("SET "+(Math.max(playerSets,aiSets)+1),W*0.5,sy+4+fontSize*1.7);
+  ctx.textAlign="left";ctx.textBaseline="bottom";
+  ctx.font="bold "+fontSize*0.42+"px 'Segoe UI',Arial,sans-serif";
+  ctx.fillStyle="#64748b";ctx.fillText("Rally: "+rallyCount,8,H-6);
+  var px=8;
+  for(var i=0;i<maxPowerCharges;i++){
+    ctx.fillStyle=i<powerCharges?"#facc15":"#333";
+    ctx.beginPath();ctx.arc(px+8,H-22,5,0,Math.PI*2);ctx.fill();px+=18;
+  }
+  ctx.fillStyle="#64748b";ctx.fillText("Power",px+4,H-16);
+  ctx.textAlign="right";
+  ctx.fillStyle=soundOn?"#4ade80":"#555";ctx.font="bold "+fontSize*0.5+"px Arial";
+  ctx.fillText(soundOn?"\u266B":"\u2716",W-8,H-8);
+  soundBtnRect={x:W-40,y:H-40,w:36,h:32};
+  ctx.restore();
+}
+
+function drawPointMessage(msg,color){
+  if(!msg)return;
+  ctx.save();ctx.textAlign="center";ctx.textBaseline="middle";
+  ctx.font="bold "+fontSize*1.2+"px 'Segoe UI',Arial,sans-serif";
+  ctx.fillStyle=color;ctx.shadowColor=color;ctx.shadowBlur=20;
+  ctx.fillText(msg,W/2,H/2);ctx.shadowBlur=0;ctx.restore();
+}
+
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle="#0a0a0a";ctx.fillRect(0,0,W,H);
+  drawCourt();
+  drawRacket(aiRacket.x,aiRacket.y,"#fb923c");
+  drawBall();
+  drawRacket(playerRacket.x,playerRacket.y,"#22d3ee");
+  drawParticles();
+  drawHUD();
+  if(state===STATE.POINT_OVER&&pointOverTimer>50){
+    var msg=lastPointWinner==="player"?"Point YOU!":"Point CPU!";
+    drawPointMessage(msg,lastPointWinner==="player"?"#4ade80":"#f87171");
+  }
+  if(state===STATE.SET_OVER){
+    drawPointMessage((playerScore>=7?"You win":"CPU wins")+" the set!",
+      playerScore>=7?"#4ade80":"#f87171");
+  }
+}
+
+function gameLoop(){
+  resize();update();draw();
+  requestAnimationFrame(gameLoop);
+}
+
+function startGame(){
+  overlayEl.classList.add("hidden");
+  winOverlayEl.classList.add("hidden");
+  resetMatch();
+}
+
+function getPos(e){
+  var rect=canvas.getBoundingClientRect();
+  var t=e.touches?e.touches[0]:e;
+  return{x:t.clientX-rect.left,y:t.clientY-rect.top};
+}
+
+canvas.addEventListener("mousemove",function(e){
+  var r=canvas.getBoundingClientRect();
+  mouseX=e.clientX-r.left;mouseY=e.clientY-r.top;
+});
+
+function hitSoundCheck(e){
+  var r=canvas.getBoundingClientRect();
+  var cx=e.clientX-r.left,cy=e.clientY-r.top;
+  if(cx>=soundBtnRect.x&&cx<=soundBtnRect.x+soundBtnRect.w&&
+     cy>=soundBtnRect.y&&cy<=soundBtnRect.y+soundBtnRect.h){
+    soundOn=!soundOn;return true;
+  }
+  return false;
+}
+
+canvas.addEventListener("click",function(e){
+  if(!hitSoundCheck(e)&&state===STATE.PLAYING&&handleDoubleTap()&&powerCharges>0){
+    powerCharges--;sfxPower();
+    hitBall(playerRacket.x,playerRacket.y,true,true);
+    spawnParticles(ball.x,ball.y,"#facc15",25);
+  }
+});
+canvas.addEventListener("mousedown",function(e){
+  initAudio();
+  if(!hitSoundCheck(e)&&state===STATE.PLAYING&&handleDoubleTap()&&powerCharges>0){
+    powerCharges--;sfxPower();
+    hitBall(playerRacket.x,playerRacket.y,true,true);
+    spawnParticles(ball.x,ball.y,"#facc15",25);
+  }
+});
+canvas.addEventListener("touchstart",function(e){
+  e.preventDefault();initAudio();
+  var p=getPos(e);mouseX=p.x;mouseY=p.y;
+  if(state===STATE.PLAYING&&handleDoubleTap()&&powerCharges>0){
+    powerCharges--;sfxPower();
+    hitBall(playerRacket.x,playerRacket.y,true,true);
+    spawnParticles(ball.x,ball.y,"#facc15",25);
+  }
+},{passive:false});
+canvas.addEventListener("touchmove",function(e){
+  e.preventDefault();var p=getPos(e);mouseX=p.x;mouseY=p.y;
+},{passive:false});
+
+playBtn.addEventListener("click",function(){initAudio();startGame()});
+replayBtn.addEventListener("click",function(){initAudio();startGame()});
+window.addEventListener("resize",resize);
+
+function updateStats(){
+  var w=parseInt(localStorage.getItem("rr_wins")||"0");
+  matchStatsEl.textContent="Match Wins: "+w;
+}
+
+resize();updateStats();gameLoop();
+})();
+</script>
+</body>
+</html>

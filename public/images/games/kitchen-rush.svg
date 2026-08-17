@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f172a"/>
+      <stop offset="1" stop-color="#431407"/>
+    </linearGradient>
+  </defs>
+  <rect width="200" height="200" fill="url(#bg)"/>
+  <!-- plate -->
+  <ellipse cx="100" cy="155" rx="60" ry="14" fill="#1e293b" stroke="#f97316" stroke-width="2"/>
+  <!-- chef hat puff -->
+  <circle cx="78" cy="42" r="22" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1.5"/>
+  <circle cx="100" cy="34" r="24" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1.5"/>
+  <circle cx="122" cy="42" r="22" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1.5"/>
+  <!-- hat band -->
+  <rect x="74" y="56" width="52" height="20" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <!-- steam lines -->
+  <path d="M88 22 Q84 10 88 0" stroke="#fbbf24" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.7"/>
+  <path d="M100 18 Q96 6 100 -4" stroke="#fbbf24" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.7"/>
+  <path d="M112 22 Q108 10 112 0" stroke="#fbbf24" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.7"/>
+  <!-- spatula left -->
+  <g transform="translate(38,100) rotate(-20)">
+    <rect x="-4" y="0" width="8" height="50" rx="3" fill="#a1a1aa" stroke="#71717a" stroke-width="1"/>
+    <rect x="-8" y="-18" width="16" height="20" rx="3" fill="#d4d4d8" stroke="#a1a1aa" stroke-width="1.5"/>
+  </g>
+  <!-- whisk right -->
+  <g transform="translate(162,95) rotate(15)">
+    <rect x="-3" y="0" width="6" height="48" rx="3" fill="#a1a1aa" stroke="#71717a" stroke-width="1"/>
+    <ellipse cx="0" cy="-10" rx="8" ry="14" fill="none" stroke="#d4d4d8" stroke-width="2"/>
+    <ellipse cx="0" cy="-10" rx="4" ry="12" fill="none" stroke="#d4d4d8" stroke-width="1.5"/>
+  </g>
+  <!-- flame dots -->
+  <g fill="#f97316" opacity="0.8">
+    <circle cx="80" cy="145" r="3"/>
+    <circle cx="100" cy="143" r="3.5"/>
+    <circle cx="120" cy="145" r="3"/>
+  </g>
+  <g fill="#fbbf24" opacity="0.6">
+    <circle cx="90" cy="148" r="2"/>
+    <circle cx="110" cy="148" r="2"/>
+  </g>
+</svg>

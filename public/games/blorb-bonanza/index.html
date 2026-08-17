@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Blorb Bonanza</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#1a1025;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;touch-action:none;user-select:none;-webkit-user-select:none}
+canvas{display:block;position:absolute;top:0;left:0;width:100%;height:100%}
+#startOverlay{position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse at center,#2a1a3a 0%,#1a1025 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;transition:opacity .5s}
+#startOverlay.hidden{opacity:0;pointer-events:none}
+#startTitle{font-size:clamp(2rem,8vw,4.5rem);font-weight:900;background:linear-gradient(135deg,#7cff6b,#c06bff,#ff9f43);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-shadow:none;margin-bottom:.2em;letter-spacing:.02em}
+#startSub{color:#b8a0cc;font-size:clamp(.9rem,2.5vw,1.3rem);margin-bottom:2em;text-align:center;padding:0 1em}
+#playBtn{padding:.8em 2.5em;font-size:clamp(1.2rem,3vw,1.8rem);font-weight:700;border:none;border-radius:50px;background:linear-gradient(135deg,#7cff6b,#4ecdc4);color:#1a1025;cursor:pointer;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 25px rgba(124,255,107,.35)}
+#playBtn:hover{transform:scale(1.07);box-shadow:0 6px 35px rgba(124,255,107,.5)}
+#playBtn:active{transform:scale(.97)}
+#startBlobCanvas{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
+#hud{position:fixed;top:0;left:0;width:100%;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;z-index:50;pointer-events:none}
+#hud>*{pointer-events:auto}
+.hud-left,.hud-right{display:flex;flex-direction:column;gap:2px}
+.hud-right{align-items:flex-end}
+.hud-label{color:#8a7a9e;font-size:.7rem;text-transform:uppercase;letter-spacing:.08em}
+.hud-value{color:#f0e6ff;font-size:clamp(1rem,3vw,1.5rem);font-weight:700}
+.hud-value.bits{color:#7cff6b}
+.hud-value.income{color:#ff9f43;font-size:.85rem}
+.hud-value.power{color:#c06bff;font-size:.85rem}
+#soundBtn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:#b8a0cc;font-size:1.3rem;width:40px;height:40px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
+#soundBtn:hover{background:rgba(255,255,255,.15)}
+#shopPanel{position:fixed;bottom:0;left:0;width:100%;max-height:55vh;background:linear-gradient(180deg,rgba(30,18,42,.95),rgba(26,16,37,.98));border-top:2px solid rgba(124,255,107,.15);z-index:50;transform:translateY(calc(100% - 50px));transition:transform .35s cubic-bezier(.4,0,.2,1);border-radius:20px 20px 0 0;overflow:hidden}
+#shopPanel.open{transform:translateY(0)}
+#shopHandle{width:100%;padding:12px 0 8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px}
+#shopHandleBar{width:40px;height:4px;background:rgba(255,255,255,.2);border-radius:2px}
+#shopLabel{color:#8a7a9e;font-size:.75rem;text-transform:uppercase;letter-spacing:.1em}
+#shopScroll{overflow-y:auto;max-height:calc(55vh - 50px);padding:8px 14px 20px;display:flex;flex-direction:column;gap:8px}
+.shop-item{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:background .15s,border-color .15s}
+.shop-item:hover{background:rgba(255,255,255,.07);border-color:rgba(124,255,107,.2)}
+.shop-item.owned{border-color:rgba(124,255,107,.25)}
+.shop-icon{font-size:1.6rem;width:42px;text-align:center;flex-shrink:0}
+.shop-info{flex:1;min-width:0}
+.shop-name{color:#e0d4f0;font-weight:600;font-size:.9rem}
+.shop-desc{color:#7a6a8e;font-size:.72rem;margin-top:1px}
+.shop-cost{color:#7cff6b;font-weight:700;font-size:.9rem;flex-shrink:0;white-space:nowrap}
+.shop-count{color:#5a4a6e;font-size:.7rem;text-align:right}
+.shop-item.maxed .shop-cost{color:#5a4a6e}
+#milestoneToast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);background:rgba(30,18,42,.92);border:2px solid rgba(124,255,107,.3);border-radius:16px;padding:16px 28px;z-index:200;text-align:center;transition:transform .35s cubic-bezier(.175,.885,.32,1.275);pointer-events:none}
+#milestoneToast.show{transform:translate(-50%,-50%) scale(1)}
+#milestoneToast .ms-title{color:#7cff6b;font-size:1.1rem;font-weight:700}
+#milestoneToast .ms-sub{color:#b8a0cc;font-size:.8rem;margin-top:4px}
+</style>
+</head>
+<body>
+<canvas id="gameCanvas"></canvas>
+
+<div id="startOverlay">
+  <canvas id="startBlobCanvas"></canvas>
+  <div id="startTitle">Blorb Bonanza</div>
+  <div id="startSub">Click the adorable blob. Collect Blorb Bits. Become legendary.</div>
+  <button id="playBtn">PLAY</button>
+</div>
+
+<div id="hud">
+  <div class="hud-left">
+    <div class="hud-label">Blorb Bits</div>
+    <div class="hud-value bits" id="hudBits">0</div>
+    <div class="hud-value income" id="hudIncome">+0/s</div>
+    <div class="hud-value power" id="hudPower">1/click</div>
+  </div>
+  <div class="hud-right">
+    <button id="soundBtn" title="Toggle Sound">&#128266;</button>
+  </div>
+</div>
+
+<div id="shopPanel">
+  <div id="shopHandle">
+    <div id="shopHandleBar"></div>
+    <div id="shopLabel">Shop</div>
+  </div>
+  <div id="shopScroll"></div>
+</div>
+
+<div id="milestoneToast">
+  <div class="ms-title" id="msTitle"></div>
+  <div class="ms-sub" id="msSub"></div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+const startOverlay = document.getElementById("startOverlay");
+const startBlobCanvas = document.getElementById("startBlobCanvas");
+const startCtx = startBlobCanvas.getContext("2d");
+const playBtn = document.getElementById("playBtn");
+const hudBits = document.getElementById("hudBits");
+const hudIncome = document.getElementById("hudIncome");
+const hudPower = document.getElementById("hudPower");
+const soundBtn = document.getElementById("soundBtn");
+const shopPanel = document.getElementById("shopPanel");
+const shopHandle = document.getElementById("shopHandle");
+const shopScroll = document.getElementById("shopScroll");
+const msTitle = document.getElementById("msTitle");
+const msSub = document.getElementById("msSub");
+const milestoneToast = document.getElementById("milestoneToast");
+
+let W, H, dpr;
+let gameStarted = false;
+let soundEnabled = true;
+let audioCtx = null;
+let shopOpen = false;
+
+let bits = 0;
+let totalClicks = 0;
+let clickPower = 1;
+let autoClickRate = 0;
+let goldenChance = 0;
+let megaMultiplier = 1;
+let particleFrenzyLevel = 0;
+let colorShiftEnabled = false;
+let doubleClickEnabled = false;
+
+let blorbHue = 140;
+let hueTimer = 0;
+let blorbX, blorbY, blorbBaseRadius, blorbRadius;
+let blorbSquish = 0;
+let blorbSquishVel = 0;
+let blorbWobble = 0;
+let blorbWobbleVel = 0;
+let blorbBounceY = 0;
+let blorbBounceVel = 0;
+let blorbBlinkTimer = 0;
+let blorbBlinking = false;
+let blorbBlinkDuration = 0;
+let blorbExpression = "happy";
+let blorbExpressionTimer = 0;
+let breathTimer = 0;
+let idleBounceTimer = 0;
+let goldenActive = false;
+let goldenTimer = 0;
+
+let floatingTexts = [];
+let particles = [];
+let milestoneQueue = [];
+let milestoneShowing = false;
+let milestoneTimer = 0;
+
+const shopItems = [
+  {id:"autoclick",name:"Auto-Clicker",desc:"Earn points automatically",icon:"\u23F0",baseCost:15,costMult:1.45,maxLevel:50,level:0,
+    apply(){autoClickRate=this.level;}},
+  {id:"double",name:"Double Click",desc:"2x per click",icon:"\u2702",baseCost:50,costMult:1.6,maxLevel:10,level:0,
+    apply(){doubleClickEnabled=this.level>0;clickPower=1+this.level;}},
+  {id:"mega",name:"Mega Blorb",desc:"Bigger blob, more points",icon:"\uD83D\uDCAA",baseCost:100,costMult:1.55,maxLevel:25,level:0,
+    apply(){megaMultiplier=1+this.level*0.3;}},
+  {id:"colorshift",name:"Color Shift",desc:"Rainbow blob cycling",icon:"\uD83C\uDF08",baseCost:200,costMult:2,maxLevel:5,level:0,
+    apply(){colorShiftEnabled=this.level>0;}},
+  {id:"frenzy",name:"Particle Frenzy",desc:"More particles per click",icon:"\u2728",baseCost:75,costMult:1.5,maxLevel:10,level:0,
+    apply(){particleFrenzyLevel=this.level;}},
+  {id:"golden",name:"Golden Blorb",desc:"Chance for 10x bonus click",icon:"\u2B50",baseCost:300,costMult:1.7,maxLevel:10,level:0,
+    apply(){goldenChance=this.level*0.03;}}
+];
+
+function getCost(item){
+  return Math.floor(item.baseCost*Math.pow(item.costMult,item.level));
+}
+
+function resize(){
+  dpr = window.devicePixelRatio||1;
+  W = window.innerWidth;
+  H = window.innerHeight;
+  canvas.width = W*dpr;
+  canvas.height = H*dpr;
+  canvas.style.width = W+"px";
+  canvas.style.height = H+"px";
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  startBlobCanvas.width = W*dpr;
+  startBlobCanvas.height = H*dpr;
+  startBlobCanvas.style.width = W+"px";
+  startBlobCanvas.style.height = H+"px";
+  startCtx.setTransform(dpr,0,0,dpr,0,0);
+  blorbX = W/2;
+  blorbY = H*0.42;
+  blorbBaseRadius = Math.min(W,H)*0.18;
+  if(blorbBaseRadius<60) blorbBaseRadius=60;
+}
+
+window.addEventListener("resize",resize);
+resize();
+
+function initAudio(){
+  if(!audioCtx){
+    audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  }
+  if(audioCtx.state==="suspended") audioCtx.resume();
+}
+
+function playPop(pitch){
+  if(!soundEnabled||!audioCtx) return;
+  try{
+    const osc=audioCtx.createOscillator();
+    const gain=audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.type="sine";
+    const f=600*(pitch||1);
+    osc.frequency.setValueAtTime(f,audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(f*0.4,audioCtx.currentTime+0.12);
+    gain.gain.setValueAtTime(0.18,audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.12);
+    osc.start(audioCtx.currentTime);
+    osc.stop(audioCtx.currentTime+0.13);
+  }catch(e){}
+}
+
+function playGoldenChime(){
+  if(!soundEnabled||!audioCtx) return;
+  try{
+    [523.25,659.25,783.99,1046.5].forEach((f,i)=>{
+      const osc=audioCtx.createOscillator();
+      const gain=audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.type="sine";
+      osc.frequency.setValueAtTime(f,audioCtx.currentTime+i*0.08);
+      gain.gain.setValueAtTime(0.15,audioCtx.currentTime+i*0.08);
+      gain.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+i*0.08+0.3);
+      osc.start(audioCtx.currentTime+i*0.08);
+      osc.stop(audioCtx.currentTime+i*0.08+0.31);
+    });
+  }catch(e){}
+}
+
+function playUpgrade(){
+  if(!soundEnabled||!audioCtx) return;
+  try{
+    const osc=audioCtx.createOscillator();
+    const gain=audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.type="triangle";
+    osc.frequency.setValueAtTime(400,audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(800,audioCtx.currentTime+0.15);
+    gain.gain.setValueAtTime(0.15,audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.2);
+    osc.start(audioCtx.currentTime);
+    osc.stop(audioCtx.currentTime+0.21);
+  }catch(e){}
+}
+
+function spawnFloatingText(x,y,text,color){
+  floatingTexts.push({x,y,text,color:color||"#7cff6b",life:1,vy:-2.5,size:18+Math.random()*6});
+}
+
+function spawnParticles(x,y,count,color,spread){
+  spread=spread||1;
+  for(let i=0;i<count;i++){
+    const angle=Math.random()*Math.PI*2;
+    const speed=(1+Math.random()*4)*spread;
+    particles.push({
+      x,y,
+      vx:Math.cos(angle)*speed,
+      vy:Math.sin(angle)*speed-1,
+      life:1,
+      decay:0.015+Math.random()*0.02,
+      size:2+Math.random()*4,
+      color:color||`hsl(${Math.random()*360},80%,65%)`
+    });
+  }
+}
+
+function spawnConfetti(count){
+  for(let i=0;i<count;i++){
+    const hue=Math.random()*360;
+    particles.push({
+      x:W*0.2+Math.random()*W*0.6,
+      y:-10-Math.random()*50,
+      vx:(Math.random()-0.5)*3,
+      vy:2+Math.random()*3,
+      life:1,
+      decay:0.005+Math.random()*0.005,
+      size:4+Math.random()*4,
+      color:`hsl(${hue},80%,60%)`,
+      confetti:true,
+      rot:Math.random()*Math.PI*2,
+      rotV:(Math.random()-0.5)*0.2
+    });
+  }
+}
+
+function showMilestone(title,sub){
+  milestoneQueue.push({title,sub});
+  if(!milestoneShowing) processMilestone();
+}
+
+function processMilestone(){
+  if(milestoneQueue.length===0){milestoneShowing=false;return;}
+  milestoneShowing=true;
+  const m=milestoneQueue.shift();
+  msTitle.textContent=m.title;
+  msSub.textContent=m.sub;
+  milestoneToast.classList.add("show");
+  spawnConfetti(60);
+  milestoneTimer=2;
+}
+
+function updateMilestones(dt){
+  if(milestoneShowing){
+    milestoneTimer-=dt;
+    if(milestoneTimer<=0){
+      milestoneToast.classList.remove("show");
+      setTimeout(processMilestone,400);
+    }
+  }
+}
+
+function checkMilestones(){
+  const t=totalClicks;
+  if(t===1) showMilestone("First Blorb!","You clicked the blob for the first time!");
+  if(t===100) showMilestone("Blorb Enthusiast","100 clicks!");
+  if(t===500) showMilestone("Blorb Addict","500 clicks! Keep going!");
+  if(t===1000) showMilestone("Blorb Master","1,000 clicks! Incredible!");
+  if(t===5000) showMilestone("Blorb Legend","5,000 clicks! You are legendary!");
+  if(t===10000) showMilestone("Blorb God","10,000 clicks! Beyond mortal comprehension!");
+  if(bits>=100) showMilestone("100 Bits!","Your collection grows...");
+  if(bits>=1000) showMilestone("1,000 Bits!","A proper stash of Blorb Bits!");
+  if(bits>=10000) showMilestone("10,000 Bits!","Blorb tycoon!");
+  if(bits>=100000) showMilestone("100,000 Bits!","Blorb billionaire!");
+  if(bits>=1000000) showMilestone("1,000,000 Bits!","Blorb TRILLIONAIRE!");
+}
+
+function drawBlorb(ctx,x,y,r,hueVal,squish,wobble,bounceY,expression,blink,golden,t){
+  const sy=1-squish*0.3;
+  const sx=1+squish*0.15;
+  const wx=Math.sin(wobble)*0.05;
+  const by=bounceY;
+  const finalR=r*megaMultiplier;
+
+  ctx.save();
+  ctx.translate(x,y+by);
+  ctx.rotate(wx);
+
+  let h=hueVal;
+  if(colorShiftEnabled){
+    h=(hueVal+t*60)%360;
+  }
+  if(golden){
+    h=45;
+  }
+
+  const grad=ctx.createRadialGradient(-finalR*0.2,-finalR*0.3,finalR*0.1,0,0,finalR*1.1);
+  const baseColor=`hsl(${h},70%,55%)`;
+  const lightColor=`hsl(${h},75%,72%)`;
+  const darkColor=`hsl(${h},65%,35%)`;
+  grad.addColorStop(0,lightColor);
+  grad.addColorStop(0.6,baseColor);
+  grad.addColorStop(1,darkColor);
+
+  ctx.scale(sx,sy);
+
+  ctx.beginPath();
+  const pts=60;
+  for(let i=0;i<=pts;i++){
+    const a=(i/pts)*Math.PI*2;
+    const wobbleR=finalR+Math.sin(a*5+t*3)*finalR*0.02+Math.sin(a*3-t*2)*finalR*0.015;
+    const px=Math.cos(a)*wobbleR;
+    const py=Math.sin(a)*wobbleR;
+    if(i===0) ctx.moveTo(px,py);
+    else ctx.lineTo(px,py);
+  }
+  ctx.closePath();
+  ctx.fillStyle=grad;
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.ellipse(-finalR*0.15,-finalR*0.25,finalR*0.35,finalR*0.25,0,0,Math.PI*2);
+  ctx.fillStyle=`hsla(${h},60%,80%,0.25)`;
+  ctx.fill();
+
+  const eyeSpacing=finalR*0.32;
+  const eyeY=-finalR*0.1;
+  const eyeR=finalR*0.13;
+  const pupilR=finalR*0.07;
+
+  if(blink){
+    ctx.strokeStyle="#2a1a2a";
+    ctx.lineWidth=2.5;
+    ctx.lineCap="round";
+    [-1,1].forEach(side=>{
+      ctx.beginPath();
+      ctx.moveTo(side*eyeSpacing-eyeR,eyeY);
+      ctx.quadraticCurveTo(side*eyeSpacing,eyeY+eyeR*0.5,side*eyeSpacing+eyeR,eyeY);
+      ctx.stroke();
+    });
+  }else{
+    [-1,1].forEach(side=>{
+      ctx.beginPath();
+      ctx.arc(side*eyeSpacing,eyeY,eyeR,0,Math.PI*2);
+      ctx.fillStyle="#fff";
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(side*eyeSpacing+pupilR*0.3,eyeY,pupilR,0,Math.PI*2);
+      ctx.fillStyle="#2a1a2a";
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(side*eyeSpacing+pupilR*0.3+1.5,eyeY-1.5,pupilR*0.35,0,Math.PI*2);
+      ctx.fillStyle="#fff";
+      ctx.fill();
+    });
+  }
+
+  const mouthY=finalR*0.2;
+  ctx.strokeStyle="#2a1a2a";
+  ctx.lineWidth=2.5;
+  ctx.lineCap="round";
+
+  if(expression==="happy"){
+    ctx.beginPath();
+    ctx.arc(0,mouthY-finalR*0.05,finalR*0.2,0.15*Math.PI,0.85*Math.PI);
+    ctx.stroke();
+  }else if(expression==="surprised"){
+    ctx.beginPath();
+    ctx.arc(0,mouthY+finalR*0.05,finalR*0.1,0,Math.PI*2);
+    ctx.fillStyle="#2a1a2a";
+    ctx.fill();
+  }else if(expression==="excited"){
+    ctx.beginPath();
+    ctx.arc(0,mouthY-finalR*0.1,finalR*0.22,0.1*Math.PI,0.9*Math.PI);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(0,mouthY-finalR*0.1,finalR*0.22,0.1*Math.PI,0.9*Math.PI);
+    ctx.fillStyle=`hsl(${h},50%,40%)`;
+    ctx.fill();
+  }else{
+    ctx.beginPath();
+    ctx.arc(0,mouthY,finalR*0.15,0.2*Math.PI,0.8*Math.PI);
+    ctx.stroke();
+  }
+
+  if(golden){
+    const sparkles=5;
+    for(let i=0;i<sparkles;i++){
+      const a=(i/sparkles)*Math.PI*2+t*2;
+      const d=finalR*1.3+Math.sin(t*4+i)*finalR*0.15;
+      const sx2=Math.cos(a)*d;
+      const sy2=Math.sin(a)*d;
+      const ss=3+Math.sin(t*6+i*1.5)*2;
+      ctx.fillStyle=`hsl(${50+i*10},100%,${70+Math.sin(t*5+i)*20}%)`;
+      drawStar(ctx,sx2,sy2,ss,4);
+    }
+  }
+
+  ctx.restore();
+}
+
+function drawStar(ctx,cx,cy,r,spikes){
+  let rot=Math.PI/2*3;
+  const step=Math.PI/spikes;
+  ctx.beginPath();
+  ctx.moveTo(cx,cy-r);
+  for(let i=0;i<spikes;i++){
+    ctx.lineTo(cx+Math.cos(rot)*r,cy+Math.sin(rot)*r);
+    rot+=step;
+    ctx.lineTo(cx+Math.cos(rot)*r*0.45,cy+Math.sin(rot)*r*0.45);
+    rot+=step;
+  }
+  ctx.closePath();
+  ctx.fill();
+}
+
+function formatNumber(n){
+  if(n>=1e12) return (n/1e12).toFixed(1)+"T";
+  if(n>=1e9) return (n/1e9).toFixed(1)+"B";
+  if(n>=1e6) return (n/1e6).toFixed(1)+"M";
+  if(n>=1e3) return (n/1e3).toFixed(1)+"K";
+  return Math.floor(n).toString();
+}
+
+function updateHUD(){
+  hudBits.textContent=formatNumber(bits);
+  hudIncome.textContent="+"+formatNumber(autoClickRate*clickPower)+"/s";
+  hudPower.textContent=clickPower+(doubleClickEnabled?" (x"+clickPower+")":"")+"/click";
+}
+
+function buildShop(){
+  shopScroll.innerHTML="";
+  shopItems.forEach((item,idx)=>{
+    const cost=getCost(item);
+    const maxed=item.level>=item.maxLevel;
+    const div=document.createElement("div");
+    div.className="shop-item"+(item.level>0?" owned":"")+(maxed?" maxed":"");
+    div.innerHTML=`
+      <div class="shop-icon">${item.icon}</div>
+      <div class="shop-info">
+        <div class="shop-name">${item.name}</div>
+        <div class="shop-desc">${item.desc}</div>
+      </div>
+      <div>
+        <div class="shop-cost">${maxed?"MAX":formatNumber(cost)}</div>
+        <div class="shop-count">Lv ${item.level}/${item.maxLevel}</div>
+      </div>
+    `;
+    div.addEventListener("click",()=>{
+      if(maxed) return;
+      if(bits>=cost){
+        bits-=cost;
+        item.level++;
+        item.apply();
+        playUpgrade();
+        buildShop();
+        updateHUD();
+        saveGame();
+      }
+    });
+    shopScroll.appendChild(div);
+  });
+}
+
+function saveGame(){
+  try{
+    const data={
+      bits,totalClicks,
+      items:shopItems.map(i=>i.level),
+      goldenChance,doubleClickEnabled
+    };
+    localStorage.setItem("blorbBonanza",JSON.stringify(data));
+  }catch(e){}
+}
+
+function loadGame(){
+  try{
+    const raw=localStorage.getItem("blorbBonanza");
+    if(!raw) return;
+    const data=JSON.parse(raw);
+    bits=data.bits||0;
+    totalClicks=data.totalClicks||0;
+    if(data.items){
+      data.items.forEach((lv,i)=>{
+        if(shopItems[i]){
+          shopItems[i].level=lv;
+          shopItems[i].apply();
+        }
+      });
+    }
+  }catch(e){}
+}
+
+let lastTime=0;
+let autoAccum=0;
+
+function gameLoop(ts){
+  requestAnimationFrame(gameLoop);
+  if(!gameStarted) return drawStartScreen(ts);
+  const dt=Math.min((ts-lastTime)/1000,0.1);
+  lastTime=ts;
+  update(dt,ts/1000);
+  render(ts/1000);
+}
+
+function update(dt,t){
+  autoAccum+=autoClickRate*dt;
+  if(autoAccum>=1){
+    const whole=Math.floor(autoAccum);
+    bits+=whole*clickPower;
+    autoAccum-=whole;
+  }
+
+  blorbSquishVel+=(-blorbSquish)*12*dt;
+  blorbSquishVel*=0.82;
+  blorbSquish+=blorbSquishVel;
+
+  blorbWobbleVel+=(-blorbWobble)*8*dt;
+  blorbWobbleVel*=0.88;
+  blorbWobble+=blorbWobbleVel;
+
+  blorbBounceVel+=(-blorbBounceY)*6*dt;
+  blorbBounceVel*=0.85;
+  blorbBounceY+=blorbBounceVel;
+
+  breathTimer+=dt;
+  const breath=Math.sin(breathTimer*1.8)*0.015;
+  blorbSquish=Math.max(-0.3,Math.min(0.3,blorbSquish+breath));
+
+  blorbBlinkTimer-=dt;
+  if(blorbBlinkTimer<=0){
+    if(blorbBlinking){
+      blorbBlinking=false;
+      blorbBlinkTimer=2+Math.random()*5;
+    }else{
+      blorbBlinking=true;
+      blorbBlinkDuration=0.1+Math.random()*0.08;
+      blorbBlinkTimer=blorbBlinkDuration;
+    }
+  }
+
+  idleBounceTimer+=dt;
+  if(idleBounceTimer>4+Math.random()*3){
+    idleBounceTimer=0;
+    blorbBounceVel=-3;
+  }
+
+  blorbExpressionTimer-=dt;
+  if(blorbExpressionTimer<=0){
+    if(totalClicks>200) blorbExpression="excited";
+    else if(totalClicks>50) blorbExpression="surprised";
+    else blorbExpression="happy";
+  }
+
+  if(goldenActive){
+    goldenTimer-=dt;
+    if(goldenTimer<=0) goldenActive=false;
+  }
+
+  floatingTexts.forEach(ft=>{
+    ft.y+=ft.vy;
+    ft.vy-=0.5*dt;
+    ft.life-=dt*1.2;
+  });
+  floatingTexts=floatingTexts.filter(ft=>ft.life>0);
+
+  particles.forEach(p=>{
+    p.x+=p.vx;
+    p.y+=p.vy;
+    if(p.confetti){
+      p.vy+=3*dt;
+      p.rot+=p.rotV;
+    }else{
+      p.vy+=2*dt;
+    }
+    p.life-=p.decay;
+  });
+  particles=particles.filter(p=>p.life>0);
+
+  updateMilestones(dt);
+}
+
+function render(t){
+  ctx.clearRect(0,0,W,H);
+
+  const bgGrad=ctx.createRadialGradient(W/2,H*0.4,0,W/2,H*0.4,Math.max(W,H)*0.7);
+  bgGrad.addColorStop(0,"#251535");
+  bgGrad.addColorStop(1,"#1a1025");
+  ctx.fillStyle=bgGrad;
+  ctx.fillRect(0,0,W,H);
+
+  for(let i=0;i<6;i++){
+    const px=W*0.15+i*W*0.14;
+    const py=H*0.75+Math.sin(t*0.5+i)*20;
+    ctx.beginPath();
+    ctx.arc(px,py,30+Math.sin(t*0.3+i)*10,0,Math.PI*2);
+    ctx.fillStyle=`hsla(${140+i*30},40%,30%,0.08)`;
+    ctx.fill();
+  }
+
+  particles.forEach(p=>{
+    ctx.save();
+    ctx.globalAlpha=p.life;
+    if(p.confetti){
+      ctx.translate(p.x,p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle=p.color;
+      ctx.fillRect(-p.size/2,-p.size/4,p.size,p.size/2);
+    }else{
+      ctx.fillStyle=p.color;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.size*p.life,0,Math.PI*2);
+      ctx.fill();
+    }
+    ctx.restore();
+  });
+
+  const finalR=blorbBaseRadius*megaMultiplier;
+  drawBlorb(ctx,blorbX,blorbY,blorbBaseRadius,blorbHue,blorbSquish,blorbWobble,blorbBounceY,blorbExpression,blorbBlinking,goldenActive,t);
+
+  floatingTexts.forEach(ft=>{
+    ctx.save();
+    ctx.globalAlpha=ft.life;
+    ctx.fillStyle=ft.color;
+    ctx.font=`bold ${ft.size}px 'Segoe UI',sans-serif`;
+    ctx.textAlign="center";
+    ctx.fillText(ft.text,ft.x,ft.y);
+    ctx.restore();
+  });
+}
+
+function drawStartScreen(t){
+  startCtx.clearRect(0,0,W,H);
+  const bgGrad=startCtx.createRadialGradient(W/2,H*0.4,0,W/2,H*0.4,Math.max(W,H)*0.7);
+  bgGrad.addColorStop(0,"#251535");
+  bgGrad.addColorStop(1,"#1a1025");
+  startCtx.fillStyle=bgGrad;
+  startCtx.fillRect(0,0,W,H);
+
+  const time=t/1000;
+  const bobY=Math.sin(time*1.5)*12;
+  const wobSquish=Math.sin(time*2)*0.05;
+  const wobRot=Math.sin(time*1.2)*0.03;
+
+  const sr=Math.min(W,H)*0.15;
+  drawBlorb(startCtx,W/2,H*0.38+bobY,sr,140+Math.sin(time)*30,wobSquish,wobRot,0,"happy",false,false,time);
+}
+
+function handleBlorbClick(cx,cy){
+  initAudio();
+  totalClicks++;
+
+  const dx=cx-blorbX;
+  const dy=cy-(blorbY+blorbBounceY);
+  const finalR=blorbBaseRadius*megaMultiplier;
+  const dist=Math.sqrt(dx*dx+dy*dy);
+
+  if(dist>finalR*1.2) return;
+
+  const isGolden=!goldenActive&&goldenChance>0&&Math.random()<goldenChance;
+  let earned=clickPower;
+  if(isGolden){
+    earned*=10;
+    goldenActive=true;
+    goldenTimer=2;
+    playGoldenChime();
+    spawnParticles(blorbX,blorbY+blorbBounceY,25+particleFrenzyLevel*5,"#FFD700",2);
+    spawnFloatingText(blorbX,blorbY-finalR*megaMultiplier-20,"+10 GOLDEN!","#FFD700");
+  }else{
+    earned=clickPower;
+    playPop(0.8+Math.random()*0.4);
+    spawnParticles(blorbX,blorbY+blorbBounceY,5+particleFrenzyLevel*3);
+    spawnFloatingText(blorbX+(Math.random()-0.5)*40,blorbY-finalR*megaMultiplier-10,"+"+earned);
+  }
+
+  bits+=earned;
+  blorbSquish=0.3;
+  blorbSquishVel=-0.5;
+  blorbWobbleVel+=(Math.random()-0.5)*0.3;
+  blorbBounceVel=-4;
+
+  blorbExpression="surprised";
+  blorbExpressionTimer=0.3;
+
+  checkMilestones();
+  updateHUD();
+  buildShop();
+  saveGame();
+}
+
+canvas.addEventListener("pointerdown",(e)=>{
+  if(!gameStarted) return;
+  const rect=canvas.getBoundingClientRect();
+  handleBlorbClick(e.clientX-rect.left,e.clientY-rect.top);
+});
+
+soundBtn.addEventListener("click",(e)=>{
+  e.stopPropagation();
+  initAudio();
+  soundEnabled=!soundEnabled;
+  soundBtn.innerHTML=soundEnabled?"&#128266;":"&#128263;";
+});
+
+shopHandle.addEventListener("click",(e)=>{
+  e.stopPropagation();
+  shopOpen=!shopOpen;
+  shopPanel.classList.toggle("open",shopOpen);
+});
+
+playBtn.addEventListener("click",()=>{
+  initAudio();
+  gameStarted=true;
+  startOverlay.classList.add("hidden");
+  lastTime=performance.now();
+  loadGame();
+  buildShop();
+  updateHUD();
+  playPop(1.2);
+});
+
+loadGame();
+buildShop();
+updateHUD();
+requestAnimationFrame(gameLoop);
+
+})();
+</script>
+</body>
+</html>

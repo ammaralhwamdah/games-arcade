@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f172a"/>
+      <stop offset="1" stop-color="#052e16"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="200" height="200" fill="url(#bg)"/>
+  <!-- court line suggestion -->
+  <line x1="100" y1="175" x2="100" y2="200" stroke="#166534" stroke-width="1.5" opacity="0.4"/>
+  <line x1="0" y1="185" x2="200" y2="185" stroke="#166534" stroke-width="1.5" opacity="0.3"/>
+  <!-- tennis racket -->
+  <g transform="translate(90,95) rotate(-15)">
+    <!-- handle -->
+    <rect x="-5" y="35" width="10" height="45" rx="4" fill="#a16207" stroke="#854d0e" stroke-width="1.5"/>
+    <rect x="-4" y="38" width="8" height="6" rx="2" fill="#713f12" opacity="0.6"/>
+    <!-- throat -->
+    <path d="M-4 35 L-18 18 L18 18 L4 35" fill="#65a30d" stroke="#4d7c0f" stroke-width="1.5"/>
+    <!-- frame -->
+    <ellipse cx="0" cy="-10" rx="30" ry="38" fill="none" stroke="#22c55e" stroke-width="5"/>
+    <!-- strings horizontal -->
+    <line x1="-26" y1="-28" x2="26" y2="-28" stroke="#d4f0a0" stroke-width="0.8" opacity="0.5"/>
+    <line x1="-29" y1="-18" x2="29" y2="-18" stroke="#d4f0a0" stroke-width="0.8" opacity="0.5"/>
+    <line x1="-30" y1="-8" x2="30" y2="-8" stroke="#d4f0a0" stroke-width="0.8" opacity="0.5"/>
+    <line x1="-29" y1="2" x2="29" y2="2" stroke="#d4f0a0" stroke-width="0.8" opacity="0.5"/>
+    <line x1="-26" y1="12" x2="26" y2="12" stroke="#d4f0a0" stroke-width="0.8" opacity="0.5"/>
+    <line x1="-20" y1="22" x2="20" y2="22" stroke="#d4f0a0" stroke-width="0.8" opacity="0.5"/>
+    <!-- strings vertical -->
+    <line x1="-22" y1="-46" x2="-22" y2="26" stroke="#d4f0a0" stroke-width="0.8" opacity="0.5"/>
+    <line x1="-12" y1="-47" x2="-12" y2="28" stroke="#d4f0a0" stroke-width="0.8" opacity="0.5"/>
+    <line x1="0" y1="-48" x2="0" y2="30" stroke="#d4f0a0" stroke-width="0.8" opacity="0.5"/>
+    <line x1="12" y1="-47" x2="12" y2="28" stroke="#d4f0a0" stroke-width="0.8" opacity="0.5"/>
+    <line x1="22" y1="-46" x2="22" y2="26" stroke="#d4f0a0" stroke-width="0.8" opacity="0.5"/>
+  </g>
+  <!-- tennis ball -->
+  <g transform="translate(148,60)">
+    <circle cx="0" cy="0" r="16" fill="#ccff00" stroke="#a3e635" stroke-width="1.5"/>
+    <!-- ball seam -->
+    <path d="M-8 -14 Q-12 -2 -6 6 Q0 12 6 6 Q12 -2 8 -14" stroke="#84cc16" stroke-width="1.5" fill="none"/>
+    <path d="M8 -14 Q12 -2 6 6 Q0 12 -6 6 Q-12 -2 -8 -14" stroke="#84cc16" stroke-width="1.5" fill="none"/>
+    <!-- ball highlight -->
+    <circle cx="-4" cy="-5" r="5" fill="#f0ff4d" opacity="0.5"/>
+    <!-- ball motion -->
+    <circle cx="0" cy="0" r="20" fill="none" stroke="#ccff00" stroke-width="1" opacity="0.2" filter="url(#glow)"/>
+  </g>
+  <!-- motion arc from ball -->
+  <path d="M148 60 Q130 50 120 65" stroke="#84cc16" stroke-width="1.5" fill="none" opacity="0.3" stroke-linecap="round" stroke-dasharray="3 3"/>
+</svg>
