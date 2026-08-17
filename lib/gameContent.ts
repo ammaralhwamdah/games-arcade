@@ -573,8 +573,6 @@ const content: Record<string, GameContent> = {
       },
     ],
   },
-};
-
   "style-salon": {
     tips: [
       "Match the colour palette before chasing rare pieces. Two items that share the same shade family always score higher than two flashy pieces that clash, so scan the colour wheel first and build from there.",
