@@ -1,0 +1,173 @@
+[build]
+  command = "npm run build"
+  publish = "out"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=(), battery=(), magnetometer=(), gyroscope=(), accelerometer=(), browsing-topics()"
+
+[[headers]]
+  for = "/data/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/games/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/play/*"
+  [headers.values]
+    Cache-Control = "no-cache, must-revalidate"
+
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[redirects]]
+  from = "/category/platformer"
+  to = "/category/arcade"
+  status = 301
+
+[[redirects]]
+  from = "/category/shooter"
+  to = "/category/shooting"
+  status = 301
+
+[[redirects]]
+  from = "/category/fighting"
+  to = "/category/action"
+  status = 301
+
+[[redirects]]
+  from = "/category/rpg"
+  to = "/category/adventure"
+  status = 301
+
+[[redirects]]
+  from = "/category/simulation"
+  to = "/category/hypercasual"
+  status = 301
+
+[[redirects]]
+  from = "/category/mario"
+  to = "/category/arcade"
+  status = 301
+
+[[redirects]]
+  from = "/category/sonic"
+  to = "/category/action"
+  status = 301
+
+[[redirects]]
+  from = "/category/pokemon"
+  to = "/category/adventure"
+  status = 301
+
+[[redirects]]
+  from = "/category/minecraft"
+  to = "/category/adventure"
+  status = 301
+
+[[redirects]]
+  from = "/category/zelda"
+  to = "/category/adventure"
+  status = 301
+
+[[redirects]]
+  from = "/play/forest-dash"
+  to = "/play/emberwood-dash"
+  status = 301
+
+[[redirects]]
+  from = "/play/the-last-adventure"
+  to = "/play/veyras-legacy"
+  status = 301
+
+[[redirects]]
+  from = "/play/subway-runner"
+  to = "/play/underground-sprint"
+  status = 301
+
+[[redirects]]
+  from = "/play/snake"
+  to = "/play/nano-serpent"
+  status = 301
+
+[[redirects]]
+  from = "/play/andromeda-invaders"
+  to = "/play/aphelion-assault"
+  status = 301
+
+[[redirects]]
+  from = "/play/neon-vanguard"
+  to = "/play/nova-corsair"
+  status = 301
+
+[[redirects]]
+  from = "/play/day-and-night-duel"
+  to = "/play/clash-of-orbs"
+  status = 301
+
+[[redirects]]
+  from = "/play/epoch-defense"
+  to = "/play/nebula-bastion"
+  status = 301
+
+[[redirects]]
+  from = "/play/2048"
+  to = "/play/2048-fusion"
+  status = 301
+
+[[redirects]]
+  from = "/games/forest-dash/*"
+  to = "/games/emberwood-dash/:splat"
+  status = 301
+
+[[redirects]]
+  from = "/games/the-last-adventure/*"
+  to = "/games/veyras-legacy/:splat"
+  status = 301
+
+[[redirects]]
+  from = "/games/subway-runner/*"
+  to = "/games/underground-sprint/:splat"
+  status = 301
+
+[[redirects]]
+  from = "/games/snake/*"
+  to = "/games/nano-serpent/:splat"
+  status = 301
+
+[[redirects]]
+  from = "/games/andromeda-invaders/*"
+  to = "/games/aphelion-assault/:splat"
+  status = 301
+
+[[redirects]]
+  from = "/games/neon-vanguard/*"
+  to = "/games/nova-corsair/:splat"
+  status = 301
+
+[[redirects]]
+  from = "/games/day-and-night-duel/*"
+  to = "/games/clash-of-orbs/:splat"
+  status = 301
+
+[[redirects]]
+  from = "/games/epoch-defense/*"
+  to = "/games/nebula-bastion/:splat"
+  status = 301
+
+[[redirects]]
+  from = "/games/2048/*"
+  to = "/games/2048-fusion/:splat"
+  status = 301
