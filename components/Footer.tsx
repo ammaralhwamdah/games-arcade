@@ -51,19 +51,6 @@ export default function Footer() {
             <div className="mt-4">
               <SocialLinks />
             </div>
-            <Link
-              href="https://www.youtube.com/@gameversepro11"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-4 block overflow-hidden rounded-lg border border-white/10 transition hover:border-violet-500/50"
-            >
-              <img
-                src="/youtube-banner.png"
-                alt="GameVerse YouTube Channel"
-                className="h-auto w-full object-cover"
-                loading="lazy"
-              />
-            </Link>
           </div>
         </div>
 
