@@ -32,7 +32,7 @@ export interface SocialLink {
   href: string;
 }
 
-/** Social media profiles. Placeholder links — update when real accounts are ready. */
+/** Social media profiles. */
 export const SOCIAL_LINKS: SocialLink[] = [
   { name: "facebook", label: "GameVerse on Facebook", href: "https://facebook.com/gameverse.pro" },
   { name: "instagram", label: "GameVerse on Instagram", href: "https://instagram.com/gameverse.pro" },
