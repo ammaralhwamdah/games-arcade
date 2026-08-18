@@ -132,14 +132,17 @@ layoutField();
 }
 
 function layoutField(){
-const fw=W*.92,fh=H*.5;
-const fx=(W-fw)/2,fy=H*.15;
+const isLandscape=W>H;
+const fw=isLandscape?W*.7:W*.92;
+const fh=isLandscape?H*.75:H*.55;
+const fx=(W-fw)/2;
+const fy=isLandscape?(H-fh)/2:H*.12;
 fieldRect={x:fx,y:fy,w:fw,h:fh};
 
-const gw=Math.min(fw*.45,320);
-const gh=Math.min(fh*.45,150);
+const gw=Math.min(fw*.55,360);
+const gh=Math.min(fh*.4,170);
 const gx=(W-gw)/2;
-const gy=fieldRect.y+10;
+const gy=fieldRect.y+15;
 goalRect={x:gx,y:gy,w:gw,h:gh};
 
 const zw=gw/3,zh=gh/3;
@@ -150,7 +153,7 @@ goalZones.push({x:gx+c*zw,y:gy+r*zh,w:zw,h:zh,row:r,col:c,id:r*3+c});
 }
 }
 
-kickerPos={x:W/2,y:fieldRect.y+fh-40*dpr/2};
+kickerPos={x:W/2,y:fieldRect.y+fh-35};
 keeper.baseX=W/2;keeper.baseY=gy+gh/2;
 keeper.x=keeper.baseX;keeper.y=keeper.baseY;
 
@@ -244,13 +247,14 @@ const t=k.diveT;
 const dir=k.diveDir;
 let offX=0,offY=0;
 let rotation=0;
+const sc=Math.min(W/400,H/300,1);
 
 if(k.diving){
 const progress=Math.min(t,1);
 const eased=Math.sin(progress*Math.PI/2);
 offX=dir===0?-70:dir===2?70:dir%3===0?-50:dir%3===2?50:0;
 offY=dir<3?-50:dir<6?0:50;
-offX*=eased;offY*=eased;
+offX*=eased*sc;offY*=eased*sc;
 rotation=eased*(dir===0||dir===3?-1:dir===2||dir===5?1:0)*.6;
 }
 
@@ -259,6 +263,7 @@ const y=k.y+offY;
 
 ctx.save();
 ctx.translate(x,y);
+ctx.scale(sc,sc);
 ctx.rotate(rotation);
 
 ctx.fillStyle="#f59e0b";
@@ -294,9 +299,11 @@ const kx=kickerPos.x;
 const ky=kickerPos.y;
 const kicking=state===STATE.SHOOTING&&ball.t<.15;
 const kickAngle=kicking?-.3:0;
+const sc=Math.min(W/400,H/300,1);
 
 ctx.save();
 ctx.translate(kx,ky);
+ctx.scale(sc,sc);
 ctx.rotate(kickAngle);
 
 ctx.fillStyle="#3b82f6";
@@ -330,7 +337,7 @@ function drawBall(){
 if(!ball.active&&state!==STATE.SHOOTING)return;
 const bx=ball.x;
 const by=ball.y-ball.z;
-const size=8+ball.z*.02;
+const size=(8+ball.z*.02)*Math.min(W/400,H/300,1);
 
 const shadowAlpha=Math.max(0,.3-ball.z*.003);
 ctx.fillStyle=`rgba(0,0,0,${shadowAlpha})`;
@@ -631,7 +638,8 @@ const ky=keeper.y;
 const bx=ball.x;
 const by=ball.y;
 const dist=Math.hypot(bx-kx,by-ky);
-if(dist<30){
+const sc=Math.min(W/400,H/300,1);
+if(dist<30*sc){
 onSaved();return;
 }
 }
