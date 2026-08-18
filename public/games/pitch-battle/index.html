@@ -26,11 +26,14 @@
   function resize() {
     var cw = window.innerWidth;
     var ch = window.innerHeight;
+    var scale = Math.min(cw / W, ch / H);
     canvas.style.width = cw + "px";
     canvas.style.height = ch + "px";
     canvas.width = Math.round(cw * DPR);
     canvas.height = Math.round(ch * DPR);
-    ctx.setTransform(cw / W * DPR, 0, 0, ch / H * DPR, 0, 0);
+    var ox = (cw - W * scale) / 2;
+    var oy = (ch - H * scale) / 2;
+    ctx.setTransform(scale * DPR, 0, 0, scale * DPR, ox * DPR, oy * DPR);
   }
   window.addEventListener("resize", resize);
   resize();
@@ -98,7 +101,11 @@
 
   function pt(e) {
     var r = canvas.getBoundingClientRect();
-    return { x: (e.clientX - r.left) / (r.width / W), y: (e.clientY - r.top) / (r.height / H) };
+    var cw = r.width, ch = r.height;
+    var scale = Math.min(cw / W, ch / H);
+    var ox = (cw - W * scale) / 2;
+    var oy = (ch - H * scale) / 2;
+    return { x: (e.clientX - r.left - ox) / scale, y: (e.clientY - r.top - oy) / scale };
   }
   canvas.addEventListener("pointerdown", function (e) {
     e.preventDefault();
