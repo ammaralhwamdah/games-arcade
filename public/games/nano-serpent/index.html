@@ -80,7 +80,7 @@
     while (true) {
       const f = {
         x: Math.floor(Math.random() * cols),
-        y: Math.floor(Math.random() * rows),
+        y: 1 + Math.floor(Math.random() * (rows - 1)),
       };
       if (!snake.some((s) => s.x === f.x && s.y === f.y)) { food = f; return; }
     }
