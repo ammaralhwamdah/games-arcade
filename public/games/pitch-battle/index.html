@@ -276,9 +276,9 @@
 
     movePlayer(p1, dt); movePlayer(p2, dt);
     dribble(p1, dt); dribble(p2, dt);
+    if (ball.owner === 0) moveBall(dt);
     if (ball.owner === 0) { tryPickup(p1); tryPickup(p2); }
     tryTackle();
-    if (ball.owner === 0) moveBall(dt);
     checkGoal();
     tickParticles(dt);
   }
