@@ -127,11 +127,15 @@ function resize() {
 }
 var TOP_RESERVE = 64;
 function layout() {
-  cell = Math.floor(Math.min(W, H - TOP_RESERVE - 8) / 8);
+  var landscape = W > H;
+  var reserve = landscape ? 36 : TOP_RESERVE;
+  var availH = H - reserve - 8;
+  var availW = W - 16;
+  cell = Math.floor(Math.min(availW / 8, availH / 8));
   if (cell < 24) cell = 24;
   bx = Math.floor((W - cell * 8) / 2);
-  by = TOP_RESERVE + Math.floor((H - TOP_RESERVE - 8 - cell * 8) / 2);
-  if (by < TOP_RESERVE) by = TOP_RESERVE;
+  by = reserve + Math.floor((availH - cell * 8) / 2);
+  if (by < reserve) by = reserve;
 }
 window.addEventListener("resize", resize);
 resize();
