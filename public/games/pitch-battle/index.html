@@ -24,12 +24,13 @@
   var DPR = Math.min(window.devicePixelRatio || 1, 2);
 
   function resize() {
-    var scale = Math.min(window.innerWidth / W, window.innerHeight / H);
-    canvas.style.width = (W * scale) + "px";
-    canvas.style.height = (H * scale) + "px";
-    canvas.width = Math.round(W * scale * DPR);
-    canvas.height = Math.round(H * scale * DPR);
-    ctx.setTransform(scale * DPR, 0, 0, scale * DPR, 0, 0);
+    var cw = window.innerWidth;
+    var ch = window.innerHeight;
+    canvas.style.width = cw + "px";
+    canvas.style.height = ch + "px";
+    canvas.width = Math.round(cw * DPR);
+    canvas.height = Math.round(ch * DPR);
+    ctx.setTransform(cw / W * DPR, 0, 0, ch / H * DPR, 0, 0);
   }
   window.addEventListener("resize", resize);
   resize();
