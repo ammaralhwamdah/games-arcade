@@ -78,9 +78,16 @@
   var stick2 = { active: false, id: -1, ox: 0, oy: 0, dx: 0, dy: 0 };
 
   document.addEventListener("keydown", function (e) {
-    if (e.code === "Enter" || e.code === "Space") {
+    if (e.code === "Enter") {
       e.preventDefault();
       if (mode === "title" || mode === "over") startKickoff();
+      return;
+    }
+    if (e.code === "Space") {
+      e.preventDefault();
+      if (mode === "title" || mode === "over") { startKickoff(); return; }
+      if (ball.owner === 1) shootBall(p1);
+      else if (ball.owner === 2) shootBall(p2);
       return;
     }
     keys[e.code] = true;
@@ -110,8 +117,8 @@
     st.dx = dx / mx; st.dy = dy / mx;
   }
   function stickEnd(e) {
-    if (e.pointerId === stick1.id) { stick1.active = false; stick1.dx = stick1.dy = 0; stick1.id = -1; }
-    if (e.pointerId === stick2.id) { stick2.active = false; stick2.dx = stick2.dy = 0; stick2.id = -1; }
+    if (e.pointerId === stick1.id) { stick1.active = false; stick1.dx = stick1.dy = 0; stick1.id = -1; if (ball.owner === 1) shootBall(p1); }
+    if (e.pointerId === stick2.id) { stick2.active = false; stick2.dx = stick2.dy = 0; stick2.id = -1; if (ball.owner === 2) shootBall(p2); }
   }
   canvas.addEventListener("pointermove", stickMove);
   canvas.addEventListener("pointerup", stickEnd);
@@ -131,6 +138,17 @@
     var m = Math.hypot(dx, dy);
     if (m > 1) { dx /= m; dy /= m; }
     return { x: dx, y: dy };
+  }
+
+  function shootBall(p) {
+    if (ball.owner !== p.team) return;
+    var fx = p.fx, fy = p.fy;
+    if (fx === 0 && fy === 0) fy = p.team === 1 ? -1 : 1;
+    var sp2 = 260;
+    ball.vx = fx * sp2; ball.vy = fy * sp2;
+    ball.owner = 0;
+    sKick();
+    burst(ball.x, ball.y, "#ffffff", 6);
   }
 
   /* ------- world ------- */
@@ -179,16 +197,6 @@
     ball.vx = 0; ball.vy = 0;
     if (p.team === 1) ball.y = Math.min(ball.y, BOT - RB - 2);
     else ball.y = Math.max(ball.y, TOP + RB + 2);
-    if (p.dx !== 0 || p.dy !== 0) return;
-    var fx = p.fx, fy = p.fy;
-    if (fx === 0 && fy === 0) fy = p.team === 1 ? -1 : 1;
-    var towardOwn = p.team === 1 ? fy > 0 : fy < 0;
-    if (towardOwn) return;
-    var sp2 = 260;
-    ball.vx = fx * sp2; ball.vy = fy * sp2;
-    ball.owner = 0;
-    sKick();
-    burst(ball.x, ball.y, "#ffffff", 6);
   }
 
   function tryPickup(p) {
@@ -258,6 +266,14 @@
     if (mode === "over") { tickParticles(dt); return; }
     if (mode === "title") { tickParticles(dt); return; }
 
+    var v1 = inputVec(p1), v2 = inputVec(p2);
+    var wasHeld1 = p1.dx !== 0 || p1.dy !== 0;
+    var wasHeld2 = p2.dx !== 0 || p2.dy !== 0;
+    var holding1 = v1.x !== 0 || v1.y !== 0;
+    var holding2 = v2.x !== 0 || v2.y !== 0;
+    if (ball.owner === 1 && p1.stun <= 0 && wasHeld1 && !holding1) shootBall(p1);
+    if (ball.owner === 2 && p2.stun <= 0 && wasHeld2 && !holding2) shootBall(p2);
+
     movePlayer(p1, dt); movePlayer(p2, dt);
     dribble(p1, dt); dribble(p2, dt);
     if (ball.owner === 0) { tryPickup(p1); tryPickup(p2); }
@@ -286,7 +302,7 @@
     ctx.fillStyle = "#64846f"; ctx.font = "600 10px system-ui, sans-serif";
     ctx.fillText("First to " + WIN_SCORE + " wins", W / 2, TOP / 2 + 15);
     ctx.fillStyle = "#5d7a68"; ctx.font = "600 11px system-ui, sans-serif";
-    ctx.fillText("Hold to dribble · Release to shoot · Tackle to steal", W / 2, (BOT + H) / 2);
+    ctx.fillText("Hold to dribble · Release or Space to shoot · Tackle to steal", W / 2, (BOT + H) / 2);
   }
 
   function drawGoal(atTop) {
@@ -400,7 +416,7 @@
       ctx.fillStyle = "#7c96a8"; ctx.font = "600 12px system-ui, sans-serif";
       ctx.fillText("Touch: drag your side of the screen", W / 2, H / 2 + 74);
       ctx.fillStyle = "#94a3b8"; ctx.font = "600 13px system-ui, sans-serif";
-      ctx.fillText("Hold to dribble · Release to shoot · Tackle to steal", W / 2, H / 2 + 104);
+      ctx.fillText("Hold to dribble · Release or Space to shoot · Tackle to steal", W / 2, H / 2 + 104);
       ctx.fillStyle = "#fbbf24"; ctx.font = "700 15px system-ui, sans-serif";
       ctx.fillText("Press Enter or tap to begin", W / 2, H / 2 + 146);
     } else if (mode === "kickoff") {
