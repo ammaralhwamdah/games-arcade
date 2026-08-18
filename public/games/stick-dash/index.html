@@ -216,8 +216,7 @@ function drawStickman(p, alpha){
   ctx.lineWidth = 3;
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
-  ctx.shadowColor = "#00e5ff";
-  ctx.shadowBlur = 8;
+  if(!isMobile){ctx.shadowColor = "#00e5ff"; ctx.shadowBlur = 8;}
 
   if(p.sliding){
     var slideOff = 10;
@@ -290,10 +289,14 @@ function drawStickman(p, alpha){
   ctx.restore();
 }
 
+var isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) || window.innerWidth < 768;
+
 function drawTrail(){
-  for(var i = 0; i < trailPositions.length; i++){
+  var maxTrail = isMobile ? 4 : 12;
+  var start = Math.max(0, trailPositions.length - maxTrail);
+  for(var i = start; i < trailPositions.length; i++){
     var t = trailPositions[i];
-    var alpha = (i / trailPositions.length) * 0.25;
+    var alpha = ((i - start) / maxTrail) * 0.2;
     var pCopy = {
       x: t.x, y: t.y, w: player.w, h: player.h,
       sliding: player.sliding, running: true,
@@ -309,8 +312,7 @@ function drawObstacle(o){
   ctx.save();
   if(o.type === "spike"){
     ctx.fillStyle = "#ff4081";
-    ctx.shadowColor = "#ff4081";
-    ctx.shadowBlur = 10;
+    if(!isMobile){ctx.shadowColor = "#ff4081"; ctx.shadowBlur = 10;}
     ctx.beginPath();
     ctx.moveTo(ox + o.w/2, oy);
     ctx.lineTo(ox + o.w, oy + o.h);
@@ -322,8 +324,7 @@ function drawObstacle(o){
     ctx.stroke();
   } else if(o.type === "barrier"){
     ctx.fillStyle = "#ff6e40";
-    ctx.shadowColor = "#ff6e40";
-    ctx.shadowBlur = 10;
+    if(!isMobile){ctx.shadowColor = "#ff6e40"; ctx.shadowBlur = 10;}
     ctx.fillRect(ox, oy, o.w, o.h);
     ctx.strokeStyle = "#ffab91";
     ctx.lineWidth = 2;
@@ -357,8 +358,7 @@ function drawCoin(c){
   var cx = c.x + shakeX;
   var cy = c.y + Math.sin(c.bobPhase)*5 + shakeY;
   ctx.save();
-  ctx.shadowColor = "#ffd740";
-  ctx.shadowBlur = 12;
+  if(!isMobile){ctx.shadowColor = "#ffd740"; ctx.shadowBlur = 12;}
   var grad = ctx.createRadialGradient(cx-2,cy-2,1,cx,cy,c.r);
   grad.addColorStop(0,"#fff9c4");
   grad.addColorStop(0.6,"#ffd740");
@@ -443,7 +443,8 @@ function die(){
   player.deathTimer = 60;
   sfx.hit();
   triggerShake(20);
-  for(var i = 0; i < 20; i++){
+  var count = isMobile ? 8 : 20;
+  for(var i = 0; i < count; i++){
     addParticle(player.x + player.w/2, player.y + player.h/2,
       (Math.random()-0.5)*8, (Math.random()-0.5)*8,
       30 + Math.random()*30, Math.random()>0.5?"#ff4081":"#00e5ff");
@@ -631,7 +632,7 @@ function update(){
     if(frameCount % 2 === 0){
       trailPositions.push({x:player.x, y:player.y, f:player.runFrame, vy:player.vy, grounded:player.grounded});
     }
-    if(trailPositions.length > 12) trailPositions.shift();
+    if(trailPositions.length > (isMobile ? 4 : 12)) trailPositions.shift();
 
     for(var i = obstacles.length-1; i >= 0; i--){
       var o = obstacles[i];
@@ -671,10 +672,12 @@ function update(){
           c.collected = true;
           coins++;
           sfx.coin();
-          for(var k = 0; k < 8; k++){
-            addParticle(c.x, c.y,
-              (Math.random()-0.5)*5, (Math.random()-0.5)*5,
-              20 + Math.random()*15, "#ffd740");
+          if(!isMobile){
+            for(var k = 0; k < 8; k++){
+              addParticle(c.x, c.y,
+                (Math.random()-0.5)*5, (Math.random()-0.5)*5,
+                20 + Math.random()*15, "#ffd740");
+            }
           }
         }
       }
