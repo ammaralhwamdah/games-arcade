@@ -290,14 +290,14 @@
 
   /* ------- input ------- */
   var keyL = false, keyR = false;
-  document.addEventListener("keydown", function (e) {
+  window.addEventListener("keydown", function (e) {
     keys[e.key] = true;
     if (e.key === " ") e.preventDefault();
     if (e.key === "Enter" || e.key === " ") {
       if (S.mode === "start" || S.mode === "over") { reset(); setWave(); }
     }
   });
-  document.addEventListener("keyup", function (e) { keys[e.key] = false; });
+  window.addEventListener("keyup", function (e) { keys[e.key] = false; });
 
   canvas.addEventListener("pointerdown", function (e) {
     if (S.mode === "start" || S.mode === "over") { reset(); setWave(); canvas.focus(); return; }
@@ -321,7 +321,9 @@
   bR.addEventListener("pointerdown", function (e) { keyR = true; touch.x = null; e.preventDefault(); });
   bF.addEventListener("pointerdown", function (e) { touch.fire = true; e.preventDefault(); });
   window.addEventListener("pointerup", function () { keyL = false; keyR = false; });
+  document.getElementById("wrap").addEventListener("click", function () { canvas.focus(); window.focus(); });
   canvas.focus();
+  window.focus();
 
   /* ------- draw ------- */
   function fillLines(t, x, y, lh) {
