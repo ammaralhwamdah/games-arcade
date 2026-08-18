@@ -439,6 +439,7 @@ function checkCollision(a, b){
 function die(){
   if(player.dead) return;
   player.dead = true;
+  state = "dead";
   player.deathTimer = 60;
   sfx.hit();
   triggerShake(20);
@@ -460,6 +461,10 @@ function onJump(){
   if(state === "start") return;
   if(state === "dead"){
     if(player.deathTimer <= 0) startGame();
+    return;
+  }
+  if(state === "gameover"){
+    startGame();
     return;
   }
   if(player.dead) return;
@@ -557,7 +562,8 @@ function startGame(){
 }
 
 function showDeath(){
-  state = "dead";
+  if(state === "gameover") return;
+  state = "gameover";
   if(score > bestDist){
     bestDist = Math.floor(score);
     localStorage.setItem("stickdash_best", bestDist);
