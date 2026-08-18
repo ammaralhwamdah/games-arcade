@@ -322,6 +322,8 @@
   bF.addEventListener("pointerdown", function (e) { touch.fire = true; e.preventDefault(); });
   window.addEventListener("pointerup", function () { keyL = false; keyR = false; });
   document.getElementById("wrap").addEventListener("click", function () { canvas.focus(); window.focus(); });
+  window.addEventListener("focus", function () { canvas.focus(); });
+  window.addEventListener("fullscreenchange", function () { setTimeout(function () { canvas.focus(); window.focus(); }, 100); });
   canvas.focus();
   window.focus();
 

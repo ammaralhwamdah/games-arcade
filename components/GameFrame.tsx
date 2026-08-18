@@ -107,6 +107,8 @@ export default function GameFrame({ src, title, slug }: { src: string; title: st
     } catch {
       /* not supported */
     }
+    const iframe = el.querySelector("iframe");
+    if (iframe) { iframe.focus(); }
   };
 
   useLayoutEffect(() => {
@@ -137,11 +139,17 @@ export default function GameFrame({ src, title, slug }: { src: string; title: st
     window.addEventListener("resize", fit);
     window.addEventListener("orientationchange", fit);
     window.addEventListener("load", fit);
+    const onFullscreen = () => {
+      const iframe = el.querySelector("iframe");
+      if (iframe) iframe.focus();
+    };
+    document.addEventListener("fullscreenchange", onFullscreen);
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", fit);
       window.removeEventListener("orientationchange", fit);
       window.removeEventListener("load", fit);
+      document.removeEventListener("fullscreenchange", onFullscreen);
     };
   }, []);
 
