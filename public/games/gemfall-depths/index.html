@@ -321,7 +321,7 @@ function generateRoom(rx,ry,floorNum){
     }
   }
 
-  var exitChance=isStart?0.15:clamp(0.1+floorNum*0.01,0.1,0.3);
+  var exitChance=isStart?1.0:clamp(0.15+floorNum*0.01,0.15,0.4);
   if(Math.random()<exitChance){
     room.hasExit=true;
     room.exitX=rand(3,ROOM_W-4)*TILE+TILE/2;
@@ -375,6 +375,7 @@ function startGame(){
   game.rooms={};
   game.currentRoomX=0;game.currentRoomY=0;
   game.roomsCleared=0;
+  player.attackPow=1;
   resetPlayer();
   loadFloor();
   document.getElementById("overlay").classList.add("hidden");
@@ -531,6 +532,13 @@ function updatePlayer(dt){
     roomCleared=true;
     var key=game.currentRoomX+","+game.currentRoomY;
     if(game.rooms[key])game.rooms[key].cleared=true;
+    if(!floorExitActive){
+      floorExitActive=true;
+      floorExit.x=player.x;
+      floorExit.y=player.y;
+      spawnFloatingText(player.x,player.y-20,"EXIT UNLOCKED","#ffcc00");
+      spawnParticle(player.x,player.y,"#ffcc00",12,80);
+    }
   }
 }
 
@@ -1145,14 +1153,9 @@ function gameLoop(time){
     camera.x=lerp(camera.x,targetCamX,CAM_LERP);
     camera.y=lerp(camera.y,targetCamY,CAM_LERP);
 
-    if(floorExitActive&&dist(player,floorExit)<18){
-      nextFloor();
-    }
-
     if(floorExitActive){
-      var key=game.currentRoomX+","+game.currentRoomY;
-      if(roomCleared&&!game.rooms[key].hasExit){
-        floorExitActive=false;
+      if(dist(player,floorExit)<18){
+        nextFloor();
       }
     }
   }
