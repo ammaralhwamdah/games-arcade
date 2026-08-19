@@ -1146,10 +1146,19 @@ function gameLoop(time){
     updateFloatingTexts(dt);
     if(attackSlash.active){attackSlash.anim-=dt;if(attackSlash.anim<=0)attackSlash.active=false;}
 
-    var targetCamX=clamp(player.x,W/2,ROOM_W*TILE-W/2);
-    var targetCamY=clamp(player.y,H/2,ROOM_H*TILE-H/2);
-    camera.x=lerp(camera.x,targetCamX,CAM_LERP);
-    camera.y=lerp(camera.y,targetCamY,CAM_LERP);
+    var roomW=ROOM_W*TILE,roomH=ROOM_H*TILE;
+    if(W>=roomW){
+      camera.x=roomW/2;
+    }else{
+      var targetCamX=clamp(player.x,W/2,roomW-W/2);
+      camera.x=lerp(camera.x,targetCamX,CAM_LERP);
+    }
+    if(H>=roomH){
+      camera.y=roomH/2;
+    }else{
+      var targetCamY=clamp(player.y,H/2,roomH-H/2);
+      camera.y=lerp(camera.y,targetCamY,CAM_LERP);
+    }
 
     if(floorExitActive){
       if(dist(player,floorExit)<18){
