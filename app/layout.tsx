@@ -4,10 +4,11 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BackToTop from "@/components/BackToTop";
+import CookieConsent from "@/components/CookieConsent";
 import { PointsProvider } from "@/components/PointsProvider";
 import { AuthProvider } from "@/components/AuthProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import { SITE_NAME, SITE_TAGLINE, SITE_DESCRIPTION, SITE_URL, ADSENSE_CLIENT, GA_ID, GTM_ID } from "@/lib/site";
+import { SITE_NAME, SITE_TAGLINE, SITE_DESCRIPTION, SITE_URL } from "@/lib/site";
 
 const geistSans = localFont({
   variable: "--font-geist-sans",
@@ -82,13 +83,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <head>
-        {GTM_ID ? (
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${GTM_ID}');`,
-            }}
-          />
-        ) : null}
         <script dangerouslySetInnerHTML={{ __html: "window.maeExportApis_=window.maeExportApis_||function(){};" }} />
         <script
           dangerouslySetInnerHTML={{
@@ -96,23 +90,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               "try{var t=localStorage.getItem('gameverse-theme');if(!t){t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'}if(t==='light'){document.documentElement.setAttribute('data-theme','light')}}catch(e){}",
           }}
         />
-        {ADSENSE_CLIENT ? (
-          <>
-            <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossOrigin="anonymous" />
-            <script
-              async
-              src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-${ADSENSE_CLIENT}`}
-              crossOrigin="anonymous"
-            />
-          </>
-        ) : null}
-        {GA_ID ? (
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date());gtag("config","${GA_ID}");function gvLoadGA(){var s=document.createElement("script");s.async=true;s.src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}";document.head.appendChild(s)}if("requestIdleCallback"in window){requestIdleCallback(gvLoadGA,{timeout:4000})}else{window.addEventListener("load",gvLoadGA)}`,
-            }}
-          />
-        ) : null}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -125,13 +102,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         />
       </head>
       <body className="flex min-h-full flex-col bg-slate-950 font-sans text-slate-100">
-        {GTM_ID ? (
-          <noscript
-            dangerouslySetInnerHTML={{
-              __html: `<iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_ID}" height="0" width="0" style="display:none;visibility:hidden"></iframe>`,
-            }}
-          />
-        ) : null}
         <ThemeProvider>
           <PointsProvider>
             <AuthProvider>
@@ -141,6 +111,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             </AuthProvider>
           </PointsProvider>
           <BackToTop />
+          <CookieConsent />
         </ThemeProvider>
       </body>
     </html>
