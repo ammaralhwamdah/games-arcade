@@ -285,16 +285,14 @@ function generateRoom(rx,ry,floorNum){
   var isStart=(rx===0&&ry===0);
   var difficulty=floorNum+Math.abs(rx)+Math.abs(ry);
 
-  if(!isStart){
-    var numEnemies=rand(1,clamp(Math.floor(difficulty/2)+1,1,5));
-    for(var i=0;i<numEnemies;i++){
-      var etype;
-      var er=Math.random();
-      if(floorNum<=5)etype=er<0.6?"slime":er<0.85?"bat":"skeleton";
-      else if(floorNum<=12)etype=er<0.4?"slime":er<0.7?"skeleton":"bat";
-      else etype=er<0.25?"slime":er<0.6?"skeleton":"bat";
-      room.enemies.push(createEnemy(etype,floorNum,rx,ry));
-    }
+  var numEnemies=rand(1+Math.floor(floorNum/3),clamp(Math.floor(difficulty/2)+2,2,8));
+  for(var i=0;i<numEnemies;i++){
+    var etype;
+    var er=Math.random();
+    if(floorNum<=5)etype=er<0.6?"slime":er<0.85?"bat":"skeleton";
+    else if(floorNum<=12)etype=er<0.4?"slime":er<0.7?"skeleton":"bat";
+    else etype=er<0.25?"slime":er<0.6?"skeleton":"bat";
+    room.enemies.push(createEnemy(etype,floorNum,rx,ry));
   }
 
   var numGems=rand(2,5+Math.floor(floorNum/3));
@@ -336,13 +334,13 @@ function createEnemy(type,floorNum,rx,ry){
   var e={type:type,x:0,y:0,hp:1,maxHp:1,speed:30,damage:1,size:12,patrolDir:DIR.RIGHT,patrolTimer:0,chasing:false,aggroRange:150,attackCooldown:0,attackRate:1,color:"#888",anim:0,flashTimer:0};
   switch(type){
     case"slime":
-      e.hp=2+Math.floor(floorNum/4);e.maxHp=e.hp;e.speed=25+floorNum*1.5;e.damage=1;
+      e.hp=2+Math.floor(floorNum/3);e.maxHp=e.hp;e.speed=25+floorNum*2;e.damage=1+Math.floor(floorNum/8);
       e.color="#44cc44";e.size=11;e.aggroRange=120;break;
     case"skeleton":
-      e.hp=3+Math.floor(floorNum/3);e.maxHp=e.hp;e.speed=35+floorNum*2;e.damage=2;
+      e.hp=3+Math.floor(floorNum/2);e.maxHp=e.hp;e.speed=35+floorNum*2.5;e.damage=2+Math.floor(floorNum/6);
       e.color="#ccccaa";e.size=13;e.aggroRange=160;e.attackRate=0.8;break;
     case"bat":
-      e.hp=1+Math.floor(floorNum/5);e.maxHp=e.hp;e.speed=50+floorNum*2;e.damage=1;
+      e.hp=1+Math.floor(floorNum/4);e.maxHp=e.hp;e.speed=50+floorNum*2.5;e.damage=1+Math.floor(floorNum/7);
       e.color="#8844aa";e.size=9;e.aggroRange=180;e.attackRate=0.5;break;
   }
   var placed=false;
