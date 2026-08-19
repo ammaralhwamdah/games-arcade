@@ -291,6 +291,263 @@ export const posts: BlogPost[] = [
       },
     ],
   },
+  {
+    slug: "why-browser-games-are-the-best-quick-break",
+    title: "Why Browser Games Are the Best Quick Break You're Not Taking",
+    excerpt:
+      "Your brain needs a reset every couple of hours. Here's why a five-minute browser game does more for your focus than scrolling social media — and how to pick the right one.",
+    date: "2026-08-07",
+    readTime: "5 min read",
+    tag: "Gaming Culture",
+    emoji: "🧠",
+    sections: [
+      {
+        heading: "Your brain is not a machine",
+        paragraphs: [
+          "I used to think powering through a four-hour study session made me productive. It did not. By hour three I was re-reading the same paragraph for the fifth time, my eyes glazing over while my fingers highlight text that my brain stopped processing an hour ago. The problem was not laziness — it was fatigue, and I was ignoring it.",
+          "Neuroscientists call it 'attention residue'. Every task you do leaves a little mental residue on the next one. After forty-five minutes of focused work, your brain quietly starts demanding a break whether you notice it or not. The trick is choosing a break that actually resets your focus instead of draining it further.",
+        ],
+      },
+      {
+        heading: "Why scrolling does not count as a break",
+        paragraphs: [
+          "Most people reach for their phone during a break. Instagram, TikTok, Twitter — pick your poison. The problem is that social media is not restful. It is a firehose of new information, emotional triggers and tiny dopamine hits that keep your brain processing even though you think you are relaxing.",
+          "Twenty minutes of scrolling later, you sit back down to work feeling worse than before. Your eyes are tired from the screen, your mind is scattered from the rapid context switching, and the 'quick break' just cost you a chunk of your next focus block. I have been there more times than I care to admit.",
+        ],
+      },
+      {
+        heading: "What makes browser games different",
+        paragraphs: [
+          "A good browser game gives your brain something completely different to work on — a spatial puzzle, a reflex challenge, a quick pattern-recognition task — and then lets you stop. There is an endpoint. You play a round, you get a score, you close the tab. No infinite scroll, no notifications pulling you back, no algorithm optimised to keep you watching.",
+          "Five minutes of a puzzle game engages the parts of your brain that handle spatial reasoning and decision-making while giving the parts responsible for language and analysis a genuine rest. It is like switching from running to cycling — still exercise, but different muscles, and the ones that were tired get to recover.",
+        ],
+      },
+      {
+        heading: "How to pick the right game for a break",
+        bullets: [
+          "Avoid games with long sessions. If a round takes more than three minutes, it is a hobby, not a break.",
+          "Choose something with a clear end point. Endless runners work because each death is a natural stopping point.",
+          "Pick a game that uses different skills than your work. If you write all day, try a reflex game. If you do spreadsheets, try a spatial puzzle.",
+          "Stay away from competitive multiplayer during work breaks. The emotional stakes are too high and you will carry the frustration back to your desk.",
+          "Set a timer if you need to. One round becomes three faster than you think.",
+        ],
+      },
+      {
+        heading: "The five-minute rule that changed my afternoons",
+        paragraphs: [
+          "Now I take a five-minute game break every ninety minutes. I play one round of whatever catches my eye, close the tab, and get back to work. The difference is noticeable — my focus lasts longer in each block, I make fewer silly mistakes in the afternoon, and I actually look forward to working because I know a break is coming.",
+          "It is not about being lazy. It is about being strategic with your energy. Your brain is the tool you use for everything — you might as well maintain it properly.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "mastering-nebula-grinder-idle-strategy",
+    title: "Mastering Nebula Grinder: The Idle Strategy That Actually Works",
+    excerpt:
+      "Nebula Grinder looks simple — click the asteroid, earn stardust, buy upgrades. But there is a hidden rhythm to the upgrade tree that separates casual players from people who break the million-stardust barrier.",
+    date: "2026-08-06",
+    readTime: "6 min read",
+    tag: "Game Guides",
+    emoji: "🌌",
+    sections: [
+      {
+        heading: "The trap everyone falls into",
+        paragraphs: [
+          "When you first open Nebula Grinder, the instinct is to buy the cheapest upgrade available. It feels logical — spend a little, earn a little more, repeat. But the upgrade costs scale exponentially while the income increases linearly. If you buy every upgrade the moment you can afford it, you will hit a wall around the 50,000 stardust mark where nothing seems to progress.",
+          "The issue is timing. Some upgrades have breakpoints where they suddenly become far more valuable than their price suggests, and buying them too early or too late wastes thousands of stardust that could have been compounding elsewhere.",
+        ],
+      },
+      {
+        heading: "The priority order that actually works",
+        paragraphs: [
+          "After way too many resets, I found a priority order that consistently gets me past the 100,000 mark. First, rush the auto-clicker to level 5. The passive income from auto-clicks is the foundation of everything else — it earns while you are thinking about what to buy next.",
+          "Second, skip the cosmetic upgrades entirely until much later. They look nice but add zero income. Every stardust spent on colours or particle effects is a stardust not compounding into more stardust. Third, buy click power upgrades only when they cost less than twenty seconds of your current auto-click income. Any more than that and you are overpaying.",
+        ],
+      },
+      {
+        heading: "When to prestige and when to hold",
+        paragraphs: [
+          "The prestige button is tempting the first time it appears. Reset everything for a multiplier? Sign me up. But prestiging too early throws away momentum. Wait until the upgrades you can buy with your current stardust cost more than a full minute of idle time. That is the sweet spot — you have squeezed enough value from this run that the prestige multiplier actually accelerates your next one instead of just resetting you to the same speed.",
+          "The second prestige is where the game opens up. The multiplier stacks with the auto-clicker levels you kept, and suddenly the early game flies by in seconds instead of minutes. From there, each prestige cycle gets shorter and more productive.",
+        ],
+      },
+      {
+        heading: "The milestone watchlist",
+        bullets: [
+          "Auto-clicker level 5 is the first real milestone. It doubles your passive income and makes every subsequent purchase faster.",
+          "Click power level 10 unlocks the stardust doubler, which is the single best purchase in the game if you can afford it without draining your reserves.",
+          "The nebula event at 250,000 stardust gives a permanent 1.5x bonus. Everything before that point is building toward it.",
+          "After the nebula event, the upgrade tree branches. Choose the left path for idle income or the right path for active clicking — both work, but mixing them slows you down.",
+        ],
+      },
+      {
+        heading: "The patience payoff",
+        paragraphs: [
+          "Nebula Grinder rewards patience more than any game I have played. The people who hit million-stardust scores are not clicking faster — they are buying smarter, prestiging at the right moment, and letting the math do the work. It is honestly a little meditative once you stop rushing and start thinking in upgrade trees instead of individual clicks.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "how-to-set-up-the-perfect-gaming-browser",
+    title: "How to Set Up Your Browser for the Best Gaming Experience",
+    excerpt:
+      "A few tweaks to your browser settings can turn a laggy, unresponsive game into a smooth experience. Here's what I changed and why it made a difference.",
+    date: "2026-08-05",
+    readTime: "5 min read",
+    tag: "Guides & Lists",
+    emoji: "⚙️",
+    sections: [
+      {
+        heading: "The problem nobody talks about",
+        paragraphs: [
+          "You open a browser game, it stutters, the frame rate drops, and you assume the game is poorly made. Sometimes that is true. But more often, your browser is the bottleneck — and a few setting changes can fix it completely. I spent a weekend tweaking my setup and the difference was night and day.",
+          "Browser games run on the same engine that renders websites, and that engine is optimised for showing you text and images, not running interactive canvas animations at sixty frames per second. With a few targeted changes, you can shift that balance.",
+        ],
+      },
+      {
+        heading: "Hardware acceleration is non-negotiable",
+        paragraphs: [
+          "Open your browser settings and search for 'hardware acceleration'. Make sure it is turned on. This tells your browser to use your graphics card instead of your CPU for rendering, and for canvas-based games the difference is massive. On my old laptop, enabling hardware acceleration turned a slideshow into a smooth game.",
+          "Chrome: Settings > System > Use hardware acceleration when available. Firefox: Settings > Performance > Use recommended performance settings. Edge: Settings > System and performance > Use hardware acceleration. Safari does this by default.",
+        ],
+      },
+      {
+        heading: "Close the tabs you are not using",
+        paragraphs: [
+          "Every open tab eats memory. A browser with thirty tabs open is like a car with the handbrake on — it technically moves, but everything feels heavier. Before you start a gaming session, close or bookmark the tabs you do not need. Your game will thank you.",
+          "If you are the kind of person who hoards tabs for 'later', install a tab manager extension that suspends inactive tabs. It frees the memory without losing your tabs, and your games get the resources they need.",
+        ],
+      },
+      {
+        heading: "The settings that matter most",
+        bullets: [
+          "Disable smooth scrolling while gaming. It adds visual interpolation that consumes GPU cycles your game could use.",
+          "Turn off tab discarding if your game sometimes runs in the background. Browsers love to kill background tabs to save memory, and your game state goes with them.",
+          "Set your browser to not preload pages. Preloading wastes bandwidth and CPU on pages you have not even visited yet.",
+          "If your browser supports it, enable tab throttling for background tabs. This limits CPU usage for tabs you are not looking at, leaving more power for the game.",
+        ],
+      },
+      {
+        heading: "The nuclear option: a gaming profile",
+        paragraphs: [
+          "If you play browser games regularly, create a separate browser profile just for gaming. No extensions, no bookmarks bar, no logged-in accounts eating memory. It takes thirty seconds to set up and every game loads faster, runs smoother, and feels more responsive. I made one last month and I am never going back.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "stick-dash-mistakes-that-cost-you-distance",
+    title: "7 Stick Dash Mistakes That Are Costing You Distance",
+    excerpt:
+      "Stick Dash looks like a simple runner, but the difference between a 500-metre run and a 2,000-metre run comes down to habits you probably do not know you have.",
+    date: "2026-08-04",
+    readTime: "5 min read",
+    tag: "Game Guides",
+    emoji: "🏃",
+    sections: [
+      {
+        heading: "Mistake one: jumping too early",
+        paragraphs: [
+          "The most common death in Stick Dash is jumping at the first obstacle you see instead of the obstacle you need to clear. Your eyes lock onto the nearest gap, your finger taps jump, and you land directly on the barrier behind it. The fix is simple but takes practice: look one obstacle ahead, not at the one in front of you. Let your brain calculate the jump before your finger reacts.",
+        ],
+      },
+      {
+        heading: "Mistake two: holding jump instead of tapping",
+        paragraphs: [
+          "Tap jumping gives you control over how high you go. Holding jump sends you to maximum height every time, which sounds good until you clip the ceiling of a low passage and die anyway. Short taps for low obstacles, full presses for high ones. The rhythm matters more than the speed.",
+        ],
+      },
+      {
+        heading: "Mistake three: ignoring the coins",
+        paragraphs: [
+          "Coins in Stick Dash are not just points — they are breadcrumbs. The game lays coin trails through safe paths, and following them is usually the right call. But players get tunnel vision on the obstacle ahead and veer off the coin path into a dead end. Glance at the coins. They know where they are going.",
+        ],
+      },
+      {
+        heading: "Mistake four: panicking at speed increases",
+        bullets: [
+          "The speed ramps up at fixed intervals. Anticipate them instead of reacting to them.",
+          "When the speed jumps, default to the centre lane. It gives you the most options.",
+          "Do not try to make fancy moves during a speed transition. Survive first, style second.",
+          "After a speed increase, give yourself two seconds to adjust before attempting any risky jumps.",
+        ],
+      },
+      {
+        heading: "Mistake five: playing too many rounds without a pause",
+        paragraphs: [
+          "After three or four deaths in a row, your reflexes degrade. You start making mistakes you did not make ten minutes ago, and the frustration compounds. Take a ten-second pause between rounds. Shake your hand, blink a few times, and start fresh. The next run will be longer than the three frustrated ones combined.",
+        ],
+      },
+      {
+        heading: "Mistake six: trusting muscle memory too early",
+        paragraphs: [
+          "Stick Dash generates obstacle patterns procedurally. The layout you memorised on your last run does not exist anymore. Players who die early are often the ones who assumed they knew what was coming based on a previous pattern. Stay present. React to what you see, not what you remember.",
+        ],
+      },
+      {
+        heading: "Mistake seven: not using the death screen",
+        paragraphs: [
+          "The death screen shows your distance and your best. glace at it. If your current run is significantly shorter than your best, something went wrong in the first thirty metres — probably one of the mistakes above. Use that information. The death screen is a free coaching session, and most people skip it.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "browser-games-vs-mobile-apps-which-should-you-play",
+    title: "Browser Games vs Mobile Apps: Which Should You Actually Play?",
+    excerpt:
+      "Both claim to be free. Both want your time. Here's an honest comparison based on what I've learned from building and playing hundreds of games on both platforms.",
+    date: "2026-08-03",
+    readTime: "6 min read",
+    tag: "Guides & Lists",
+    emoji: "📱",
+    sections: [
+      {
+        heading: "The convenience argument",
+        paragraphs: [
+          "Mobile apps have one unbeatable advantage: they are always in your pocket. You can play on the bus, in a waiting room, or during a commercial break. Browser games require you to be at a computer with a browser open. On pure convenience, mobile wins every time.",
+          "But convenience is not the whole story. Browser games load instantly — no app store, no thirty-second download, no 'update required' screen. You click a link and you are playing. For a quick five-minute break, that speed matters more than having the game on your phone.",
+        ],
+      },
+      {
+        heading: "The money question",
+        paragraphs: [
+          "Free-to-play mobile games are free to install and then gradually ask for money. Energy systems, loot boxes, battle passes, cosmetic shops — the list of monetisation tricks is long and creative. Some mobile games are genuinely free, but they are the exception, not the rule.",
+          "Browser games are almost always completely free. There is no app store taking a thirty-percent cut, no subscription model to maintain, and no shareholders demanding quarterly revenue growth. The game is free because hosting it costs almost nothing. When a browser game says free, it usually means free.",
+        ],
+      },
+      {
+        heading: "The ad problem",
+        paragraphs: [
+          "Mobile apps interrupt you with full-screen video ads that you cannot skip. They pop up after every round, every death, every level completion. Some games show ads between every action, turning a two-minute play session into a one-minute game and a one-minute ad.",
+          "Browser games show ads too — usually banner ads on the side of the page that do not interrupt gameplay. You see them, they exist, but they do not hijack your screen or waste your time. The difference in player experience is enormous.",
+        ],
+      },
+      {
+        heading: "Quality and originality",
+        bullets: [
+          "The app store is flooded with clones. How many match-three games can one platform hold? Finding something original requires digging through pages of near-identical titles.",
+          "Browser games are easier to make, which paradoxically leads to more variety. Developers experiment freely because the barrier to publishing is lower.",
+          "Mobile apps often have better graphics because developers can target specific hardware. Browser games run on everything, which limits visual ambition but guarantees compatibility.",
+          "Browser games save progress in your browser, not in an account. Lose your browser data and your high scores go with it. Mobile apps tie progress to your account, which is more resilient but also means your data is in someone else's hands.",
+        ],
+      },
+      {
+        heading: "The privacy trade-off",
+        paragraphs: [
+          "Mobile apps request access to your contacts, camera, location, photos and sometimes your microphone. Browser games ask for nothing. They run in a sandboxed iframe that cannot access your files, your camera or your contact list. If privacy matters to you — and it should — browser games are the safer choice by a wide margin.",
+        ],
+      },
+      {
+        heading: "My honest recommendation",
+        paragraphs: [
+          "Play both. Use mobile apps for games you want to invest serious time in — the ones with deep progression systems and multiplayer communities. Use browser games for quick breaks, brain resets and the kind of pick-up-and-play fun that mobile apps have mostly abandoned in favour of monetisation loops. The best gaming setup includes both, used intentionally.",
+        ],
+      },
+    ],
+  },
 ];
 
 export function getAllPosts(): BlogPost[] {
