@@ -100,12 +100,11 @@ export default function PrivacyPage() {
           </p>
         </Section>
 
-        <Section title="4. Third-Party Game Content">
+        <Section title="4. Game Content">
           <p>
-            The games on our website are embedded from third-party sources and may run inside an
-            isolated iframe. These games are provided by third parties and we encourage you to review
-            their own privacy practices. We do not share your personal information with these game
-            providers.
+            All games on our website are original, hand-built titles developed exclusively by the{" "}
+            {SITE_NAME} team. They run inside an isolated iframe in your browser for security and
+            performance. We do not share your personal information with any external game providers.
           </p>
         </Section>
 

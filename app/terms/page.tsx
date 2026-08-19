@@ -50,16 +50,16 @@ export default function TermsPage() {
           </p>
         </Section>
 
-        <Section title="3. Games Provided by Third Parties">
+        <Section title="3. Game Content">
           <p>
-            Many games on our website are embedded from third-party sources and remain the property
-            of their respective owners. These games are provided "as is" and we do not claim
-            ownership of them. We are not responsible for the availability, accuracy, or performance
-            of third-party game content. If you believe a game infringes your rights, please see our{" "}
-            <Link className="text-violet-400 hover:text-violet-300" href="/dmca">
-              DMCA page
-            </Link>
-            .
+            All games available on {SITE_NAME} are original titles built exclusively by our team.
+            They are provided &quot;as is&quot; and while we test every game before publishing, we do not
+            warrant that they will be uninterrupted or error-free. If you experience any issues, please
+            contact us through our{" "}
+            <Link className="text-violet-400 hover:text-violet-300" href="/contact">
+              contact page
+            </Link>{" "}
+            and we will address it promptly.
           </p>
         </Section>
 
