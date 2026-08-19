@@ -154,13 +154,13 @@ var touchState={up:false,down:false,left:false,right:false,attack:false};
 var touchIds={};
 
 function getDPadRect(){
-  var s=Math.min(W,H)*0.13;
-  var cx=s*2.2,cy=H-s*2.2;
+  var s=Math.min(W,H)*0.065;
+  var cx=s*2.5+12,cy=H-s*2.5-12;
   return{cx:cx,cy:cy,s:s};
 }
 function getAttackRect(){
-  var s=Math.min(W,H)*0.14;
-  var cx=W-s*2.2,cy=H-s*2.2;
+  var s=Math.min(W,H)*0.07;
+  var cx=W-s*2.5-12,cy=H-s*2.5-12;
   return{cx:cx,cy:cy,s:s};
 }
 
