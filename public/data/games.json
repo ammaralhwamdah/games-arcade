@@ -168,11 +168,9 @@
     "mech-mayhem",
     "kitchen-rush",
     "stick-dash",
-    "penalty-pro",
     "blorb-bonanza",
     "voxel-voyage",
     "gemfall-depths",
-    "turbo-tarmac",
     "racket-rumble"
   ],
   "games": [
@@ -748,22 +746,6 @@
       "description": "Stick Dash is a neon-lit endless runner where a fearless stickman sprints forward and the world throws everything it has at him. Tap or press Space to jump — double-tap for a second lift — and swipe down or hit S to slide under the low obstacles. Coins litter the path and each one adds to your tally, but a single collision with a spike, laser or barrier ends the run and locks in your distance. The longer you survive, the faster the world moves and the tighter the gaps become, so read two obstacles ahead and time every input to the rhythm. Your best run is saved in your browser, and the retry button is always one tap away. Original to Gameverse — pure reflexes, zero filler."
     },
     {
-      "id": "penalty-pro",
-      "slug": "penalty-pro",
-      "name": "Penalty Pro",
-      "category": "soccer",
-      "categories": ["soccer", "sports", "arcade"],
-      "file": "games/penalty-pro/index.html",
-      "src": "/games/penalty-pro/index.html",
-      "image": "/images/games/penalty-pro.svg",
-      "sizeKb": 21,
-      "rating": 4.8,
-      "plays": 0,
-      "year": 2026,
-      "tags": ["exclusive", "html5", "soccer", "football", "penalty", "sports", "single-player"],
-      "description": "Twelve yards, one keeper and ten chances to prove you belong on the pitch. Penalty Pro splits the goal into nine zones — tap or click the one you want to aim at, and the ball rockets toward it while the keeper dives the opposite way or reads your mind and palms it away. Score consecutively and the multiplier climbs, turning ordinary goals into high-value streaks that pad your final score. Miss or get saved and the streak resets, so every kick after a blank carries extra pressure. The keeper adapts as the rounds progress, reading your habits and cheating toward your favourite corners, so keep your placement unpredictable if you want the clean sheet. Your best score is saved in your browser — original to Gameverse, built from scratch, no ads, no filler."
-    },
-    {
       "id": "blorb-bonanza",
       "slug": "blorb-bonanza",
       "name": "Blorb Bonanza",
@@ -810,22 +792,6 @@
       "year": 2026,
       "tags": ["exclusive", "html5", "adventure", "dungeon", "roguelike", "gems", "single-player"],
       "description": "Gemfall Depths is a procedurally generated dungeon that stretches twenty floors deep, and every floor is a fresh layout you have never seen before. Move with WASD or the arrow keys, attack with Space or a click, and fight your way through slimes, skeletons, bats and tougher enemies that get meaner the deeper you go. Gems, gold and treasure chests drop loot that keeps you alive, and each floor's exit is guarded by a boss that demands every trick you have learned so far. Health potions patch you up between fights, the sword upgrades stack, and the dungeon reshuffles every run so memorisation is not an option — only instinct, reflexes and a little luck stand between you and the bottom. Your best run is saved locally, and the retry button is always one tap away. Original to Gameverse — zero ads, pure dungeon crawling."
-    },
-    {
-      "id": "turbo-tarmac",
-      "slug": "turbo-tarmac",
-      "name": "Turbo Tarmac",
-      "category": "racing",
-      "categories": ["racing", "arcade", "2-player"],
-      "file": "games/turbo-tarmac/index.html",
-      "src": "/games/turbo-tarmac/index.html",
-      "image": "/images/games/turbo-tarmac.svg",
-      "sizeKb": 32,
-      "rating": 4.9,
-      "plays": 0,
-      "year": 2026,
-      "tags": ["exclusive", "html5", "racing", "drift", "cars", "competitive", "single-player"],
-      "description": "Turbo Tarmac is a top-down racer that throws you onto a dynamically generated circuit with three AI rivals and three laps to prove you belong on the podium. Accelerate with W or the up arrow, steer with A and D, and hold Space or S to brake hard and slide the rear into a drift that bends the car around the apex faster than any clean line could. Every corner is a trade-off: brake too late and you overshoot, brake too early and the AI passes you on the exit. Laps tick by, positions shift, and the HUD updates your place in real time so you always know how close the pack is. Finish first to see your time, your best lap and your position locked in — then hit race again and chase a faster one. Original to Gameverse — zero ads, pure speed."
     },
     {
       "id": "racket-rumble",

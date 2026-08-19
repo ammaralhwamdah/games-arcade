@@ -693,37 +693,6 @@ const content: Record<string, GameContent> = {
       },
     ],
   },
-  "penalty-pro": {
-    tips: [
-      "Never aim at the same zone twice in a row. The keeper learns your habits quickly, and the moment you repeat a corner it starts diving there early — unpredictable placement is the whole game.",
-      "Aim for the corners when the keeper is central. A shot down the middle is the easiest save, so spread the ball wide and trust the angle to do the work.",
-      "After a miss or a save, take a breath before the next kick. The streak multiplier resets, so the next goal starts a fresh chain — rushing a nervous kick only adds a second blank to the run.",
-      "Watch the keeper's pre-dive movement. A slight lean in one direction before the kick often reveals where it is heading, giving you a split second to switch zones.",
-      "Score ten in a row and the multiplier maxes out. Reaching that streak means every subsequent goal is worth the peak value, so protecting the streak is worth more than any single fancy placement.",
-    ],
-    faq: [
-      {
-        q: "Is Penalty Pro free to play?",
-        a: "Yes. Penalty Pro is completely free, runs in your browser and shows no ads inside the game. There is nothing to download, install or pay for — just step up to the spot and start shooting.",
-      },
-      {
-        q: "How do I aim my shot?",
-        a: "Click or tap one of the nine zones on the goal face. The ball automatically shoots toward that zone while the keeper dives in a direction determined by its own logic.",
-      },
-      {
-        q: "What does the streak multiplier do?",
-        a: "Every consecutive goal without a miss or save increases the multiplier. The higher the multiplier, the more each subsequent goal is worth — so a long streak turns ordinary goals into big points.",
-      },
-      {
-        q: "How many kicks do I get?",
-        a: "You get ten kicks per round. Your score after ten kicks is your final result, and your best score is saved so you can always try for a cleaner run.",
-      },
-      {
-        q: "Does the keeper get harder?",
-        a: "Yes, the keeper adapts to your patterns. The more you repeat the same zones, the more accurately it dives — keep your placement unpredictable to stay ahead.",
-      },
-    ],
-  },
   "blorb-bonanza": {
     tips: [
       "Auto-tappers are the foundation. Buy them early and let the idle income build while you figure out the rest of the shop — a steady stream of Blorb Bits is worth more than a bigger single click.",
@@ -814,37 +783,6 @@ const content: Record<string, GameContent> = {
       {
         q: "Is the dungeon the same every run?",
         a: "No. The dungeon is procedurally generated, so every run produces different room layouts, enemy placements and item locations. The only constant is the challenge.",
-      },
-    ],
-  },
-  "turbo-tarmac": {
-    tips: [
-      "Brake into the corner, accelerate out. A fast exit onto the straight is worth more than a fast entry into the apex, so scrub speed early and floor it as soon as the car straightens.",
-      "Drift is a tool, not a style. Holding Space or S through the corner slides the rear and bends the car faster than clean steering, but drifting too long bleeds speed — use it for tight corners only.",
-      "Watch the position indicator, not just the timer. Knowing whether you are in first, second or third tells you how aggressive to drive — second place on the final lap calls for a risky pass, not a cautious line.",
-      "The AI takes predictable lines. Learn the circuit's tight corners and position yourself on the inside before the AI turns in — a clean inside line beats a desperate late brake every time.",
-      "Three laps is short enough to learn the circuit. Use the first lap to read the layout, the second to push your pace, and the third to seal the position — rushing lap one usually ends in a crash.",
-    ],
-    faq: [
-      {
-        q: "Is Turbo Tarmac free to play?",
-        a: "Yes. Turbo Tarmac is completely free, runs in your browser and shows no ads inside the game. There is nothing to download, install or pay for — just hit the track and start racing.",
-      },
-      {
-        q: "How do I drift?",
-        a: "Hold Space or S while turning to initiate a drift. The car slides through the corner and straightens as you release the brake. Drifting too long bleeds speed, so use it only on tight bends.",
-      },
-      {
-        q: "How many laps and opponents are there?",
-        a: "Each race is three laps around a dynamically generated circuit, with three AI opponents. Finishing first requires clean lines, well-timed drifts and the nerve to pass on the inside.",
-      },
-      {
-        q: "How do I control the car on mobile?",
-        a: "On mobile, tap and hold the left or right side of the screen to steer, and the top or bottom half to brake or accelerate. The touch zones are large enough to feel intuitive without looking.",
-      },
-      {
-        q: "Is my best time saved?",
-        a: "Yes, your best race time and best lap time are saved in your browser, so you can always come back and try to beat your own record.",
       },
     ],
   },
