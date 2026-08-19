@@ -150,43 +150,78 @@ var keys={};
 window.addEventListener("keydown",function(e){keys[e.code]=true;if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code)>=0)e.preventDefault()});
 window.addEventListener("keyup",function(e){keys[e.code]=false});
 
-var touchJoystick={active:false,startX:0,startY:0,curX:0,curY:0,dx:0,dy:0,tapX:0,tapY:0,tapped:false,tapTime:0};
-var touchId=null;
+var touchState={up:false,down:false,left:false,right:false,attack:false};
+var touchIds={};
+
+function getDPadRect(){
+  var s=Math.min(W,H)*0.13;
+  var cx=s*2.2,cy=H-s*2.2;
+  return{cx:cx,cy:cy,s:s};
+}
+function getAttackRect(){
+  var s=Math.min(W,H)*0.14;
+  var cx=W-s*2.2,cy=H-s*2.2;
+  return{cx:cx,cy:cy,s:s};
+}
+
+function hitDPad(x,y){
+  var d=getDPadRect();
+  var dx=x-d.cx,dy=y-d.cy;
+  if(Math.abs(dx)>d.s*1.6||Math.abs(dy)>d.s*1.6)return null;
+  if(Math.abs(dx)<d.s*0.5&&Math.abs(dy)<d.s*0.5)return null;
+  if(Math.abs(dx)>Math.abs(dy)){
+    return dx>0?"right":"left";
+  }else{
+    return dy>0?"down":"up";
+  }
+}
+function hitAttack(x,y){
+  var a=getAttackRect();
+  var dx=x-a.cx,dy=y-a.cy;
+  return Math.sqrt(dx*dx+dy*dy)<a.s*1.3;
+}
 
 canvas.addEventListener("touchstart",function(e){
   e.preventDefault();
   initAudio();
-  var t=e.changedTouches[0];
-  var x=t.clientX,y=t.clientY;
-  if(x<W*0.5){
-    touchJoystick.active=true;touchJoystick.startX=x;touchJoystick.startY=y;touchJoystick.curX=x;touchJoystick.curY=y;touchJoystick.dx=0;touchJoystick.dy=0;
-    touchId=t.identifier;
-  }else{
-    touchJoystick.tapped=true;touchJoystick.tapX=x;touchJoystick.tapY=y;touchJoystick.tapTime=Date.now();
+  for(var i=0;i<e.changedTouches.length;i++){
+    var t=e.changedTouches[i];
+    var x=t.clientX,y=t.clientY;
+    var dir=hitDPad(x,y);
+    if(dir){
+      touchState[dir]=true;
+      touchIds[t.identifier]=dir;
+    }else if(hitAttack(x,y)){
+      touchState.attack=true;
+      touchIds[t.identifier]="attack";
+    }
   }
 },{passive:false});
 
 canvas.addEventListener("touchmove",function(e){
   e.preventDefault();
-  for(var i=0;i<e.changedTouches.length;i++){
-    var t=e.changedTouches[i];
-    if(touchJoystick.active&&t.identifier===touchId){
-      touchJoystick.curX=t.clientX;touchJoystick.curY=t.clientY;
-      var dx=touchJoystick.curX-touchJoystick.startX;
-      var dy=touchJoystick.curY-touchJoystick.startY;
-      var d=Math.sqrt(dx*dx+dy*dy);
-      var maxD=60;
-      if(d>maxD){dx=dx/d*maxD;dy=dy/d*maxD;touchJoystick.curX=touchJoystick.startX+dx;touchJoystick.curY=touchJoystick.startY+dy;}
-      touchJoystick.dx=dx/maxD;touchJoystick.dy=dy/maxD;
-    }
-  }
 },{passive:false});
 
 canvas.addEventListener("touchend",function(e){
   e.preventDefault();
   for(var i=0;i<e.changedTouches.length;i++){
     var t=e.changedTouches[i];
-    if(t.identifier===touchId){touchJoystick.active=false;touchJoystick.dx=0;touchJoystick.dy=0;touchId=null;}
+    var id=touchIds[t.identifier];
+    if(id){
+      touchState[id]=false;
+      delete touchIds[t.identifier];
+    }
+  }
+},{passive:false});
+
+canvas.addEventListener("touchcancel",function(e){
+  for(var i=0;i<e.changedTouches.length;i++){
+    var t=e.changedTouches[i];
+    var id=touchIds[t.identifier];
+    if(id){
+      touchState[id]=false;
+      delete touchIds[t.identifier];
+    }
   }
 },{passive:false});
 
@@ -465,14 +500,10 @@ function updatePlayer(dt){
   if(player.attackAnim>0)player.attackAnim-=dt;
 
   var mx=0,my=0;
-  if(keys["KeyW"]||keys["ArrowUp"])my=-1;
-  if(keys["KeyS"]||keys["ArrowDown"])my=1;
-  if(keys["KeyA"]||keys["ArrowLeft"])mx=-1;
-  if(keys["KeyD"]||keys["ArrowRight"])mx=1;
-
-  if(touchJoystick.active){
-    mx=touchJoystick.dx;my=touchJoystick.dy;
-  }
+  if(keys["KeyW"]||keys["ArrowUp"]||touchState.up)my=-1;
+  if(keys["KeyS"]||keys["ArrowDown"]||touchState.down)my=1;
+  if(keys["KeyA"]||keys["ArrowLeft"]||touchState.left)mx=-1;
+  if(keys["KeyD"]||keys["ArrowRight"]||touchState.right)mx=1;
 
   var len=Math.sqrt(mx*mx+my*my);
   if(len>0.15){
@@ -517,10 +548,10 @@ function updatePlayer(dt){
   else if(player.y<half+2&&player.facing===DIR.UP)transitionToRoom(DIR.UP);
   else if(player.y>ROOM_H*TILE-half-2&&player.facing===DIR.DOWN)transitionToRoom(DIR.DOWN);
 
-  var doAttack=(keys["Space"]||mouse.down||touchJoystick.tapped);
+  var doAttack=(keys["Space"]||mouse.down||touchState.attack);
   if(doAttack&&player.attackCooldown<=0){
     doPlayerAttack();
-    touchJoystick.tapped=false;
+    touchState.attack=false;
   }
 
   var totalEnemies=enemies.length;
@@ -726,11 +757,20 @@ function drawRoom(){
   ctx.fillStyle="#111118";
   ctx.fillRect(0,0,W,H);
 
-  var offX=W/2-cx;
-  var offY=H/2-cy;
+  var roomPxW=ROOM_W*TILE;
+  var roomPxH=ROOM_H*TILE;
+  var renderScale=Math.min(W/roomPxW,H/roomPxH);
+  var drawW=roomPxW*renderScale;
+  var drawH=roomPxH*renderScale;
+  var baseOffX=(W-drawW)/2;
+  var baseOffY=(H-drawH)/2;
+
+  var offX=baseOffX+(-cx+roomPxW/2)*renderScale;
+  var offY=baseOffY+(-cy+roomPxH/2)*renderScale;
 
   ctx.save();
   ctx.translate(offX,offY);
+  ctx.scale(renderScale,renderScale);
 
   var wallColor="#2a2233";
   var floorColor="#1a1520";
@@ -1118,14 +1158,35 @@ function drawTransition(){
   ctx.fillRect(0,0,W,H);
 }
 
-function drawJoystick(){
-  if(!touchJoystick.active)return;
-  ctx.globalAlpha=0.3;
-  ctx.fillStyle="#ffffff";
-  ctx.beginPath();ctx.arc(touchJoystick.startX,touchJoystick.startY,40,0,Math.PI*2);ctx.fill();
-  ctx.globalAlpha=0.6;
-  ctx.fillStyle="#ffcc00";
-  ctx.beginPath();ctx.arc(touchJoystick.curX,touchJoystick.curY,16,0,Math.PI*2);ctx.fill();
+function drawControls(){
+  if(!("ontouchstart" in window))return;
+  var d=getDPadRect();
+  var s=d.s;
+  ctx.globalAlpha=0.25;
+  var dirs=[{dx:0,dy:-1,key:"up",label:"▲"},{dx:0,dy:1,key:"down",label:"▼"},{dx:-1,dy:0,key:"left",label:"◀"},{dx:1,dy:0,key:"right",label:"▶"}];
+  for(var i=0;i<dirs.length;i++){
+    var dd=dirs[i];
+    var bx=d.cx+dd.dx*s*1.15-s*0.45;
+    var by=d.cy+dd.dy*s*1.15-s*0.45;
+    ctx.fillStyle=touchState[dd.key]?"rgba(255,200,50,0.6)":"rgba(255,255,255,0.15)";
+    ctx.strokeStyle="rgba(255,255,255,0.4)";
+    ctx.lineWidth=2;
+    ctx.beginPath();ctx.roundRect(bx,by,s*0.9,s*0.9,8);ctx.fill();ctx.stroke();
+    ctx.fillStyle=touchState[dd.key]?"#fff":"rgba(255,255,255,0.6)";
+    ctx.font=s*0.45+"px sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";
+    ctx.fillText(dd.label,d.cx+dd.dx*s*1.15,d.cy+dd.dy*s*1.15);
+  }
+  ctx.globalAlpha=1;
+
+  var a=getAttackRect();
+  ctx.globalAlpha=0.25;
+  ctx.fillStyle=touchState.attack?"rgba(255,80,80,0.6)":"rgba(255,255,255,0.15)";
+  ctx.strokeStyle="rgba(255,100,100,0.5)";
+  ctx.lineWidth=2;
+  ctx.beginPath();ctx.arc(a.cx,a.cy,a.s,0,Math.PI*2);ctx.fill();ctx.stroke();
+  ctx.fillStyle=touchState.attack?"#fff":"rgba(255,255,255,0.7)";
+  ctx.font="bold "+a.s*0.7+"px sans-serif";ctx.textAlign="center";ctx.textBaseline="middle";
+  ctx.fillText("⚔",a.cx,a.cy);
   ctx.globalAlpha=1;
 }
 
@@ -1172,7 +1233,7 @@ function gameLoop(time){
     drawRoom();
     drawHUD();
     drawTransition();
-    drawJoystick();
+    drawControls();
   }else if(game.state==="menu"){
     drawMenuBg();
   }
