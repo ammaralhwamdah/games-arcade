@@ -336,13 +336,18 @@ function drawCourt(){
   ctx.stroke();
 }
 
+var isMobile=/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)||window.innerWidth<768;
+
 function drawRacket(x,y,color){
   ctx.save();ctx.translate(x,y);
-  var gw=ctx.createRadialGradient(0,0,racketW*0.1,0,0,racketW*0.6);
-  gw.addColorStop(0,color+"44");gw.addColorStop(1,"transparent");
-  ctx.fillStyle=gw;
-  ctx.fillRect(-racketW*0.6,-racketH*3,racketW*1.2,racketH*6);
-  ctx.fillStyle=color;ctx.shadowColor=color;ctx.shadowBlur=12;
+  if(!isMobile){
+    var gw=ctx.createRadialGradient(0,0,racketW*0.1,0,0,racketW*0.6);
+    gw.addColorStop(0,color+"44");gw.addColorStop(1,"transparent");
+    ctx.fillStyle=gw;
+    ctx.fillRect(-racketW*0.6,-racketH*3,racketW*1.2,racketH*6);
+  }
+  ctx.fillStyle=color;
+  if(!isMobile){ctx.shadowColor=color;ctx.shadowBlur=12;}
   var rw=racketW*0.9,rh=racketH;
   ctx.beginPath();ctx.roundRect(-rw/2,-rh/2,rw,rh,rh/2);ctx.fill();
   ctx.strokeStyle="#fff";ctx.lineWidth=1.5;
@@ -354,13 +359,16 @@ function drawRacket(x,y,color){
 
 function drawBall(){
   if(!ball.active&&state!==STATE.POINT_OVER)return;
-  for(var i=0;i<ball.trail.length;i++){
-    var t=ball.trail[i],a=(i/ball.trail.length)*0.4,sz=ballRadius*(i/ball.trail.length)*0.7;
+  var maxTrail=isMobile?10:25;
+  var trailLen=Math.min(ball.trail.length,maxTrail);
+  for(var i=0;i<trailLen;i++){
+    var t=ball.trail[i],a=(i/trailLen)*0.4,sz=ballRadius*(i/trailLen)*0.7;
     ctx.fillStyle="rgba(255,255,100,"+a+")";
     ctx.beginPath();ctx.arc(t.x,t.y,sz,0,Math.PI*2);ctx.fill();
   }
   if(!ball.active)return;
-  ctx.save();ctx.shadowColor="#ffeb3b";ctx.shadowBlur=15;
+  ctx.save();
+  if(!isMobile){ctx.shadowColor="#ffeb3b";ctx.shadowBlur=15;}
   var g=ctx.createRadialGradient(ball.x-ballRadius*0.3,ball.y-ballRadius*0.3,0,ball.x,ball.y,ballRadius);
   g.addColorStop(0,"#fff9c4");g.addColorStop(0.5,"#ffeb3b");g.addColorStop(1,"#f59e0b");
   ctx.fillStyle=g;ctx.beginPath();ctx.arc(ball.x,ball.y,ballRadius,0,Math.PI*2);ctx.fill();
@@ -402,7 +410,8 @@ function drawPointMessage(msg,color){
   if(!msg)return;
   ctx.save();ctx.textAlign="center";ctx.textBaseline="middle";
   ctx.font="bold "+fontSize*1.2+"px 'Segoe UI',Arial,sans-serif";
-  ctx.fillStyle=color;ctx.shadowColor=color;ctx.shadowBlur=20;
+  ctx.fillStyle=color;
+  if(!isMobile){ctx.shadowColor=color;ctx.shadowBlur=20;}
   ctx.fillText(msg,W/2,H/2);ctx.shadowBlur=0;ctx.restore();
 }
 
@@ -426,7 +435,7 @@ function draw(){
 }
 
 function gameLoop(){
-  resize();update();draw();
+  update();draw();
   requestAnimationFrame(gameLoop);
 }
 
