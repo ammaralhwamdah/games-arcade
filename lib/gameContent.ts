@@ -817,6 +817,37 @@ const content: Record<string, GameContent> = {
       },
     ],
   },
+  "neon-circuit": {
+    tips: [
+      "Start from the power source — the glowing orange node — and trace which tiles it can reach. Rotate those tiles first to build a foundation.",
+      "Focus on endpoints (tiles with only one connection). They are the hardest to reach, so plan your path toward them early.",
+      "Corner tiles are the trickiest. A corner connects two adjacent sides, so rotating it wrong can silently block power from flowing.",
+      "Use the power percentage at the bottom of the screen to track your progress. If it stalls, you likely have a single dead tile blocking everything.",
+      "Tap the same tile multiple times to cycle through all four rotations. Sometimes the answer is just one more spin.",
+    ],
+    faq: [
+      {
+        q: "How do I play Neon Circuit?",
+        a: "Tap any tile on the grid to rotate it ninety degrees clockwise. Your goal is to connect the glowing power source to every tile on the board. When power flows through a tile, it lights up in neon cyan.",
+      },
+      {
+        q: "What do the different tile shapes mean?",
+        a: "Straight tiles connect two opposite sides. Corner tiles connect two adjacent sides. T-junction tiles connect three sides. Cross tiles connect all four sides. Each shape has a specific role in directing power flow.",
+      },
+      {
+        q: "What is the orange dot?",
+        a: "The orange dot marks the power source. Energy starts here and flows outward through connected tiles. Your job is to make sure it reaches every tile on the grid.",
+      },
+      {
+        q: "How many levels are there?",
+        a: "Neon Circuit has 11 levels, starting with small three by three grids and scaling up to five by five. Each level introduces new tile arrangements and challenges.",
+      },
+      {
+        q: "How is my progress tracked?",
+        a: "Your unlocked levels are saved in your browser automatically. The move counter shows how many rotations you made, so you can replay levels to find more efficient solutions.",
+      },
+    ],
+  },
 };
 
 export function getGameContent(slug: string): GameContent | undefined {

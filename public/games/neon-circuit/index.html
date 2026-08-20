@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>Neon Circuit</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#0a0a1a;font-family:'Segoe UI',system-ui,sans-serif;touch-action:none;user-select:none}
+canvas{display:block}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+"use strict";
+const C=document.getElementById("c"),X=C.getContext("2d");
+let W,H,dpr;
+function resize(){dpr=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;C.width=W*dpr;C.height=H*dpr;X.setTransform(dpr,0,0,dpr,0,0)}
+resize();addEventListener("resize",resize);
+
+const AC=new(window.AudioContext||window.webkitAudioContext)();
+function snd(freq,dur,type="sine",vol=0.12){
+  if(AC.state==="suspended")AC.resume();
+  const o=AC.createOscillator(),g=AC.createGain();
+  o.type=type;o.frequency.setValueAtTime(freq,AC.currentTime);
+  g.gain.setValueAtTime(vol,AC.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001,AC.currentTime+dur);
+  o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+dur);
+}
+
+const TILE={
+  EMPTY:0,END:1,STRAIGHT:2,CORNER:3,TJUNC:4,CROSS:5
+};
+
+const TILE_CONN=[
+  [],
+  [1],
+  [0,2],
+  [0,1],
+  [0,1,2],
+  [0,1,2,3]
+];
+
+function rotConns(conns,rot){
+  return conns.map(c=>(c+rot)%4);
+}
+
+function hasConn(conns,dir){return conns.includes(dir)}
+
+const OPPOSITE=[2,3,0,1];
+const DX=[0,1,0,-1];
+const DY=[-1,0,1,0];
+
+const LEVELS=[
+  {w:3,h:3,tiles:[[5,0,2],[3,2,3],[1,2,1]],src:[0,0]},
+  {w:3,h:3,tiles:[[2,1,2],[4,2,1],[1,0,1]],src:[0,0]},
+  {w:3,h:3,tiles:[[3,0,3],[2,1,2],[3,2,1]],src:[0,0]},
+  {w:4,h:3,tiles:[[2,1,3],[4,2,1],[3,0,2],[2,2,1]],src:[0,0]},
+  {w:4,h:3,tiles:[[3,1,2],[5,2,3],[3,0,1],[1,2,1]],src:[0,0]},
+  {w:4,h:4,tiles:[[2,1,4],[3,2,3],[2,0,2],[4,1,1],[3,0,1],[5,2,2],[1,0,1],[2,2,1],[3,0,3],[2,1,2],[4,2,1],[1,0,1]],src:[0,0]},
+  {w:4,h:4,tiles:[[3,1,3],[2,2,4],[3,0,1],[1,2,1],[2,1,3],[5,2,2],[4,0,1],[1,2,1],[3,1,2],[2,0,2],[3,2,1],[1,0,1]],src:[0,0]},
+  {w:5,h:4,tiles:[[2,1,3],[4,2,3],[3,0,2],[2,1,2],[1,2,1],[3,1,2],[5,0,4],[3,2,3],[2,0,2],[1,2,1],[3,1,2],[2,0,2],[3,2,1],[4,0,1],[1,2,1]],src:[0,0]},
+  {w:5,h:4,tiles:[[3,1,2],[5,2,3],[4,0,2],[3,1,1],[1,2,1],[2,1,3],[3,0,2],[2,2,4],[3,0,1],[1,2,1],[3,1,2],[2,0,2],[4,2,1],[3,0,1],[1,0,1]],src:[0,0]},
+  {w:5,h:5,tiles:[[2,1,3],[3,2,3],[2,0,4],[3,1,1],[1,2,1],[3,1,2],[5,0,3],[4,2,2],[2,0,1],[1,2,1],[2,1,3],[3,0,4],[2,2,3],[3,0,1],[1,2,1],[3,1,2],[2,0,2],[3,2,1],[4,0,1],[1,2,1],[3,1,2],[2,0,2],[4,2,1],[3,0,1],[1,0,1]],src:[0,0]},
+];
+
+function buildLevel(idx){
+  const def=LEVELS[idx]||LEVELS[LEVELS.length-1];
+  const w=def.w,h=def.h;
+  const grid=[];
+  for(let r=0;r<h;r++){
+    grid[r]=[];
+    for(let c=0;c<w;c++){
+      const ti=r*w+c;
+      const t=def.tiles[ti]||[0,0,0];
+      const type=t[0], solvedRot=t[1];
+      let actualRot=solvedRot;
+      if(idx>0)actualRot=(solvedRot+Math.floor(Math.random()*3)+1)%4;
+      const conns=TILE_CONN[type].slice();
+      grid[r][c]={type,rot:actualRot,solvedRot,conns,powered:false,powerAnim:0};
+    }
+  }
+  return{w,h,grid,src:def.src.slice()};
+}
+
+let state="menu";
+let level=0,grid,gridW,gridH,srcR,srcC;
+let moves=0,timer=0,lastTime=0;
+let particles=[];
+let maxUnlocked=0;
+try{maxUnlocked=parseInt(localStorage.getItem("nc_progress"))||0}catch(e){}
+
+function saveProg(){try{localStorage.setItem("nc_progress",String(maxUnlocked))}catch(e){}}
+
+function startLevel(idx){
+  level=idx;
+  const lv=buildLevel(idx);
+  grid=lv.grid;gridW=lv.w;gridH=lv.h;srcR=lv.src[0];srcC=lv.src[1];
+  moves=0;timer=0;particles=[];
+  propagate();
+  state="playing";
+  snd(523,0.15);snd(659,0.15,0.15);
+}
+
+function propagate(){
+  for(let r=0;r<gridH;r++)for(let c=0;c<gridW;c++)grid[r][c].powered=false;
+  grid[srcR][srcC].powered=true;
+  grid[srcR][srcC].powerAnim=1;
+  let changed=true;
+  while(changed){
+    changed=false;
+    for(let r=0;r<gridH;r++){
+      for(let c=0;c<gridW;c++){
+        if(!grid[r][c].powered)continue;
+        const conns=rotConns(grid[r][c].conns,grid[r][c].rot);
+        for(const d of conns){
+          const nr=r+DY[d],nc=c+DX[d];
+          if(nr<0||nr>=gridH||nc<0||nc>=gridW)continue;
+          if(grid[nr][nc].powered)continue;
+          const nConns=rotConns(grid[nr][nc].conns,grid[nr][nc].rot);
+          if(hasConn(nConns,OPPOSITE[d])){
+            grid[nr][nc].powered=true;
+            grid[nr][nc].powerAnim=1;
+            changed=true;
+          }
+        }
+      }
+    }
+  }
+}
+
+function checkWin(){
+  for(let r=0;r<gridH;r++)for(let c=0;c<gridW;c++){
+    if(grid[r][c].type===TILE.EMPTY)continue;
+    if(!grid[r][c].powered)return false;
+  }
+  return true;
+}
+
+function spawnParticles(x,y,color){
+  for(let i=0;i<12;i++){
+    const ang=Math.random()*Math.PI*2;
+    const spd=1+Math.random()*3;
+    particles.push({x,y,vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd,life:1,color,size:2+Math.random()*3});
+  }
+}
+
+let touchStart=null;
+let tileHighlights=[];
+
+function getTileAt(x,y){
+  const pad=Math.min(W,H)*0.04;
+  const area=W-pad*2;
+  const availH=H-pad*2;
+  const tileSize=Math.floor(Math.min(area/gridW,(availH-60)/gridH));
+  const totalW=gridW*tileSize,totalH=gridH*tileSize;
+  const ox=(W-totalW)/2,oy=(H-totalH)/2+20;
+  const c=Math.floor((x-ox)/tileSize);
+  const r=Math.floor((y-oy)/tileSize);
+  if(r>=0&&r<gridH&&c>=0&&c<gridW)return{r,c,tileSize,ox,oy};
+  return null;
+}
+
+C.addEventListener("pointerdown",e=>{
+  if(state==="menu"){
+    state="levels";
+    snd(440,0.1);
+    return;
+  }
+  if(state==="levels"){
+    const btnW=Math.min(160,W*0.22);
+    const btnH=50;
+    const cols=Math.floor((W-40)/(btnW+10));
+    const sx=(W-cols*(btnW+10)+10)/2;
+    const sy=100;
+    for(let i=0;i<=Math.min(maxUnlocked+1,LEVELS.length-1);i++){
+      const col=i%cols,row=Math.floor(i/cols);
+      const bx=sx+col*(btnW+10),by=sy+row*(btnH+12);
+      if(e.clientX>=bx&&e.clientX<=bx+btnW&&e.clientY>=by&&e.clientY<=by+btnH){
+        startLevel(i);
+        return;
+      }
+    }
+    return;
+  }
+  if(state==="levelComplete"){
+    if(level<LEVELS.length-1){
+      if(level>=maxUnlocked){maxUnlocked=level+1;saveProg()}
+      startLevel(level+1);
+    }else{
+      state="levels";
+    }
+    snd(523,0.1);
+    return;
+  }
+  if(state==="playing"){
+    const t=getTileAt(e.clientX,e.clientY);
+    if(t){
+      touchStart={x:e.clientX,y:e.clientY,r:t.r,c:t.c,moved:false};
+    }
+  }
+});
+
+C.addEventListener("pointermove",e=>{
+  if(touchStart&&(Math.abs(e.clientX-touchStart.x)>10||Math.abs(e.clientY-touchStart.y)>10)){
+    touchStart.moved=true;
+  }
+});
+
+C.addEventListener("pointerup",e=>{
+  if(state==="playing"&&touchStart&&!touchStart.moved){
+    const t=getTileAt(e.clientX,e.clientY);
+    if(t&&t.r===touchStart.r&&t.c===touchStart.c){
+      grid[t.r][t.c].rot=(grid[t.r][t.c].rot+1)%4;
+      moves++;
+      propagate();
+      snd(330+grid[t.r][t.c].rot*110,0.08,"triangle",0.08);
+      spawnParticles(e.clientX,e.clientY,"#22d3ee");
+      if(checkWin()){
+        state="levelComplete";
+        snd(523,0.2);snd(659,0.2,"sine",0.1);snd(784,0.3,"sine",0.08);
+        if(level>=maxUnlocked){maxUnlocked=Math.min(level+1,LEVELS.length-1);saveProg()}
+      }
+    }
+  }
+  touchStart=null;
+});
+
+function drawTile(cx,cy,sz,tile){
+  const conns=rotConns(tile.conns,tile.rot);
+  const hw=sz*0.38;
+  const lw=sz*0.14;
+  const isSrc=tile.type!==TILE.EMPTY;
+  const glow=tile.powered?12+Math.sin(Date.now()*0.005)*4:0;
+  const baseColor=tile.powered?"#22d3ee":"#1e293b";
+  const lineColor=tile.powered?"#06b6d4":"#334155";
+  const glowColor="rgba(34,211,238,0.6)";
+
+  X.save();
+  X.translate(cx,cy);
+
+  if(tile.type===TILE.EMPTY){
+    X.restore();return;
+  }
+
+  X.shadowBlur=glow;
+  X.shadowColor=glowColor;
+
+  for(const d of conns){
+    X.beginPath();
+    if(d===0){X.moveTo(-lw,-hw);X.lineTo(lw,-hw);X.lineTo(lw,0);X.lineTo(-lw,0)}
+    else if(d===1){X.moveTo(0,-lw);X.lineTo(hw,-lw);X.lineTo(hw,lw);X.lineTo(0,lw)}
+    else if(d===2){X.moveTo(-lw,0);X.lineTo(lw,0);X.lineTo(lw,hw);X.lineTo(-lw,hw)}
+    else if(d===3){X.moveTo(-hw,-lw);X.lineTo(0,-lw);X.lineTo(0,lw);X.lineTo(-hw,lw)}
+    X.closePath();
+    X.fillStyle=lineColor;X.fill();
+    if(tile.powered){
+      X.strokeStyle="#22d3ee";X.lineWidth=1.5;X.stroke();
+    }
+  }
+
+  if(tile.type===TILE.CROSS){
+    X.fillStyle=tile.powered?"#0891b2":"#1e293b";
+    X.fillRect(-lw,-lw,lw*2,lw*2);
+  }
+
+  X.shadowBlur=0;
+
+  if(tile.powered){
+    const pulse=Math.sin(Date.now()*0.003)*0.3+0.7;
+    X.globalAlpha=pulse*0.4;
+    X.beginPath();X.arc(0,0,sz*0.15,0,Math.PI*2);
+    X.fillStyle="#22d3ee";X.fill();
+    X.globalAlpha=1;
+  }
+
+  X.restore();
+}
+
+function drawMenu(){
+  X.fillStyle="#0a0a1a";X.fillRect(0,0,W,H);
+
+  const cy=H*0.3;
+  const t=Date.now()*0.001;
+
+  X.shadowBlur=30;X.shadowColor="#8b5cf6";
+  X.font=`bold ${Math.min(48,W*0.08)}px 'Segoe UI',system-ui,sans-serif`;
+  X.textAlign="center";X.textBaseline="middle";
+  X.fillStyle="#8b5cf6";X.fillText("NEON",W/2,cy-30);
+  X.shadowColor="#22d3ee";X.fillStyle="#22d3ee";
+  X.fillText("CIRCUIT",W/2,cy+25);
+  X.shadowBlur=0;
+
+  X.font=`${Math.min(16,W*0.035)}px 'Segoe UI',system-ui,sans-serif`;
+  X.fillStyle="#64748b";
+  X.fillText("Rotate the tiles. Connect the power.",W/2,cy+70);
+
+  const btnW=Math.min(200,W*0.45);
+  const btnH=55;
+  const btnY=H*0.6;
+  const grd=X.createLinearGradient(W/2-btnW/2,btnY,W/2+btnW/2,btnY+btnH);
+  grd.addColorStop(0,"#8b5cf6");grd.addColorStop(1,"#06b6d4");
+  X.fillStyle=grd;
+  X.beginPath();
+  X.roundRect(W/2-btnW/2,btnY,btnW,btnH,14);
+  X.fill();
+  X.shadowBlur=20;X.shadowColor="#8b5cf6";X.fill();X.shadowBlur=0;
+
+  X.font=`bold ${Math.min(20,W*0.04)}px 'Segoe UI',system-ui,sans-serif`;
+  X.fillStyle="#fff";X.fillText("PLAY",W/2,btnY+btnH/2+1);
+
+  for(let i=0;i<6;i++){
+    const angle=t+i*0.5;
+    const px=W/2+Math.cos(angle)*(80+i*30);
+    const py=H*0.82+Math.sin(angle*1.3)*20;
+    X.globalAlpha=0.15-i*0.02;
+    X.beginPath();X.arc(px,py,3,0,Math.PI*2);
+    X.fillStyle=i%2?"#8b5cf6":"#22d3ee";X.fill();
+  }
+  X.globalAlpha=1;
+}
+
+function drawLevels(){
+  X.fillStyle="#0a0a1a";X.fillRect(0,0,W,H);
+  X.font=`bold ${Math.min(28,W*0.06)}px 'Segoe UI',system-ui,sans-serif`;
+  X.textAlign="center";X.textBaseline="middle";
+  X.fillStyle="#e2e8f0";X.fillText("SELECT LEVEL",W/2,55);
+
+  const btnW=Math.min(160,W*0.22);
+  const btnH=50;
+  const cols=Math.floor((W-40)/(btnW+10));
+  const sx=(W-cols*(btnW+10)+10)/2;
+  const sy=100;
+
+  for(let i=0;i<=Math.min(maxUnlocked+1,LEVELS.length-1);i++){
+    const col=i%cols,row=Math.floor(i/cols);
+    const bx=sx+col*(btnW+10),by=sy+row*(btnH+12);
+    const unlocked=i<=maxUnlocked;
+
+    if(unlocked){
+      const grd=X.createLinearGradient(bx,by,bx+btnW,by+btnH);
+      grd.addColorStop(0,"#8b5cf6");grd.addColorStop(1,"#06b6d4");
+      X.fillStyle=grd;
+    }else{
+      X.fillStyle="#1e293b";
+    }
+    X.beginPath();X.roundRect(bx,by,btnW,btnH,10);X.fill();
+
+    X.font=`bold ${Math.min(18,W*0.035)}px 'Segoe UI',system-ui,sans-serif`;
+    X.fillStyle=unlocked?"#fff":"#475569";
+    X.fillText(String(i+1),bx+btnW/2,by+btnH/2);
+  }
+}
+
+function drawGame(){
+  X.fillStyle="#0a0a1a";X.fillRect(0,0,W,H);
+
+  const pad=Math.min(W,H)*0.04;
+  const area=W-pad*2;
+  const availH=H-pad*2-50;
+  const tileSize=Math.floor(Math.min(area/gridW,availH/gridH));
+  const totalW=gridW*tileSize,totalH=gridH*tileSize;
+  const ox=(W-totalW)/2,oy=(H-totalH)/2+25;
+
+  X.strokeStyle="rgba(139,92,246,0.08)";X.lineWidth=1;
+  for(let r=0;r<=gridH;r++){
+    X.beginPath();X.moveTo(ox,oy+r*tileSize);X.lineTo(ox+totalW,oy+r*tileSize);X.stroke();
+  }
+  for(let c=0;c<=gridW;c++){
+    X.beginPath();X.moveTo(ox+c*tileSize,oy);X.lineTo(ox+c*tileSize,oy+totalH);X.stroke();
+  }
+
+  for(let r=0;r<gridH;r++){
+    for(let c=0;c<gridW;c++){
+      const cx=ox+c*tileSize+tileSize/2;
+      const cy=oy+r*tileSize+tileSize/2;
+      drawTile(cx,cy,tileSize,grid[r][c]);
+
+      if(r===srcR&&c===srcC){
+        X.shadowBlur=20;X.shadowColor="#f59e0b";
+        X.beginPath();X.arc(cx,cy,tileSize*0.12,0,Math.PI*2);
+        X.fillStyle="#f59e0b";X.fill();
+        X.shadowBlur=0;
+      }
+    }
+  }
+
+  X.font=`bold ${Math.min(14,W*0.03)}px 'Segoe UI',system-ui,sans-serif`;
+  X.textAlign="center";X.textBaseline="top";
+  X.fillStyle="#64748b";
+  X.fillText(`LEVEL ${level+1}  ·  MOVES: ${moves}`,W/2,8);
+
+  let powered=0,total=0;
+  for(let r=0;r<gridH;r++)for(let c=0;c<gridW;c++){
+    if(grid[r][c].type===TILE.EMPTY)continue;
+    total++;if(grid[r][c].powered)powered++;
+  }
+  const pct=total?Math.round(powered/total*100):0;
+  X.fillStyle=pct===100?"#22d3e":"#475569";
+  X.fillText(`${pct}% POWERED`,W/2,H-25);
+}
+
+function drawLevelComplete(){
+  X.fillStyle="rgba(10,10,26,0.85)";X.fillRect(0,0,W,H);
+  X.shadowBlur=30;X.shadowColor="#22d3ee";
+  X.font=`bold ${Math.min(40,W*0.08)}px 'Segoe UI',system-ui,sans-serif`;
+  X.textAlign="center";X.textBaseline="middle";
+  X.fillStyle="#22d3ee";X.fillText("CIRCUIT COMPLETE!",W/2,H*0.35);
+  X.shadowBlur=0;
+  X.font=`${Math.min(18,W*0.04)}px 'Segoe UI',system-ui,sans-serif`;
+  X.fillStyle="#94a3b8";
+  X.fillText(`Moves: ${moves}`,W/2,H*0.48);
+
+  const btnW=Math.min(200,W*0.45);
+  const btnH=50;
+  const btnY=H*0.58;
+  const grd=X.createLinearGradient(W/2-btnW/2,btnY,W/2+btnW/2,btnY+btnH);
+  grd.addColorStop(0,"#8b5cf6");grd.addColorStop(1,"#06b6d4");
+  X.fillStyle=grd;
+  X.beginPath();X.roundRect(W/2-btnW/2,btnY,btnW,btnH,12);X.fill();
+  X.font=`bold ${Math.min(18,W*0.038)}px 'Segoe UI',system-ui,sans-serif`;
+  X.fillStyle="#fff";
+  X.fillText(level<LEVELS.length-1?"NEXT LEVEL":"BACK",W/2,btnY+btnH/2);
+}
+
+function drawParticles(dt){
+  for(let i=particles.length-1;i>=0;i--){
+    const p=particles[i];
+    p.x+=p.vx;p.y+=p.vy;p.life-=dt*2;p.vy+=dt*2;
+    if(p.life<=0){particles.splice(i,1);continue;}
+    X.globalAlpha=p.life;
+    X.shadowBlur=8;X.shadowColor=p.color;
+    X.beginPath();X.arc(p.x,p.y,p.size*p.life,0,Math.PI*2);
+    X.fillStyle=p.color;X.fill();
+  }
+  X.globalAlpha=1;X.shadowBlur=0;
+}
+
+let lastTs=0;
+function loop(ts){
+  const dt=Math.min((ts-lastTs)/1000,0.05);
+  lastTs=ts;
+  X.clearRect(0,0,W,H);
+
+  if(state==="menu")drawMenu();
+  else if(state==="levels")drawLevels();
+  else if(state==="playing")drawGame();
+  else if(state==="levelComplete"){drawGame();drawLevelComplete();}
+
+  drawParticles(dt);
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

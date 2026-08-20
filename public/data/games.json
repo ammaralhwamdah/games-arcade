@@ -1,6 +1,6 @@
 {
   "generated": "2026-08-17T12:00:00.000Z",
-  "total": 29,
+  "total": 30,
   "categories": 20,
   "categoriesMeta": [
     {
@@ -808,6 +808,22 @@
       "year": 2026,
       "tags": ["exclusive", "html5", "sports", "tennis", "racket", "competitive", "single-player"],
       "description": "Racket Rumble is a fast-paced tennis showdown where you control the racket with your mouse or finger and the ball does not care about your excuses. Move the racket to meet the ball, aim your returns past the AI opponent, and build long rallies that rack up the tension. Double-tap for a power smash — a heavier, faster shot that gives the AI less time to react — but mistime it and you leave the court wide open. First to seven points takes the set, and the match runs best-of-three, so a shaky start is not the end if you can hold your nerve. The ball arcs, the racket snaps, and every rally feels like a real point worth fighting for. Your best results are saved locally — original to Gameverse, zero ads, just you, the racket and the baseline."
+    },
+    {
+      "id": "neon-circuit",
+      "slug": "neon-circuit",
+      "name": "Neon Circuit",
+      "category": "puzzle",
+      "categories": ["puzzle", "arcade"],
+      "file": "games/neon-circuit/index.html",
+      "src": "/games/neon-circuit/index.html",
+      "image": "/images/games/neon-circuit.svg",
+      "sizeKb": 12,
+      "rating": 4.9,
+      "plays": 0,
+      "year": 2026,
+      "tags": ["exclusive", "html5", "puzzle", "neon", "circuit", "cyberpunk", "single-player"],
+      "description": "Neon Circuit is a glowing puzzle where you rotate tiles to connect a power source to every endpoint on the grid. Each tile carries a circuit pattern — straight, corner, T-junction or cross — and your job is to spin each one until the energy flows uninterrupted through the entire network. Tap a tile to rotate it ninety degrees, watch the neon light surge through connected paths, and keep going until the whole board pulses with power. The puzzles start gentle at three by three grids and scale up to five by five, introducing new circuit shapes and trickier layouts as you progress. A move counter tracks how efficient your solution is, so optimising your path is just as rewarding as finding one. The cyberpunk neon aesthetic makes every powered connection feel alive, and the Web Audio clicks and chimes give each rotation a satisfying snap. Progress saves locally, the level select screen tracks your unlocked stages, and the whole experience runs offline in your browser — original to Gameverse, zero ads, pure neon problem-solving."
     }
   ]
 }
