@@ -548,6 +548,115 @@ export const posts: BlogPost[] = [
       },
     ],
   },
+  {
+    slug: "gemfall-depths-surviving-first-five-minutes",
+    title: "Gemfall Depths: How to Survive Your First Five Minutes Underground",
+    excerpt:
+      "Gemfall Depths drops you into a dark mine with nothing but a pickaxe and bad lighting. Most players die before they understand what killed them. Here is how to actually start enjoying it.",
+    date: "2026-08-02",
+    readTime: "5 min read",
+    tag: "Game Guides",
+    emoji: "⛏️",
+    sections: [
+      {
+        heading: "The first death is always a surprise",
+        paragraphs: [
+          "You spawn on a small platform. The graphics are blocky, the soundtrack is quiet, and nothing seems dangerous. You walk forward, maybe swing your pickaxe at a wall, and then something hits you from a direction you were not watching. The screen goes dark, the round ends, and you wonder what just happened.",
+          "That first death is normal. Gemfall Depths is a game that teaches through punishment, and the first lesson is always the same: the mine does not care that you are new. Enemies appear from the edges of the screen, the floor drops out beneath you if you are not paying attention, and the camera has opinions about where it wants to look. Understanding these three things is the difference between dying at thirty seconds and surviving long enough to actually play.",
+        ],
+      },
+      {
+        heading: "Movement is your real weapon",
+        paragraphs: [
+          "The biggest mistake new players make is treating Gemfall Depths like a combat game. It is not. It is a movement game that happens to have enemies. Your character can move in four directions, and every pixel of positioning matters more than any swing of your pickaxe. Walk into an enemy and you take damage. Walk around an enemy and you lose nothing.",
+          "The controls feel stiff at first because they are deliberate. You move in fixed steps, not fluid sliding, which means every direction change is a commitment. Once you internalise that each step is a decision, the whole game opens up. You stop rushing into rooms and start planning your path three steps ahead.",
+        ],
+      },
+      {
+        heading: "The D-pad and attack button on mobile",
+        paragraphs: [
+          "If you are playing on your phone, the D-pad in the bottom-left corner controls movement and the attack button on the bottom-right swings your pickaxe. The trick is to keep your left thumb on the D-pad at all times and only tap the attack button with your right thumb when you are certain there is an enemy in range. Moving and attacking at the same time is a recipe for walking directly into trouble.",
+          "A small but important detail: the D-pad registers touches on its edges, not its centre. Press the outer ring of the pad for cleaner input. Players who press the middle get inconsistent movement because they accidentally trigger two directions at once.",
+        ],
+      },
+      {
+        heading: "How exits and enemies actually work",
+        paragraphs: [
+          "Each floor of the mine has an exit somewhere on the map. You cannot see it until you get close, which means exploration is not optional — it is the point. Enemies spawn in fixed patterns relative to your position, so if you die to the same enemy twice, it is probably because you are taking the same path twice. Try a different route.",
+          "Enemies in Gemfall Depths are slow but relentless. They do not speed up or slow down; they just keep moving toward you at their own pace. The danger is not their speed — it is their numbers. One enemy is trivial. Three enemies cutting off your escape routes is lethal. Always keep at least one clear direction to retreat.",
+        ],
+      },
+      {
+        heading: "The camera and render scale",
+        paragraphs: [
+          "Gemfall Depths uses a top-down camera that follows your character. On smaller screens, the camera can feel too close, making it hard to see enemies approaching from off-screen. The game adjusts its render scale based on your device, but if things feel cramped, try playing on a larger screen or rotating to landscape mode. Seeing more of the mine at once is a genuine survival advantage.",
+        ],
+      },
+      {
+        heading: "Three habits that make you instantly better",
+        bullets: [
+          "Never stand still. Even if nothing is on screen, keep moving. Enemies spawn from the edges, and a stationary target is the easiest one to hit.",
+          "Hug walls for safety, then break away. Walking along a wall means nothing can approach from that side, cutting your danger zones in half.",
+          "Count your pickaxe swings. Each swing has a small cooldown, and swinging at nothing leaves you open. Only attack when you see something worth hitting.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "disappearing-art-five-minute-break",
+    title: "The Disappearing Art of the Five-Minute Break",
+    excerpt:
+      "We used to take breaks without thinking about it. Now we fill every gap with a scroll through our phones. Here is why bringing back the short break — and filling it with a game instead of a feed — might be the simplest productivity upgrade you can make.",
+    date: "2026-08-01",
+    readTime: "6 min read",
+    tag: "Gaming Culture",
+    emoji: "☕",
+    sections: [
+      {
+        heading: "Breaks used to be simple",
+        paragraphs: [
+          "A generation ago, a break meant standing up, stretching, maybe looking out a window or grabbing a cup of tea. Nobody thought about it because there was nothing to think about. You worked until you felt tired, you stopped for a few minutes, you went back. The break was a pause, not a decision.",
+          "Then smartphones happened, and every idle moment became an opportunity to check something. A notification, a message, a news headline. The five-minute break did not disappear — it got hijacked. Instead of resting, we replaced one screen with another and called it relaxation.",
+        ],
+      },
+      {
+        heading: "Scrolling is not resting",
+        paragraphs: [
+          "The science on this is surprisingly clear. Your brain processes social media differently from passive rest. Scrolling through a feed demands constant micro-decisions: tap or skip, read or ignore, react or move on. After ten minutes of scrolling, your brain has processed more information than it would in thirty minutes of staring at a wall. That is the opposite of a break.",
+          "I noticed this in my own afternoons. I would hit a wall around two o'clock, open Instagram for a quick break, and come back to my desk feeling muddier than before. My eyes were tired, my thoughts were scattered, and the focus I had before the break was gone. The break was supposed to recharge me, but it drained the last of my battery instead.",
+        ],
+      },
+      {
+        heading: "Why games work better as breaks",
+        paragraphs: [
+          "A browser game does something that social media cannot: it gives your brain a completely different task. Instead of processing other people's words and images, you are solving a spatial problem, reacting to movement, or making quick decisions in a closed system. The cognitive load is different, which means the parts of your brain that were overworking get to rest while different parts take over.",
+          "The other advantage is the endpoint. A social media feed has no natural stopping point — it is designed to keep you scrolling. A browser game round ends. You play, you get a score, the round is over. That clear boundary means you can actually stop when you intended to, instead of losing ten minutes to an algorithm.",
+        ],
+      },
+      {
+        heading: "The five-minute rule in practice",
+        paragraphs: [
+          "The rule is simple: every ninety minutes, take five minutes away from your main task. In those five minutes, play one round of a browser game. Not a long game, not a deep game — a quick game with a clear round structure. A puzzle, a runner, an arcade game with a scoreboard. Play one round, check your score, close the tab, and go back to work.",
+          "It sounds almost too simple to matter, but the results are immediate. Your focus resets because your brain got a genuine rest. Your mood improves because you accomplished something small and tangible. And your afternoon gets noticeably more productive because you are not fighting through a wall of accumulated fatigue.",
+        ],
+      },
+      {
+        heading: "What to play and what to avoid",
+        bullets: [
+          "Best for breaks: puzzle games, quick arcade rounds, anything under three minutes per session.",
+          "Avoid for breaks: games with long matches, competitive multiplayer, anything that triggers frustration or strong emotion.",
+          "The test is simple: if you feel calm after the round, it was a good break game. If you feel worked up, pick something different next time.",
+        ],
+      },
+      {
+        heading: "A small change that compounds",
+        paragraphs: [
+          "I have been doing this for about three months now. The change was not dramatic on any single day, but the cumulative effect was real. I ended more days feeling like I had actually worked at my best instead of grinding through fog. Five minutes is a tiny investment, and the return is a brain that works better for the remaining eight hours.",
+          "The irony is that the best break from screens is still a screen — just a different kind. One that gives instead of takes, that ends instead of drags on, that makes you think in a new direction instead of recycling the same feed. Five minutes, one round, and you come back sharper. It is the simplest upgrade I have found.",
+        ],
+      },
+    ],
+  },
 ];
 
 export function getAllPosts(): BlogPost[] {
