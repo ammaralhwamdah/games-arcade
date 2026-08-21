@@ -22,7 +22,7 @@ export default function ContactForm() {
     const body = encodeURIComponent(
       `Name: ${form.name}\nEmail: ${form.email}\n\n${form.message}`
     );
-    const subject = encodeURIComponent(`[GameVerse] ${form.subject}`);
+    const subject = encodeURIComponent(`[PlayKrux] ${form.subject}`);
     window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
     setSent(true);
   };

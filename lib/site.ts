@@ -1,10 +1,10 @@
-export const SITE_NAME = "GameVerse";
+export const SITE_NAME = "PlayKrux";
 export const SITE_TAGLINE = "Free Online Games — Play Instantly";
 export const SITE_DESCRIPTION =
   "Play free online games instantly in your browser. No downloads, no sign-ups. Action, puzzle, racing, sports, arcade and more — updated daily.";
 
 export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://gameverse.example.com";
+  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://playkrux.com";
 
 export const ADSENSE_CLIENT = process.env.NEXT_PUBLIC_ADSENSE_CLIENT || "";
 
@@ -17,7 +17,7 @@ export const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "ammar.alh
 /** Site editor / responsible person shown on pages (E-E-A-T signal). */
 export const SITE_EDITOR = process.env.NEXT_PUBLIC_SITE_EDITOR || "Ammar Yaser";
 
-/** Year GameVerse was founded. */
+/** Year PlayKrux was founded. */
 export const SITE_FOUNDED_YEAR = 2026;
 
 export const CATEGORY_PAGE_SIZE = 60;
@@ -34,10 +34,10 @@ export interface SocialLink {
 
 /** Social media profiles. */
 export const SOCIAL_LINKS: SocialLink[] = [
-  { name: "facebook", label: "GameVerse on Facebook", href: "https://facebook.com/gameverse.pro" },
-  { name: "instagram", label: "GameVerse on Instagram", href: "https://instagram.com/gameverse.pro" },
-  { name: "x", label: "GameVerse on X (Twitter)", href: "https://x.com/gameverse_pro" },
-  { name: "youtube", label: "GameVerse on YouTube", href: "https://www.youtube.com/@gameversepro11" },
-  { name: "tiktok", label: "GameVerse on TikTok", href: "https://tiktok.com/@gameverse" },
-  { name: "telegram", label: "GameVerse on Telegram", href: "https://t.me/gameverse" },
+  { name: "facebook", label: "PlayKrux on Facebook", href: "https://facebook.com/playkrux" },
+  { name: "instagram", label: "PlayKrux on Instagram", href: "https://instagram.com/playkrux" },
+  { name: "x", label: "PlayKrux on X (Twitter)", href: "https://x.com/playkrux" },
+  { name: "youtube", label: "PlayKrux on YouTube", href: "https://www.youtube.com/@playkrux" },
+  { name: "tiktok", label: "PlayKrux on TikTok", href: "https://tiktok.com/@playkrux" },
+  { name: "telegram", label: "PlayKrux on Telegram", href: "https://t.me/playkrux" },
 ];

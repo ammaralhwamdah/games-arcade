@@ -5,7 +5,7 @@ import { CONTACT_EMAIL } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Contact Us",
   description:
-    "Get in touch with GameVerse. Report a broken game, ask a question, or reach out about advertising and partnerships. We reply within 24-48 hours.",
+    "Get in touch with PlayKrux. Report a broken game, ask a question, or reach out about advertising and partnerships. We reply within 24-48 hours.",
   alternates: { canonical: "/contact" },
 };
 

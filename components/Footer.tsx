@@ -9,7 +9,7 @@ export default function Footer() {
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
         <div className="grid gap-10 md:grid-cols-4">
           <div>
-            <Link href="/" aria-label="GameVerse home">
+            <Link href="/" aria-label="PlayKrux home">
               <Logo />
             </Link>
             <p className="mt-4 max-w-md text-sm leading-6 text-slate-400">

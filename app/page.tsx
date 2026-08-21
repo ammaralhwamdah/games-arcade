@@ -145,14 +145,14 @@ export default function Home() {
       {/* Why choose us */}
       <section className="border-t border-white/5 bg-slate-900/30">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
-          <h2 className="text-center text-2xl font-bold text-white sm:text-3xl">Why Gamers Love {`GameVerse`}</h2>
+          <h2 className="text-center text-2xl font-bold text-white sm:text-3xl">Why Gamers Love {`PlayKrux`}</h2>
           <p className="mx-auto mt-2 max-w-xl text-center text-sm text-slate-400">
             We built the easiest way to play great games online — no friction, no fees, just fun.
           </p>
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {[
               { icon: "⚡", title: "Instant Play", desc: "Games load directly in your browser. No downloads or installs, ever." },
-              { icon: "🎮", title: "Original Library", desc: `Hand-built titles across ${categories.length} categories — all exclusive to GameVerse.` },
+              { icon: "🎮", title: "Original Library", desc: `Hand-built titles across ${categories.length} categories — all exclusive to PlayKrux.` },
               { icon: "📱", title: "Works Everywhere", desc: "Optimized for desktop, tablet and mobile. Play on any device." },
               { icon: "💯", title: "100% Free", desc: "Every single game is completely free to play, no hidden costs." },
             ].map((f) => (

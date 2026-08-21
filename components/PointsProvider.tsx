@@ -4,7 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import type { ReactNode } from "react";
 import { DAILY_BONUS_POINTS } from "@/lib/points";
 
-const STORAGE_KEY = "gameverse-points-v1";
+const STORAGE_KEY = "playkrux-points-v1";
 
 interface PointsState {
   points: number;

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 
-const CONSENT_KEY = "gameverse-cookie-consent";
+const CONSENT_KEY = "playkrux-cookie-consent";
 
 interface WindowWithDataLayer extends Window {
   dataLayer?: unknown[];

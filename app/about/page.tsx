@@ -6,7 +6,7 @@ import { SITE_NAME, SITE_EDITOR, SITE_FOUNDED_YEAR } from "@/lib/site";
 export function generateMetadata(): Metadata {
   return {
     title: "About Us",
-    description: "Learn about GameVerse — a growing collection of original, instant-play free online games. Our mission, our story and the team behind our browser games.",
+    description: "Learn about PlayKrux — a growing collection of original, instant-play free online games. Our mission, our story and the team behind our browser games.",
     alternates: { canonical: "/about" },
   };
 }
@@ -17,7 +17,7 @@ export default function AboutPage() {
     <div className="mx-auto max-w-4xl px-4 py-14 sm:px-6">
       <div className="mb-10 text-center">
         <span className="text-5xl" aria-hidden>🎮</span>
-        <h1 className="mt-4 text-3xl font-black text-white sm:text-4xl">About GameVerse</h1>
+        <h1 className="mt-4 text-3xl font-black text-white sm:text-4xl">About PlayKrux</h1>
         <p className="mx-auto mt-3 max-w-xl text-sm leading-7 text-slate-400 sm:text-base">
           We believe the best games should be one click away — free, fast and fun for everyone.
         </p>
@@ -27,7 +27,7 @@ export default function AboutPage() {
         <section className="rounded-2xl border border-white/5 bg-slate-900/50 p-6 sm:p-8">
           <h2 className="text-xl font-bold text-white">Our Mission</h2>
           <p className="mt-3 text-sm leading-7 text-slate-400">
-            GameVerse was created to solve a simple problem: finding good games online is often a
+            PlayKrux was created to solve a simple problem: finding good games online is often a
             maze of downloads, sign-ups and endless waiting. We built a single place where you can
             play <strong className="text-slate-200">free games</strong> instantly — directly in your browser,
             on any device, with zero friction.
@@ -40,7 +40,7 @@ export default function AboutPage() {
         </section>
 
         <section className="rounded-2xl border border-white/5 bg-slate-900/50 p-6 sm:p-8">
-          <h2 className="text-xl font-bold text-white">Why Play on GameVerse?</h2>
+          <h2 className="text-xl font-bold text-white">Why Play on PlayKrux?</h2>
           <div className="mt-5 grid gap-5 sm:grid-cols-2">
             {[
               { icon: "⚡", t: "Instant Play", d: "Games load right in your browser. No downloads, no installs, no waiting." },
@@ -69,7 +69,7 @@ export default function AboutPage() {
             </span>
             <div>
               <h3 className="text-sm font-bold text-white">{SITE_EDITOR}</h3>
-              <p className="text-xs text-slate-500">Founder &amp; Editor-in-Chief — GameVerse</p>
+              <p className="text-xs text-slate-500">Founder &amp; Editor-in-Chief — PlayKrux</p>
             </div>
           </div>
           <p className="mt-4 text-sm leading-7 text-slate-400">
