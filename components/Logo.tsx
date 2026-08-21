@@ -29,7 +29,7 @@ export default function Logo({ compact = false }: { compact?: boolean }) {
     <span className="flex items-center gap-2">
       <GamepadMark />
       {!compact && (
-        <span className="text-lg font-extrabold tracking-tight text-white">
+        <span className="text-xl font-extrabold tracking-tight text-white">
           Play<span className="bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">Krux</span>
         </span>
       )}
