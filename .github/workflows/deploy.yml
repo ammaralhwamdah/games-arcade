@@ -34,7 +34,7 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          NEXT_PUBLIC_SITE_URL: https://gameverse.pro
+          NEXT_PUBLIC_SITE_URL: https://playkrux.com
           NEXT_PUBLIC_CONTACT_EMAIL: ammar.alhwamdah@gmail.com
           NEXT_PUBLIC_SITE_EDITOR: Ammar Yaser
           NEXT_PUBLIC_ADMIN_EMAIL: ammar.alhwamdah@gmail.com
