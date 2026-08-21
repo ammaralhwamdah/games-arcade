@@ -12,7 +12,7 @@ export const GA_ID = process.env.NEXT_PUBLIC_GA_ID || "";
 
 export const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID || "";
 
-export const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "ammar.alhwamdah@gmail.com";
+export const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "playkrux@gmail.com";
 
 /** Site editor / responsible person shown on pages (E-E-A-T signal). */
 export const SITE_EDITOR = process.env.NEXT_PUBLIC_SITE_EDITOR || "Ammar Yaser";
