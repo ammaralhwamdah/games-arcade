@@ -41,9 +41,9 @@ jobs:
           NEXT_PUBLIC_ADMIN_USERNAME: ammar
           NEXT_PUBLIC_SUPABASE_URL: https://ggcsianuhafonuzphzjw.supabase.co
           NEXT_PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdnY3NpYW51aGFmb251enBoemp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU5NDY1MzUsImV4cCI6MjEwMTUyMjUzNX0.T2TCUJUyZuIsc6cLftp5hmSfnwYN890IAgpNQjF7nXQ
-          NEXT_PUBLIC_ADSENSE_CLIENT: pub-4796514807536738
-          NEXT_PUBLIC_GA_ID: G-TNH2FGZL89
-          NEXT_PUBLIC_GTM_ID: GTM-PZ9MSQX8
+          NEXT_PUBLIC_ADSENSE_CLIENT: 
+          NEXT_PUBLIC_GA_ID: G-GR5DG65ZK7
+          NEXT_PUBLIC_GTM_ID: GTM-PC37BFTH
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
