@@ -37,7 +37,7 @@ jobs:
           NEXT_PUBLIC_SITE_URL: https://playkrux.com
           NEXT_PUBLIC_CONTACT_EMAIL: playkrux@gmail.com
           NEXT_PUBLIC_SITE_EDITOR: Ammar Yaser
-          NEXT_PUBLIC_ADMIN_EMAIL: playkrux@gmail.com
+          NEXT_PUBLIC_ADMIN_EMAIL: ammar.alhwamdah@gmail.com
           NEXT_PUBLIC_ADMIN_USERNAME: ammar
           NEXT_PUBLIC_SUPABASE_URL: https://ggcsianuhafonuzphzjw.supabase.co
           NEXT_PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdnY3NpYW51aGFmb251enBoemp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU5NDY1MzUsImV4cCI6MjEwMTUyMjUzNX0.T2TCUJUyZuIsc6cLftp5hmSfnwYN890IAgpNQjF7nXQ
