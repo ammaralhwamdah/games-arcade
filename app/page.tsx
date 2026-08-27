@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import SearchBar from "@/components/SearchBar";
 import GameCard from "@/components/GameCard";
 import CategoryCard from "@/components/CategoryCard";
-import AdSlot from "@/components/AdSlot";
 import { getFeaturedGames, getPopularGames, getLatestGames, getCategoriesWithCounts } from "@/lib/games";
 import { getLatestPosts } from "@/lib/blog";
 
@@ -90,11 +89,6 @@ export default function Home() {
             <GameCard key={g.slug} game={g} categoryMeta={catMeta.get(g.category)} />
           ))}
         </div>
-      </section>
-
-      {/* Ad */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6">
-        <AdSlot format="horizontal" />
       </section>
 
       {/* Categories */}

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import GameGrid from "@/components/GameGrid";
-import AdSlot from "@/components/AdSlot";
 import { getAllGames, getCategories } from "@/lib/games";
 import { GAMES_PAGE_SIZE } from "@/lib/site";
 
@@ -29,10 +28,6 @@ export default function GamesPage() {
       </div>
 
       <GameGrid initialGames={games} categories={categories} />
-
-      <div className="mt-12">
-        <AdSlot format="horizontal" />
-      </div>
     </div>
   );
 }

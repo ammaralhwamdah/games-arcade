@@ -3,7 +3,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import GameFrame from "@/components/GameFrame";
 import GameCard from "@/components/GameCard";
-import AdSlot from "@/components/AdSlot";
 import Comments from "@/components/Comments";
 import RegisterPrompt from "@/components/RegisterPrompt";
 import { getGameBySlug, getCategory, getSimilarGames, getPopularGames } from "@/lib/games";
@@ -150,10 +149,6 @@ export default async function PlayPage({ params }: Props) {
             </p>
           </div>
 
-          <div className="mt-6">
-            <AdSlot format="horizontal" />
-          </div>
-
           <div className="mt-8 rounded-2xl border border-white/5 bg-slate-900/50 p-6">
             <h2 className="text-lg font-bold text-white">About {game.name}</h2>
             <p className="mt-3 text-sm leading-7 text-slate-400">{describeGame(game)}</p>
@@ -215,7 +210,6 @@ export default async function PlayPage({ params }: Props) {
 
         {/* Sidebar */}
         <aside className="space-y-6">
-          <AdSlot format="rectangle" slot="side" />
           <div className="rounded-2xl border border-white/5 bg-slate-900/50 p-5">
             <h2 className="mb-4 text-sm font-bold text-white">More {category?.name ?? "Games"}</h2>
             <div className="space-y-3">
@@ -238,7 +232,6 @@ export default async function PlayPage({ params }: Props) {
               ))}
             </div>
           </div>
-          <AdSlot format="rectangle" slot="side2" />
         </aside>
       </div>
 

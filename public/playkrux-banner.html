@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>PlayKrux YouTube Banner - Download</title>
+<style>
+  body {
+    margin: 0;
+    padding: 20px;
+    background: #0a0a1a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    font-family: Arial, sans-serif;
+  }
+  h2 { color: #fff; margin: 0; }
+  p { color: #aaa; margin: 5px 0 0 0; font-size: 14px; }
+  .info { text-align: center; }
+  .banner-box {
+    border: 2px solid #333;
+    overflow: hidden;
+  }
+</style>
+</head>
+<body>
+  <div class="info">
+    <h2>Right-click the banner → "Save image as..." → PNG</h2>
+    <p>2048 x 1152 px — perfect for YouTube banner</p>
+  </div>
+  <div class="banner-box">
+    <svg viewBox="0 0 2048 1152" width="2048" height="1152" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#0a0a1a"/>
+          <stop offset="40%" stop-color="#1a0a3e"/>
+          <stop offset="100%" stop-color="#0a1a2e"/>
+        </linearGradient>
+        <linearGradient id="accentGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#8b5cf6"/>
+          <stop offset="100%" stop-color="#06b6d4"/>
+        </linearGradient>
+        <linearGradient id="textGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#a78bfa"/>
+          <stop offset="50%" stop-color="#c084fc"/>
+          <stop offset="100%" stop-color="#22d3ee"/>
+        </linearGradient>
+        <linearGradient id="btnPink" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#f472b6"/>
+          <stop offset="100%" stop-color="#c084fc"/>
+        </linearGradient>
+        <linearGradient id="btnCyan" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#38bdf8"/>
+          <stop offset="100%" stop-color="#67e8f9"/>
+        </linearGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="6" result="blur"/>
+          <feMerge>
+            <feMergeNode in="blur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+        <filter id="softGlow">
+          <feGaussianBlur stdDeviation="20" result="blur"/>
+          <feMerge>
+            <feMergeNode in="blur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+        <filter id="bigGlow">
+          <feGaussianBlur stdDeviation="40" result="blur"/>
+          <feMerge>
+            <feMergeNode in="blur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+      </defs>
+
+      <!-- Background -->
+      <rect width="2048" height="1152" fill="url(#bgGrad)"/>
+
+      <!-- Decorative circles - background -->
+      <circle cx="200" cy="200" r="300" fill="#8b5cf6" opacity="0.05"/>
+      <circle cx="1850" cy="950" r="350" fill="#06b6d4" opacity="0.05"/>
+      <circle cx="1024" cy="576" r="500" fill="#8b5cf6" opacity="0.03"/>
+
+      <!-- Geometric accent lines -->
+      <line x1="0" y1="576" x2="2048" y2="576" stroke="url(#accentGrad)" stroke-width="1" opacity="0.15"/>
+      <line x1="1024" y1="0" x2="1024" y2="1152" stroke="url(#accentGrad)" stroke-width="1" opacity="0.1"/>
+
+      <!-- Diagonal accent lines -->
+      <line x1="0" y1="1152" x2="600" y2="0" stroke="#8b5cf6" stroke-width="1" opacity="0.08"/>
+      <line x1="1448" y1="1152" x2="2048" y2="0" stroke="#06b6d4" stroke-width="1" opacity="0.08"/>
+
+      <!-- Grid dots pattern -->
+      <g opacity="0.06">
+        <circle cx="100" cy="100" r="2" fill="#8b5cf6"/>
+        <circle cx="200" cy="100" r="2" fill="#8b5cf6"/>
+        <circle cx="300" cy="100" r="2" fill="#8b5cf6"/>
+        <circle cx="400" cy="100" r="2" fill="#8b5cf6"/>
+        <circle cx="100" cy="200" r="2" fill="#8b5cf6"/>
+        <circle cx="200" cy="200" r="2" fill="#8b5cf6"/>
+        <circle cx="300" cy="200" r="2" fill="#8b5cf6"/>
+        <circle cx="400" cy="200" r="2" fill="#8b5cf6"/>
+        <circle cx="100" cy="300" r="2" fill="#8b5cf6"/>
+        <circle cx="200" cy="300" r="2" fill="#8b5cf6"/>
+        <circle cx="300" cy="300" r="2" fill="#8b5cf6"/>
+        <circle cx="400" cy="300" r="2" fill="#8b5cf6"/>
+        <circle cx="1648" cy="800" r="2" fill="#06b6d4"/>
+        <circle cx="1748" cy="800" r="2" fill="#06b6d4"/>
+        <circle cx="1848" cy="800" r="2" fill="#06b6d4"/>
+        <circle cx="1948" cy="800" r="2" fill="#06b6d4"/>
+        <circle cx="1648" cy="900" r="2" fill="#06b6d4"/>
+        <circle cx="1748" cy="900" r="2" fill="#06b6d4"/>
+        <circle cx="1848" cy="900" r="2" fill="#06b6d4"/>
+        <circle cx="1948" cy="900" r="2" fill="#06b6d4"/>
+        <circle cx="1648" cy="1000" r="2" fill="#06b6d4"/>
+        <circle cx="1748" cy="1000" r="2" fill="#06b6d4"/>
+        <circle cx="1848" cy="1000" r="2" fill="#06b6d4"/>
+        <circle cx="1948" cy="1000" r="2" fill="#06b6d4"/>
+      </g>
+
+      <!-- Floating particles -->
+      <circle cx="150" cy="400" r="3" fill="#8b5cf6" opacity="0.4" filter="url(#glow)"/>
+      <circle cx="500" cy="150" r="2" fill="#06b6d4" opacity="0.5" filter="url(#glow)"/>
+      <circle cx="1550" cy="250" r="3" fill="#c084fc" opacity="0.4" filter="url(#glow)"/>
+      <circle cx="1900" cy="500" r="2" fill="#22d3ee" opacity="0.5" filter="url(#glow)"/>
+      <circle cx="700" cy="900" r="2" fill="#8b5cf6" opacity="0.3" filter="url(#glow)"/>
+      <circle cx="1350" cy="1000" r="3" fill="#06b6d4" opacity="0.3" filter="url(#glow)"/>
+
+      <!-- Controller icon - left side -->
+      <g transform="translate(200, 400) scale(1.2)">
+        <!-- Controller body -->
+        <rect x="0" y="30" width="180" height="80" rx="40" fill="#1e1b4b" stroke="#8b5cf6" stroke-width="2" opacity="0.8"/>
+        <!-- Left grip -->
+        <ellipse cx="8" cy="70" rx="30" ry="40" fill="#1e1b4b" stroke="#8b5cf6" stroke-width="2" opacity="0.8"/>
+        <!-- Right grip -->
+        <ellipse cx="172" cy="70" rx="30" ry="40" fill="#1e1b4b" stroke="#8b5cf6" stroke-width="2" opacity="0.8"/>
+        <!-- D-pad -->
+        <rect x="30" y="58" width="30" height="10" rx="3" fill="#334155"/>
+        <rect x="40" y="48" width="10" height="30" rx="3" fill="#334155"/>
+        <!-- Buttons -->
+        <circle cx="145" cy="55" r="8" fill="url(#btnPink)" filter="url(#glow)"/>
+        <circle cx="160" cy="70" r="8" fill="url(#btnCyan)" filter="url(#glow)"/>
+        <circle cx="145" cy="85" r="8" fill="#fbbf24" filter="url(#glow)"/>
+        <circle cx="130" cy="70" r="8" fill="#34d399" filter="url(#glow)"/>
+      </g>
+
+      <!-- Main title - PlayKrux -->
+      <text x="1024" y="480" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="900" font-size="160" fill="white" filter="url(#softGlow)">
+        Play<tspan fill="url(#textGrad)">Krux</tspan>
+      </text>
+
+      <!-- Tagline -->
+      <text x="1024" y="580" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="400" font-size="48" fill="#94a3b8" letter-spacing="12">
+        FREE ONLINE GAMES
+      </text>
+
+      <!-- Accent line under tagline -->
+      <rect x="724" y="620" width="600" height="3" rx="1.5" fill="url(#accentGrad)" opacity="0.6"/>
+
+      <!-- Feature pills -->
+      <g transform="translate(1024, 720)">
+        <!-- Pill 1 -->
+        <rect x="-420" y="-25" width="220" height="50" rx="25" fill="#1e1b4b" stroke="#8b5cf6" stroke-width="1.5" opacity="0.8"/>
+        <text x="-310" y="8" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="22" fill="#a78bfa">28 Games</text>
+
+        <!-- Pill 2 -->
+        <rect x="-150" y="-25" width="220" height="50" rx="25" fill="#1e1b4b" stroke="#06b6d4" stroke-width="1.5" opacity="0.8"/>
+        <text x="-40" y="8" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="22" fill="#22d3ee">19 Categories</text>
+
+        <!-- Pill 3 -->
+        <rect x="120" y="-25" width="220" height="50" rx="25" fill="#1e1b4b" stroke="#8b5cf6" stroke-width="1.5" opacity="0.8"/>
+        <text x="230" y="8" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="22" fill="#a78bfa">100% Free</text>
+      </g>
+
+      <!-- Bottom accent bar -->
+      <rect x="0" y="1120" width="2048" height="32" fill="url(#accentGrad)" opacity="0.3"/>
+
+      <!-- Corner accents -->
+      <path d="M0 0 L200 0 L0 200 Z" fill="#8b5cf6" opacity="0.05"/>
+      <path d="M2048 0 L1848 0 L2048 200 Z" fill="#06b6d4" opacity="0.05"/>
+      <path d="M0 1152 L200 1152 L0 952 Z" fill="#06b6d4" opacity="0.05"/>
+      <path d="M2048 1152 L1848 1152 L2048 952 Z" fill="#8b5cf6" opacity="0.05"/>
+
+      <!-- Controller icon - right side (mirrored) -->
+      <g transform="translate(1648, 400) scale(1.2) scale(-1,1) translate(-180,0)">
+        <!-- Controller body -->
+        <rect x="0" y="30" width="180" height="80" rx="40" fill="#1e1b4b" stroke="#06b6d4" stroke-width="2" opacity="0.8"/>
+        <!-- Left grip -->
+        <ellipse cx="8" cy="70" rx="30" ry="40" fill="#1e1b4b" stroke="#06b6d4" stroke-width="2" opacity="0.8"/>
+        <!-- Right grip -->
+        <ellipse cx="172" cy="70" rx="30" ry="40" fill="#1e1b4b" stroke="#06b6d4" stroke-width="2" opacity="0.8"/>
+        <!-- D-pad -->
+        <rect x="30" y="58" width="30" height="10" rx="3" fill="#334155"/>
+        <rect x="40" y="48" width="10" height="30" rx="3" fill="#334155"/>
+        <!-- Buttons -->
+        <circle cx="145" cy="55" r="8" fill="url(#btnPink)" filter="url(#glow)"/>
+        <circle cx="160" cy="70" r="8" fill="url(#btnCyan)" filter="url(#glow)"/>
+        <circle cx="145" cy="85" r="8" fill="#fbbf24" filter="url(#glow)"/>
+        <circle cx="130" cy="70" r="8" fill="#34d399" filter="url(#glow)"/>
+      </g>
+
+      <!-- Website URL -->
+      <text x="1024" y="900" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="600" font-size="32" fill="#64748b" letter-spacing="4">
+        playkrux.com
+      </text>
+    </svg>
+  </div>
+</body>
+</html>

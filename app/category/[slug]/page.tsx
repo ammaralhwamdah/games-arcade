@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import GameGrid from "@/components/GameGrid";
-import AdSlot from "@/components/AdSlot";
 import { getCategory, getGamesByCategory, getCategories } from "@/lib/games";
 import { GAMES_PAGE_SIZE } from "@/lib/site";
 import type { CategoryMeta } from "@/lib/types";
@@ -63,10 +62,6 @@ export default async function CategoryPage({ params }: Props) {
         categories={categories}
         defaultCategory={slug}
       />
-
-      <div className="mt-12">
-        <AdSlot format="horizontal" />
-      </div>
     </div>
   );
 }
