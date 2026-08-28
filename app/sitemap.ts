@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getFeaturedGames, getCategories } from "@/lib/games";
+import { getAllGames, getFeaturedGames, getCategories } from "@/lib/games";
 import { getAllPosts } from "@/lib/blog";
 import { SITE_URL } from "@/lib/site";
 
@@ -35,13 +35,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
-  // During the AdSense-review phase only hand-curated games are indexed.
-  // The full catalog is opened up for indexing later.
-  const gamePages: MetadataRoute.Sitemap = getFeaturedGames().map((g) => ({
+  // Include every indexable game page. Featured games get higher priority.
+  const featuredSlugs = new Set(getFeaturedGames(100).map((g) => g.slug));
+  const gamePages: MetadataRoute.Sitemap = getAllGames().map((g) => ({
     url: `${SITE_URL}/play/${g.slug}`,
     lastModified: now,
     changeFrequency: "monthly",
-    priority: 0.8,
+    priority: featuredSlugs.has(g.slug) ? 0.9 : 0.8,
   }));
 
   return [...staticPages, ...blogPages, ...categoryPages, ...gamePages];

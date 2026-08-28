@@ -1,13 +1,23 @@
 import type { Metadata } from "next";
 import GameGrid from "@/components/GameGrid";
 import { getAllGames, getCategories } from "@/lib/games";
-import { GAMES_PAGE_SIZE } from "@/lib/site";
+import { GAMES_PAGE_SIZE, SITE_URL } from "@/lib/site";
 
 export function generateMetadata(): Metadata {
+  const description =
+    "Browse PlayKrux free online games. Search, filter by category and sort by popularity, rating or newest to find your next favorite game — no download, no sign-up.";
   return {
-    title: "All Free Online Games",
-    description: "Browse our free online games. Search, filter by category and sort by popularity, rating or newest to find your next favorite game.",
+    title: "All Free Online Games — Play Instantly",
+    description,
     alternates: { canonical: "/games" },
+    robots: { index: true, follow: true },
+    openGraph: {
+      title: "All Free Online Games — Play Instantly",
+      description,
+      type: "website",
+      url: `${SITE_URL}/games`,
+      siteName: "PlayKrux",
+    },
   };
 }
 

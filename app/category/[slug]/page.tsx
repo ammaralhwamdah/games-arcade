@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import GameGrid from "@/components/GameGrid";
 import { getCategory, getGamesByCategory, getCategories } from "@/lib/games";
-import { GAMES_PAGE_SIZE } from "@/lib/site";
+import { GAMES_PAGE_SIZE, SITE_URL } from "@/lib/site";
 import type { CategoryMeta } from "@/lib/types";
 
 interface Props {
@@ -19,10 +19,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const category = getCategory(slug);
   if (!category) return {};
+  const title = `Play Free ${category.name} Games Online — No Download`;
   return {
-    title: `${category.name} Games — Play Free ${category.name} Games Online`,
+    title,
     description: category.description,
     alternates: { canonical: `/category/${slug}` },
+    robots: { index: true, follow: true },
+    openGraph: {
+      title,
+      description: category.description,
+      type: "website",
+      url: `${SITE_URL}/category/${slug}`,
+      siteName: "PlayKrux",
+    },
   };
 }
 
