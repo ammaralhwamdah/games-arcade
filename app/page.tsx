@@ -5,6 +5,34 @@ import GameCard from "@/components/GameCard";
 import CategoryCard from "@/components/CategoryCard";
 import { getFeaturedGames, getPopularGames, getLatestGames, getCategoriesWithCounts } from "@/lib/games";
 import { getLatestPosts } from "@/lib/blog";
+import { SITE_URL } from "@/lib/site";
+
+const faq = [
+  {
+    q: "Are PlayKrux games really free to play?",
+    a: "Yes — every game on PlayKrux is 100% free. There are no paywalls, no in-app purchases required and no hidden costs. You can play as long as you like.",
+  },
+  {
+    q: "Do I need to download anything to play?",
+    a: "No. All PlayKrux games run directly in your browser as HTML5 games, so there is nothing to download and nothing to install. Just open a game and start playing.",
+  },
+  {
+    q: "Do I need to create an account or sign up?",
+    a: "No sign-up is required to play. You can jump straight into any game instantly. Only added features such as leaderboards and rewards are tied to an optional account.",
+  },
+  {
+    q: "Can I play PlayKrux games on mobile and tablet?",
+    a: "Yes. PlayKrux games are optimized for desktop, tablet and mobile browsers, so you can enjoy them on almost any device with a modern web browser.",
+  },
+  {
+    q: "Are the games on PlayKrux original?",
+    a: "Yes. Every title in the PlayKrux library is hand-built and exclusive to the platform — no clones, no third-party filler and no recycled content.",
+  },
+  {
+    q: "How often are new games added?",
+    a: "New original games are added regularly, so the library keeps growing and there is always something fresh to try.",
+  },
+];
 
 export function generateMetadata(): Metadata {
   return {
@@ -218,6 +246,22 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: faq.map((f) => ({
+              "@type": "Question",
+              name: f.q,
+              acceptedAnswer: { "@type": "Answer", text: f.a },
+            })),
+            publisher: { "@type": "Organization", name: "PlayKrux", url: SITE_URL },
+          }),
+        }}
+      />
     </>
   );
 }
