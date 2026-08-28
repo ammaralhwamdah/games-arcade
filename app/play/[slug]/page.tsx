@@ -9,6 +9,7 @@ import { getGameBySlug, getCategory, getSimilarGames, getPopularGames } from "@/
 import { getGameContent } from "@/lib/gameContent";
 import { formatNumber, gameUrl } from "@/lib/format";
 import { SITE_NAME, SITE_URL, STATIC_GAME_PAGES, SITE_EDITOR } from "@/lib/site";
+import { buildGameTitle, buildGameDescription } from "@/lib/seo";
 import type { Game } from "@/lib/types";
 
 interface Props {
@@ -25,17 +26,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const game = getGameBySlug(slug);
   if (!game) return {};
-  const raw = (game.description ?? `Play ${game.name} online for free in your browser.`)
+  const title = buildGameTitle(game);
+  const raw = (buildGameDescription(game) ?? `Play ${game.name} online for free in your browser.`)
     .replace(/\s+/g, " ")
     .trim();
   const description = raw.length > 158 ? `${raw.slice(0, 155)}\u2026` : raw;
   return {
-    title: `Play ${game.name} Online Free`,
+    title,
     description,
     alternates: { canonical: `/play/${slug}` },
     robots: { index: true, follow: true },
     openGraph: {
-      title: `Play ${game.name} Online Free`,
+      title,
       description,
       type: "website",
       url: `${SITE_URL}/play/${slug}`,
