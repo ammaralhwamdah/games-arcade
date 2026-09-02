@@ -31,7 +31,7 @@ export interface SocialLink {
 /** Social media profiles. */
 export const SOCIAL_LINKS: SocialLink[] = [
   { name: "facebook", label: "PlayKrux on Facebook", href: "https://web.facebook.com/profile.php?id=61594135946440" },
-  { name: "instagram", label: "PlayKrux on Instagram", href: "https://instagram.com/playkrux" },
+  { name: "instagram", label: "PlayKrux on Instagram", href: "https://www.instagram.com/playkrux" },
   { name: "x", label: "PlayKrux on X (Twitter)", href: "https://x.com/playkrux" },
   { name: "youtube", label: "PlayKrux on YouTube", href: "https://www.youtube.com/@playkrux" },
   { name: "tiktok", label: "PlayKrux on TikTok", href: "https://tiktok.com/@playkrux" },
