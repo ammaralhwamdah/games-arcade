@@ -324,13 +324,21 @@ function draw(){
   layout();
 
   X.textBaseline="middle";
-  X.font=`700 ${Math.max(12,Math.min(W*0.09,H*0.07))}px "Segoe UI",sans-serif`;
-  X.fillStyle="#94a3b8";X.textAlign="left";
-  X.fillText("Time "+fmt(state.t),W*0.05,H*0.05);
-  X.fillStyle="#94a3b8";X.textAlign="center";
-  X.fillText(`Pairs ${state.matched}/${state.pairs}`,W/2,H*0.05);
-  X.fillStyle="#94a3b8";X.textAlign="right";
-  X.fillText(`Moves ${state.moves}`,W*0.95,H*0.05);
+  const inf=()=>{
+    const tT="Time "+fmt(state.t),pT=`Pairs ${state.matched}/${state.pairs}`,mT=`Moves ${state.moves}`;
+    let f=Math.min(W*0.10,H*0.075);
+    X.font=`700 ${f}px "Segoe UI",sans-serif`;
+    const m=W*0.03,gap=W*0.02;
+    while(f>10&&X.measureText(tT).width+X.measureText(pT).width+X.measureText(mT).width+m*2+gap*2>W){f-=1;X.font=`700 ${f}px "Segoe UI",sans-serif`;}
+    const y=H*0.05;
+    X.fillStyle="#94a3b8";X.textAlign="left";
+    X.fillText(tT,m,y);
+    X.textAlign="center";
+    X.fillText(pT,W/2,y);
+    X.textAlign="right";
+    X.fillText(mT,W-m,y);
+  };
+  inf();
 
   X.shadowColor="rgba(167,139,250,0.4)";X.shadowBlur=12;
   X.fillStyle="#fff";X.font=`800 ${Math.max(11,Math.min(W*0.073,H*0.06))}px "Segoe UI",sans-serif`;
