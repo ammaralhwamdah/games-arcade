@@ -324,16 +324,16 @@ function draw(){
   layout();
 
   X.textBaseline="middle";
-  X.font=`700 ${Math.max(12,W*0.09)}px "Segoe UI",sans-serif`;
+  X.font=`700 ${Math.max(12,Math.min(W*0.09,H*0.07))}px "Segoe UI",sans-serif`;
   X.fillStyle="#94a3b8";X.textAlign="left";
-  X.fillText("Time "+fmt(state.t),W*0.05,H*0.06);
+  X.fillText("Time "+fmt(state.t),W*0.05,H*0.05);
   X.fillStyle="#94a3b8";X.textAlign="center";
-  X.fillText(`Pairs ${state.matched}/${state.pairs}`,W/2,H*0.06);
+  X.fillText(`Pairs ${state.matched}/${state.pairs}`,W/2,H*0.05);
   X.fillStyle="#94a3b8";X.textAlign="right";
-  X.fillText(`Moves ${state.moves}`,W*0.95,H*0.06);
+  X.fillText(`Moves ${state.moves}`,W*0.95,H*0.05);
 
   X.shadowColor="rgba(167,139,250,0.4)";X.shadowBlur=12;
-  X.fillStyle="#fff";X.font=`800 ${Math.max(11,W*0.073)}px "Segoe UI",sans-serif`;
+  X.fillStyle="#fff";X.font=`800 ${Math.max(11,Math.min(W*0.073,H*0.06))}px "Segoe UI",sans-serif`;
   X.textAlign="center";
   X.fillText("Twinlume",W/2,H*0.125);
   X.shadowBlur=0;
