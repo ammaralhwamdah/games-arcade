@@ -1,6 +1,6 @@
 {
-  "generated": "2026-08-17T12:00:00.000Z",
-  "total": 30,
+  "generated": "2026-09-02T12:00:00.000Z",
+  "total": 29,
   "categories": 20,
   "categoriesMeta": [
     {
@@ -145,6 +145,7 @@
     }
   ],
   "featured": [
+    "twinlume",
     "emberwood-dash",
     "nebula-grinder",
     "shardlume",
@@ -200,7 +201,7 @@
         "upgrades",
         "single-player"
       ],
-      "description": "Nebula Grinder is a clicker with a beating heart — the core asteroid drifts in, and you grind it into stardust one satisfying thunk at a time. Every tap feeds the machine: plasma picks that double your hit, auto-grinders that chew rock while you grab a coffee, drone swarms that stack the dust pouring in every second, and warp collectors that multiply the whole hoard. Watch for the golden asteroid — it fades fast and pays like a whole armada, so drop everything and grab it. Milestones chime, the shop keeps raising the stakes, and your best hoard stays saved forever. Original to Gameverse and built from scratch — no ads, no timers, just rock, dust and the climb."
+      "description": "Nebula Grinder is a clicker with a beating heart — the core asteroid drifts in, and you grind it into stardust one satisfying thunk at a time. Every tap feeds the machine: plasma picks that double your hit, auto-grinders that chew rock while you grab a coffee, drone swarms that stack the dust pouring in every second, and warp collectors that multiply the whole hoard. Watch for the golden asteroid — it fades fast and pays like a whole armada, so drop everything and grab it. Milestones chime, the shop keeps raising the stakes, and your best hoard stays saved forever. Original to PlayKrux and built from scratch — no ads, no timers, just rock, dust and the climb."
     },
     {
       "id": "shardlume",
@@ -227,7 +228,7 @@
         "neon",
         "single-player"
       ],
-      "description": "Shardlume is a match-3 with a lightshow — sweep three or more glowing shards together and they shatter into a cascade that doubles the points every time it chains. Tap one shard, tap a neighbour to swap, and let the lumens fall where they may; the board reshuffles itself the moment no move is left, so the flow never dies. You get sixty seconds on the clock and a best score that never forgets a near-miss. Neon, fast and built from scratch for Gameverse — all that is missing is you."
+      "description": "Shardlume is a match-3 with a lightshow — sweep three or more glowing shards together and they shatter into a cascade that doubles the points every time it chains. Tap one shard, tap a neighbour to swap, and let the lumens fall where they may; the board reshuffles itself the moment no move is left, so the flow never dies. You get sixty seconds on the clock and a best score that never forgets a near-miss. Neon, fast and built from scratch for PlayKrux — all that is missing is you."
     },
     {
       "id": "emberwood-dash",
@@ -652,7 +653,7 @@
         "ai",
         "two-player"
       ],
-      "description": "Climb the royal tower of strategy. Bishopspire is full classical chess against an engine with a temper — castling, en passant, promotion and all — with three difficulty spirits that grow more savage the higher you climb. Casual plays loose and forgiving, Balanced thinks a little deeper, and Savage hunts you through your own moves. Sit on either colour, flip the board when the mood takes you, undo a blunder or two, and watch the captured pieces pile up on the scoreboard. When two humans want the same screen, Two Players mode settles it old-school. Promotion lets you choose your queen, rook, bishop or knight, and the game calls check, checkmate, stalemate, fifty-move draws, threefold repetition and insufficient material exactly when it should. Original and exclusive to Gameverse, with the spire that does not forgive the careless."
+      "description": "Climb the royal tower of strategy. Bishopspire is full classical chess against an engine with a temper — castling, en passant, promotion and all — with three difficulty spirits that grow more savage the higher you climb. Casual plays loose and forgiving, Balanced thinks a little deeper, and Savage hunts you through your own moves. Sit on either colour, flip the board when the mood takes you, undo a blunder or two, and watch the captured pieces pile up on the scoreboard. When two humans want the same screen, Two Players mode settles it old-school. Promotion lets you choose your queen, rook, bishop or knight, and the game calls check, checkmate, stalemate, fifty-move draws, threefold repetition and insufficient material exactly when it should. Original and exclusive to PlayKrux, with the spire that does not forgive the careless."
     },
     {
       "id": "klondrake",
@@ -679,7 +680,7 @@
         "logic",
         "single-player"
       ],
-      "description": "Stack the drake's golden hoard. Klondrake is a full classical Klondike solitaire with a dragon's hoard of treasure piled on the table — build the four suits from Ace to King on the golden towers, untangle the seven tableaux in red-on-black descending order, and spend every draw from the lair's stockpile wisely. Casual mode draws one card at a time for a calm, winnable climb; Savage mode draws three and taxes your nerve with a redeal penalty. Click a card to pick it up, click a glowing spot to drop it, double-click to auto-play to the towers, and use the hint when the drake's eyes deceive you. Auto-place runs any eligible card home for you, undo forgives your mistakes, and the game scores every placement, reveal, and redeal before calling your hoard complete. Original and exclusive to Gameverse — with a lair that does not forgive a wasted hand."
+      "description": "Stack the drake's golden hoard. Klondrake is a full classical Klondike solitaire with a dragon's hoard of treasure piled on the table — build the four suits from Ace to King on the golden towers, untangle the seven tableaux in red-on-black descending order, and spend every draw from the lair's stockpile wisely. Casual mode draws one card at a time for a calm, winnable climb; Savage mode draws three and taxes your nerve with a redeal penalty. Click a card to pick it up, click a glowing spot to drop it, double-click to auto-play to the towers, and use the hint when the drake's eyes deceive you. Auto-place runs any eligible card home for you, undo forgives your mistakes, and the game scores every placement, reveal, and redeal before calling your hoard complete. Original and exclusive to PlayKrux — with a lair that does not forgive a wasted hand."
     },
     {
       "id": "style-salon",
@@ -695,7 +696,7 @@
       "plays": 0,
       "year": 2026,
       "tags": ["exclusive", "html5", "girls", "dress-up", "fashion", "makeover", "single-player"],
-      "description": "Style Salon puts a whole wardrobe at your fingertips — tap through hairstyles, tops, bottoms and accessories to build the perfect outfit on a rotating mannequin. Every combo you assemble earns style points, and the better the pieces match, the higher the multiplier climbs. Work through round after round, chase your best score, and prove you have the eye for fashion that nobody else can match. Original to Gameverse, built from scratch — no ads, no timers, just you, the clothes, and the mirror."
+      "description": "Style Salon puts a whole wardrobe at your fingertips — tap through hairstyles, tops, bottoms and accessories to build the perfect outfit on a rotating mannequin. Every combo you assemble earns style points, and the better the pieces match, the higher the multiplier climbs. Work through round after round, chase your best score, and prove you have the eye for fashion that nobody else can match. Original to PlayKrux, built from scratch — no ads, no timers, just you, the clothes, and the mirror."
     },
     {
       "id": "mech-mayhem",
@@ -711,7 +712,7 @@
       "plays": 0,
       "year": 2026,
       "tags": ["exclusive", "html5", "boys", "robots", "battle", "shooting", "single-player"],
-      "description": "Mech Mayhem drops you into a neon arena with a cockpit, a cannon and a whole lot of hostile hardware headed your way. Move with WASD or the arrows, open fire with Space, and pick up the power-ups that fall from every robot you scrap — spread shots, shield boosts, rapid fire, all of it stacks. Each wave brings tighter formations, faster projectiles and nastier enemy types, and every fifth wave throws a heavy boss that demands every trick you have learned. Your health bar is the only thing between you and a system failure, so dodge clean, shoot straight and keep the streak alive. Original to Gameverse — pure arcade mayhem, zero filler."
+      "description": "Mech Mayhem drops you into a neon arena with a cockpit, a cannon and a whole lot of hostile hardware headed your way. Move with WASD or the arrows, open fire with Space, and pick up the power-ups that fall from every robot you scrap — spread shots, shield boosts, rapid fire, all of it stacks. Each wave brings tighter formations, faster projectiles and nastier enemy types, and every fifth wave throws a heavy boss that demands every trick you have learned. Your health bar is the only thing between you and a system failure, so dodge clean, shoot straight and keep the streak alive. Original to PlayKrux — pure arcade mayhem, zero filler."
     },
     {
       "id": "kitchen-rush",
@@ -727,7 +728,7 @@
       "plays": 0,
       "year": 2026,
       "tags": ["exclusive", "html5", "cooking", "time-management", "food", "casual", "single-player"],
-      "description": "Kitchen Rush throws you behind the counter with a ticking clock and a queue of orders that does not care about your excuses. Read the recipe at the top, tap the ingredients in the exact order shown, and serve before the timer runs out — every correct dish racks up points, and consecutive perfects chain into combo multipliers that push your score skyward. Miss an ingredient and the combo resets, so accuracy beats speed when the orders start piling up. New recipes unlock as your level climbs: burgers, pizza, salad, sushi and more, each one faster and fussier than the last. Synthesised sizzles, dings and chops keep the pressure real — one wrong tap and the kitchen goes silent. Original to Gameverse, built from scratch — no ads, no downloads, just cooking, clocks and chaos."
+      "description": "Kitchen Rush throws you behind the counter with a ticking clock and a queue of orders that does not care about your excuses. Read the recipe at the top, tap the ingredients in the exact order shown, and serve before the timer runs out — every correct dish racks up points, and consecutive perfects chain into combo multipliers that push your score skyward. Miss an ingredient and the combo resets, so accuracy beats speed when the orders start piling up. New recipes unlock as your level climbs: burgers, pizza, salad, sushi and more, each one faster and fussier than the last. Synthesised sizzles, dings and chops keep the pressure real — one wrong tap and the kitchen goes silent. Original to PlayKrux, built from scratch — no ads, no downloads, just cooking, clocks and chaos."
     },
     {
       "id": "stick-dash",
@@ -743,7 +744,7 @@
       "plays": 0,
       "year": 2026,
       "tags": ["exclusive", "html5", "stickman", "runner", "endless", "jumping", "single-player"],
-      "description": "Stick Dash is a neon-lit endless runner where a fearless stickman sprints forward and the world throws everything it has at him. Tap or press Space to jump — double-tap for a second lift — and swipe down or hit S to slide under the low obstacles. Coins litter the path and each one adds to your tally, but a single collision with a spike, laser or barrier ends the run and locks in your distance. The longer you survive, the faster the world moves and the tighter the gaps become, so read two obstacles ahead and time every input to the rhythm. Your best run is saved in your browser, and the retry button is always one tap away. Original to Gameverse — pure reflexes, zero filler."
+      "description": "Stick Dash is a neon-lit endless runner where a fearless stickman sprints forward and the world throws everything it has at him. Tap or press Space to jump — double-tap for a second lift — and swipe down or hit S to slide under the low obstacles. Coins litter the path and each one adds to your tally, but a single collision with a spike, laser or barrier ends the run and locks in your distance. The longer you survive, the faster the world moves and the tighter the gaps become, so read two obstacles ahead and time every input to the rhythm. Your best run is saved in your browser, and the retry button is always one tap away. Original to PlayKrux — pure reflexes, zero filler."
     },
     {
       "id": "blorb-bonanza",
@@ -759,7 +760,7 @@
       "plays": 0,
       "year": 2026,
       "tags": ["exclusive", "html5", "clicker", "idle", "cute", "upgrades", "single-player"],
-      "description": "Meet the Blorb — a wobbly, grinning blob that lives to be tapped. Every click earns Blorb Bits, and the shop behind the pull-up handle sells upgrades that multiply your income: click power, auto-tappers, colour shifts, confetti bursts and more. Stack enough upgrades and the Blorb evolves — growing, shifting colours and showering the screen with particle confetti as the numbers climb higher. Milestones chime when you hit big targets and the shop keeps raising the stakes, turning a quiet click session into a snowball of idle income that grows while you watch. Your best haul is saved in your browser, so you can close the tab and come back to a new target to chase. Original to Gameverse — zero ads, zero tracking, just blobs, bits and the climb."
+      "description": "Meet the Blorb — a wobbly, grinning blob that lives to be tapped. Every click earns Blorb Bits, and the shop behind the pull-up handle sells upgrades that multiply your income: click power, auto-tappers, colour shifts, confetti bursts and more. Stack enough upgrades and the Blorb evolves — growing, shifting colours and showering the screen with particle confetti as the numbers climb higher. Milestones chime when you hit big targets and the shop keeps raising the stakes, turning a quiet click session into a snowball of idle income that grows while you watch. Your best haul is saved in your browser, so you can close the tab and come back to a new target to chase. Original to PlayKrux — zero ads, zero tracking, just blobs, bits and the climb."
     },
     {
       "id": "voxel-voyage",
@@ -775,7 +776,7 @@
       "plays": 0,
       "year": 2026,
       "tags": ["exclusive", "html5", "3d", "space", "obstacles", "endless", "single-player"],
-      "description": "Voxel Voyage drops your ship into a neon corridor hurtling through deep space, and the only way out is forward. Steer with A and D on desktop or swipe on mobile, threading between voxel asteroids and barriers that spawn faster the deeper you fly. Energy orbs line the gaps — grab them for points and watch the speed climb as the corridor tightens and the neon walls blur past. Every metre is tracked, every collision ends the run, and your best distance sits at the top of the screen waiting to be beaten. The pseudo-3D perspective shifts as you move, giving each dodge a visceral sense of speed that a flat screen has no business delivering. Original to Gameverse — zero ads, zero filler, just you, the void and the reflexes to cross it."
+      "description": "Voxel Voyage drops your ship into a neon corridor hurtling through deep space, and the only way out is forward. Steer with A and D on desktop or swipe on mobile, threading between voxel asteroids and barriers that spawn faster the deeper you fly. Energy orbs line the gaps — grab them for points and watch the speed climb as the corridor tightens and the neon walls blur past. Every metre is tracked, every collision ends the run, and your best distance sits at the top of the screen waiting to be beaten. The pseudo-3D perspective shifts as you move, giving each dodge a visceral sense of speed that a flat screen has no business delivering. Original to PlayKrux — zero ads, zero filler, just you, the void and the reflexes to cross it."
     },
     {
       "id": "gemfall-depths",
@@ -791,7 +792,7 @@
       "plays": 0,
       "year": 2026,
       "tags": ["exclusive", "html5", "adventure", "dungeon", "roguelike", "gems", "single-player"],
-      "description": "Gemfall Depths is a procedurally generated dungeon that stretches twenty floors deep, and every floor is a fresh layout you have never seen before. Move with WASD or the arrow keys, attack with Space or a click, and fight your way through slimes, skeletons, bats and tougher enemies that get meaner the deeper you go. Gems, gold and treasure chests drop loot that keeps you alive, and each floor's exit is guarded by a boss that demands every trick you have learned so far. Health potions patch you up between fights, the sword upgrades stack, and the dungeon reshuffles every run so memorisation is not an option — only instinct, reflexes and a little luck stand between you and the bottom. Your best run is saved locally, and the retry button is always one tap away. Original to Gameverse — zero ads, pure dungeon crawling."
+      "description": "Gemfall Depths is a procedurally generated dungeon that stretches twenty floors deep, and every floor is a fresh layout you have never seen before. Move with WASD or the arrow keys, attack with Space or a click, and fight your way through slimes, skeletons, bats and tougher enemies that get meaner the deeper you go. Gems, gold and treasure chests drop loot that keeps you alive, and each floor's exit is guarded by a boss that demands every trick you have learned so far. Health potions patch you up between fights, the sword upgrades stack, and the dungeon reshuffles every run so memorisation is not an option — only instinct, reflexes and a little luck stand between you and the bottom. Your best run is saved locally, and the retry button is always one tap away. Original to PlayKrux — zero ads, pure dungeon crawling."
     },
     {
       "id": "racket-rumble",
@@ -807,7 +808,7 @@
       "plays": 0,
       "year": 2026,
       "tags": ["exclusive", "html5", "sports", "tennis", "racket", "competitive", "single-player"],
-      "description": "Racket Rumble is a fast-paced tennis showdown where you control the racket with your mouse or finger and the ball does not care about your excuses. Move the racket to meet the ball, aim your returns past the AI opponent, and build long rallies that rack up the tension. Double-tap for a power smash — a heavier, faster shot that gives the AI less time to react — but mistime it and you leave the court wide open. First to seven points takes the set, and the match runs best-of-three, so a shaky start is not the end if you can hold your nerve. The ball arcs, the racket snaps, and every rally feels like a real point worth fighting for. Your best results are saved locally — original to Gameverse, zero ads, just you, the racket and the baseline."
+      "description": "Racket Rumble is a fast-paced tennis showdown where you control the racket with your mouse or finger and the ball does not care about your excuses. Move the racket to meet the ball, aim your returns past the AI opponent, and build long rallies that rack up the tension. Double-tap for a power smash — a heavier, faster shot that gives the AI less time to react — but mistime it and you leave the court wide open. First to seven points takes the set, and the match runs best-of-three, so a shaky start is not the end if you can hold your nerve. The ball arcs, the racket snaps, and every rally feels like a real point worth fighting for. Your best results are saved locally — original to PlayKrux, zero ads, just you, the racket and the baseline."
     },
     {
       "id": "neon-circuit",
@@ -823,7 +824,23 @@
       "plays": 0,
       "year": 2026,
       "tags": ["exclusive", "html5", "puzzle", "neon", "circuit", "cyberpunk", "single-player"],
-      "description": "Neon Circuit is a glowing puzzle where you rotate tiles to connect a power source to every endpoint on the grid. Each tile carries a circuit pattern — straight, corner, T-junction or cross — and your job is to spin each one until the energy flows uninterrupted through the entire network. Tap a tile to rotate it ninety degrees, watch the neon light surge through connected paths, and keep going until the whole board pulses with power. The puzzles start gentle at three by three grids and scale up to five by five, introducing new circuit shapes and trickier layouts as you progress. A move counter tracks how efficient your solution is, so optimising your path is just as rewarding as finding one. The cyberpunk neon aesthetic makes every powered connection feel alive, and the Web Audio clicks and chimes give each rotation a satisfying snap. Progress saves locally, the level select screen tracks your unlocked stages, and the whole experience runs offline in your browser — original to Gameverse, zero ads, pure neon problem-solving."
+      "description": "Neon Circuit is a glowing puzzle where you rotate tiles to connect a power source to every endpoint on the grid. Each tile carries a circuit pattern — straight, corner, T-junction or cross — and your job is to spin each one until the energy flows uninterrupted through the entire network. Tap a tile to rotate it ninety degrees, watch the neon light surge through connected paths, and keep going until the whole board pulses with power. The puzzles start gentle at three by three grids and scale up to five by five, introducing new circuit shapes and trickier layouts as you progress. A move counter tracks how efficient your solution is, so optimising your path is just as rewarding as finding one. The cyberpunk neon aesthetic makes every powered connection feel alive, and the Web Audio clicks and chimes give each rotation a satisfying snap. Progress saves locally, the level select screen tracks your unlocked stages, and the whole experience runs offline in your browser — original to PlayKrux, zero ads, pure neon problem-solving."
+    },
+    {
+      "id": "twinlume",
+      "slug": "twinlume",
+      "name": "Twinlume",
+      "category": "puzzle",
+      "categories": ["puzzle", "hypercasual", "2-player"],
+      "file": "games/twinlume/index.html",
+      "src": "/games/twinlume/index.html",
+      "image": "/images/games/twinlume.svg",
+      "sizeKb": 16,
+      "rating": 4.9,
+      "plays": 0,
+      "year": 2026,
+      "tags": ["exclusive", "html5", "memory", "puzzle", "neon", "match", "single-player", "kids"],
+      "description": "Twinlume is a neon memory puzzle where every pair has a twin. Glowing cards hide cryptic forms - stars, moons, hearts, bolts and more - and your job is to flip two that match to dissolve them in light. Tap any card to turn it over, build a mental map of every symbol you see, and clear the whole board in the fewest moves you can. Three grids keep the challenge rising: an easy three by four layout for warming up, a balanced four by four for a proper test of recall, and a brutal four by six board that will stretch your memory to its limit. Each puzzle tracks your time and your best score is saved in your browser, so every round hands you a glowing target to beat. The neon aesthetic makes each match feel like a small celebration, and the Web Audio chimes give every flip a satisfying snap. It runs offline, shows no ads and asks for nothing - original to PlayKrux, pure brain-brightening memory play."
     }
   ]
 }

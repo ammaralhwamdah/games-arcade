@@ -1041,6 +1041,48 @@ const content: Record<string, GameContent> = {
       },
     ],
   },
+  "twinlume": {
+    tips: [
+      "Start from the outside and sweep inward. Clearing the outer row first leaves fewer cards to misread later, and you build the grid's skeleton before the middle gets crowded.",
+      "Say the symbol out loud as you flip it. Naming what you see - star, moon, bolt - anchors it better than a silent glance, and paired positions start to stick after just a few rounds.",
+      "Watch the edges between flips. A lot of players only look at the card they just turned. Scanning the whole board while the next card animates is where the real recall advantage lives.",
+      "When you find a match, do not rush the third move. Take one beat to review everything you still have memorised, because the board shuffles nothing - your attention just drifts.",
+      "Move economy beats speed. Fewer mistakes beat faster taps, so if you are unsure, flip a card you have already seen rather than gambling on an unknown corner. Your best score rewards deliberate play.",
+    ],
+    features: [
+      "Three grid sizes that scale the challenge from warm-up to memory marathon",
+      "Eighteen hand-drawn neon symbols, each with its own glow and audio snap",
+      "Best time saved for every difficulty in your browser",
+      "Move counter and timer that reward deliberate, careful play",
+      "Runs offline with zero ads - tap a card and disappear into the light",
+    ],
+    faq: [
+      {
+        q: "Is Twinlume really free to play?",
+        a: "Yes. Twinlume is completely free, runs directly in your browser and shows no ads inside the game. There is nothing to download, install or pay for - just tap two cards and start matching.",
+      },
+      {
+        q: "How do I play Twinlume?",
+        a: "Tap any card to flip it over and reveal its symbol, then tap a second card to look for its twin. If the two symbols match they dissolve in light; if not, they flip back. Clear every pair on the board to finish the round.",
+      },
+      {
+        q: "How many grids are there?",
+        a: "Three. Easy is a three by four grid with six pairs for a quick warm-up, Medium is four by four with eight pairs, and Hard is four by six with twelve pairs to stretch your recall.",
+      },
+      {
+        q: "Does the game save my best time?",
+        a: "Yes. Your best time for each of the three grid sizes is saved in your browser automatically, so every round hands you a glowing target to beat on your next attempt.",
+      },
+      {
+        q: "Can I play on my phone?",
+        a: "Yes. Twinlume is built for both mouse and touch. Tap the cards with your finger on mobile or click them with the mouse on desktop - it runs in any modern browser.",
+      },
+      {
+        q: "Does anything happen when I clear the board?",
+        a: "Finishing a board releases a burst of confetti and shows your time and move count. If you set a new best, the board crowns it with a star, then you can jump back to the menu for another round.",
+      },
+    ],
+  },
 };
 
 export function getGameContent(slug: string): GameContent | undefined {
