@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import SearchBar from "@/components/SearchBar";
 import GameCard from "@/components/GameCard";
 import CategoryCard from "@/components/CategoryCard";
-import { getFeaturedGames, getPopularGames, getLatestGames, getCategoriesWithCounts } from "@/lib/games";
+import { getFeaturedGames, getPopularGames, getLatestGames, getCategoriesWithCounts, getGameCount } from "@/lib/games";
 import { getLatestPosts } from "@/lib/blog";
 import { SITE_URL } from "@/lib/site";
 
@@ -46,6 +46,7 @@ export default function Home() {
   const popular = getPopularGames(12);
   const latest = getLatestGames(12);
   const categories = getCategoriesWithCounts();
+  const gameCount = getGameCount();
   const catMeta = new Map(categories.map((c) => [c.slug, { name: c.name, emoji: c.emoji }]));
   const posts = getLatestPosts(3);
 
@@ -82,8 +83,9 @@ export default function Home() {
             <SearchBar large />
           </div>
 
-          <div className="mt-12 grid w-full max-w-2xl grid-cols-2 gap-4">
+          <div className="mt-12 grid w-full max-w-2xl grid-cols-3 gap-4">
             {[
+              { value: String(gameCount), label: "Games" },
               { value: String(categories.length), label: "Categories" },
               { value: "100%", label: "Free to Play" },
             ].map((s) => (
