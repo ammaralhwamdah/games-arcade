@@ -23,7 +23,7 @@ export const GAMES_PAGE_SIZE = 60;
 export const STATIC_GAME_PAGES = 1500;
 
 export interface SocialLink {
-  name: "facebook" | "instagram" | "x" | "youtube" | "tiktok" | "telegram";
+  name: "facebook" | "instagram" | "x" | "youtube" | "telegram";
   label: string;
   href: string;
 }
@@ -34,6 +34,5 @@ export const SOCIAL_LINKS: SocialLink[] = [
   { name: "instagram", label: "PlayKrux on Instagram", href: "https://www.instagram.com/playkrux" },
   { name: "x", label: "PlayKrux on X (Twitter)", href: "https://x.com/playkrux" },
   { name: "youtube", label: "PlayKrux on YouTube", href: "https://www.youtube.com/@playkrux" },
-  { name: "tiktok", label: "PlayKrux on TikTok", href: "https://tiktok.com/@playkrux" },
   { name: "telegram", label: "PlayKrux on Telegram", href: "https://t.me/playkrux" },
 ];
