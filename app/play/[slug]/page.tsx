@@ -166,6 +166,20 @@ export default async function PlayPage({ params }: Props) {
             </div>
           </div>
 
+          {gameContent && gameContent.features && gameContent.features.length > 0 && (
+            <div className="mt-8 rounded-2xl border border-white/5 bg-slate-900/50 p-6">
+              <h2 className="text-lg font-bold text-white">Key Features</h2>
+              <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+                {gameContent.features.map((feature, i) => (
+                  <li key={i} className="flex items-start gap-2.5 text-sm leading-6 text-slate-400">
+                    <span className="mt-0.5 text-violet-300" aria-hidden>✦</span>
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           {gameContent && gameContent.tips.length > 0 && (
             <div className="mt-8 rounded-2xl border border-white/5 bg-slate-900/50 p-6">
               <h2 className="text-lg font-bold text-white">Tips &amp; Strategies</h2>

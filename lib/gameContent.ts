@@ -5,6 +5,7 @@ export interface FaqItem {
 
 export interface GameContent {
   tips: string[];
+  features: string[];
   faq: FaqItem[];
 }
 
@@ -16,6 +17,13 @@ const content: Record<string, GameContent> = {
       "Slide under the low-hanging vines instead of jumping over them - it is faster and keeps your rhythm, so the forest speed increase catches you off guard less often.",
       "Stick to one side of the path for short stretches. Streams and logs come in predictable patterns, and reading two moves ahead beats reacting to each obstacle.",
       "Short hops beat long jumps when the gap is small. A quick tap uses less air time and lets you land sooner, which matters as the run speeds up into dusk.",
+    ],
+    features: [
+      "Endless woodland runner with progressively rising speed",
+      "Golden leaf power-up turns you into an acorn magnet",
+      "Jump, slide and double-jump controls tuned for keyboard and touch",
+      "Coyote time and short hops reward precise platforming",
+      "Best distance saved in your browser",
     ],
     faq: [
       {
@@ -44,6 +52,13 @@ const content: Record<string, GameContent> = {
       "Emeralds are usually tucked near puzzle solutions. Solving the lever-and-block puzzles while collecting them is more efficient than hunting for them afterwards.",
       "Play with a friend if you can - the co-op design lets one player control Lena and one control Rafiq, and two sets of eyes solve the temple's puzzles much faster.",
     ],
+    features: [
+      "Co-op puzzle-platforming with two interlocking heroes",
+      "Lena climbs on Rafiq's shoulders to reach double the height",
+      "Golden keys, hidden ledges and collectible emeralds to explore",
+      "Two-player local co-op or single-player switching",
+      "Automatic checkpoints that save your progress",
+    ],
     faq: [
       {
         q: "Is Veyra's Legacy a two-player game?",
@@ -70,6 +85,12 @@ const content: Record<string, GameContent> = {
       "Do not call a meeting the second you see anything odd. Gather two or three observations first so your accusation has weight instead of guesswork.",
       "Keep an eye on the oxygen timer. If you are sure who the impostor is, vote fast - but if you are not sure, your best move is to keep watching rather than accuse at random.",
       "Pay attention to players who always volunteer the alibi first. The real impostor usually rehearses their story, while crewmates simply describe what they saw.",
+    ],
+    features: [
+      "Deduction game about finding the hidden impostor on a ship",
+      "Room tracker and event log give you real evidence to weigh",
+      "Meetings and voting let the whole crew decide together",
+      "Oxygen timer keeps every match tense and fast",
     ],
     faq: [
       {
@@ -98,6 +119,12 @@ const content: Record<string, GameContent> = {
       "The walls are deadly, so aim to keep your snake away from the edges when you are long. Circle the centre and expand outward as you grow.",
       "Slow down your thinking, not your movement. Each food decision is cheap; each wall bump is fatal. Patience is the whole game at high lengths.",
     ],
+    features: [
+      "Classic Snake gameplay with a clean, modern presentation",
+      "Zero ads and zero tracking inside the game",
+      "Gradually rising pace keeps the tension building",
+      "Instant restarts after every run",
+    ],
     faq: [
       {
         q: "Is Nano Serpent a classic Snake game?",
@@ -124,6 +151,13 @@ const content: Record<string, GameContent> = {
       "Sliding under signs is faster than jumping over them and keeps you lower to the ground, which helps when the next obstacle arrives quickly after.",
       "Grab coins in safe patterns. Coins usually sit in a lane with no obstacle, so following a coin line is a decent route - but always look ahead before committing.",
       "As the speed climbs, look further up the track. Your eyes lead your hands, so reading obstacles early gives you a full second more than reacting at the last moment.",
+    ],
+    features: [
+      "Endless subway runner with rising speed and no limit",
+      "Switch lanes, jump barriers and slide under signs",
+      "Swipe controls tuned specifically for touch screens",
+      "No ads or trackers inside the game",
+      "Best distance saved to chase on every run",
     ],
     faq: [
       {
@@ -152,6 +186,12 @@ const content: Record<string, GameContent> = {
       "Move in small, quick taps rather than holding left or right. The retro hitbox is forgiving, but tiny corrections let you thread gaps between incoming bullets.",
       "Use the shield deliberately. Park yourself under a shield while you plan your next lane shift, then move in a single decisive slide to the next cover.",
     ],
+    features: [
+      "Retro space-invaders style shooter with tight formations",
+      "Shield cover and a mystery saucer bonus to contest",
+      "Limited lives with escalating waves",
+      "Tiny-correction controls that reward precision over spraying",
+    ],
     faq: [
       {
         q: "What is Aphelion Assault?",
@@ -178,6 +218,13 @@ const content: Record<string, GameContent> = {
       "Dodge asteroid fields in wide arcs. Trying to thread the smallest gap wastes time and usually costs a hit - go around, not through.",
       "Focus fire on drones that are about to shoot first. Taking out the closest threat immediately reduces the bullet count aimed at you.",
       "Keep your scoreboard mentality: chain kills without getting hit to build multipliers. A clean streak is worth far more than rushing for pickups.",
+    ],
+    features: [
+      "Neon arcade shooter with asteroid fields and drone squads",
+      "Charged cannon that clears the screen in one burst",
+      "Boss fight every fifth wave",
+      "Power-up drops from every downed drone",
+      "Touch controls and a saved high score",
     ],
     faq: [
       {
@@ -206,6 +253,12 @@ const content: Record<string, GameContent> = {
       "Do not obsess over the percentage during the early game. The control bar swings wildly until the board fills, so stay consistent and it will settle in your favour.",
       "When you reach the high 50s, switch from attacking to protecting. One or two defensive launches near your core stop the AI from flipping your advantage.",
     ],
+    features: [
+      "Territory-control puzzler where orbs roll and flip cells",
+      "Adaptive AI opponent that grows with your skill",
+      "First to 70% control of the grid wins",
+      "One-tap controls identical on desktop and mobile",
+    ],
     faq: [
       {
         q: "How do I win a clash?",
@@ -232,6 +285,12 @@ const content: Record<string, GameContent> = {
       "Invest in one tower type to start. Specialising early unlocks upgrades faster, then you can add variety once the horde begins mixing fast and tanky enemies.",
       "Watch which enemies leak past and adapt. If the fast runners are getting through, shift a tower closer to the path's start before the next wave begins.",
       "Keep at least one life in reserve for the first half of each wave. A single stray enemy can end the run, so prioritise the leak over chasing the last coin.",
+    ],
+    features: [
+      "Tower-defense with three distinct tower types",
+      "Adaptive upgrade economy driven by gold from kills",
+      "Endless waves with mixing enemy types",
+      "Corner positioning rewards strategic tower placement",
     ],
     faq: [
       {
@@ -260,6 +319,13 @@ const content: Record<string, GameContent> = {
       "On touch, drag your half of the screen to move - small drags give you control, big drags send the ball flying, so match your input to the moment.",
       "The first goal changes the match. An early lead forces your opponent to open up and attack, which opens space for counter-attacks. Use it.",
     ],
+    features: [
+      "Same-screen local multiplayer soccer duel",
+      "Player 1 on WASD, Player 2 on the arrow keys",
+      "First to five goals wins the match",
+      "Arcade rules with dribble, shoot and tackle",
+      "Touch controls for two players on one device",
+    ],
     faq: [
       {
         q: "Is Pitch Battle two players on one screen?",
@@ -286,6 +352,13 @@ const content: Record<string, GameContent> = {
       "Build a staircase, not a scatter. Arrange tiles in descending order along one edge so smaller tiles always feed into larger ones instead of clogging the board.",
       "Merging a small tile now is almost always better than waiting for a perfect combo later. A clean board gives you room to survive, and space is the real currency in 2048.",
       "When the board gets tight, undo your last swipe mentally - ask which swipe wastes the least space. If no move creates new room, you made a mistake three moves ago, not now.",
+    ],
+    features: [
+      "Classic 2048 sliding puzzle with smooth controls",
+      "Arrow keys, WASD or swipe to move the whole board",
+      "Keep playing past 2048 to chase even higher tiles",
+      "Subtle custom audio with a mute button",
+      "Board state and score saved so you can keep going",
     ],
     faq: [
       {
@@ -318,6 +391,13 @@ const content: Record<string, GameContent> = {
       "Give the AI cars a little room when they are right beside you. A side nudge can spin you both into the dust, while backing off one car length keeps you in the race.",
       "Slipstream the car ahead on the straights. Matching their line at close distance keeps you right behind their bumper, ready to dive inside at the next braking zone.",
     ],
+    features: [
+      "Arcade racing on a punishing desert circuit",
+      "Race three AI rivals over three laps",
+      "Realistic grip model: sand bleeds your speed",
+      "Best lap time and ghost racing saved in your browser",
+      "Simple keys or on-screen touch pedals and steering",
+    ],
     faq: [
       {
         q: "What is Dustveil Speedway?",
@@ -344,6 +424,13 @@ const content: Record<string, GameContent> = {
       "Work the bottom rows first. Orbs only fall, never rise, so the lower half of the grid is where space runs out first. Keep a breathing gap near the floor and the whole board stays alive longer.",
       "Diagonals are the quiet setup. Three matching shards that sit diagonally are one row or column spin away from blooming - keep an eye on those slanted pairs when the grid feels too tangled to read.",
       "There is no clock, so trust the slow read. When the board looks locked, pick the colour you can count the most of, then spend one rotation finding them instead of spinning rows at random - order slips back in faster than you expect.",
+    ],
+    features: [
+      "Relaxing rotation puzzle with glowing shard constellations",
+      "No timer, no pressure - play entirely at your own pace",
+      "Cascade blooms that chain across the whole grid",
+      "Best score saved automatically",
+      "Colour count grows as you level up for deeper challenges",
     ],
     faq: [
       {
@@ -378,6 +465,13 @@ const content: Record<string, GameContent> = {
       "Savage mode never misses an open four. Before you plant a mark, check every row, column and diagonal passing through that cell for a rival run of three - a single greedy move can hand the CPU a crown and all three points.",
       "The centre is the quiet king. The middle cell sits inside more possible winning lines than any corner, so on a fresh board it is worth grabbing early - and on a crowded board it is worth defending.",
       "A full five is triple the points, but never chase it with your eyes closed. Forcing the fifth mark lets your opponent see the line a mile away; usually the faster four is the smarter win.",
+    ],
+    features: [
+      "5x5 twist on tic-tac-toe with four-in-a-row to win",
+      "Full five crowns the round with triple points",
+      "Three CPU difficulties from Casual to Savage",
+      "Two Players pass-and-play mode on one screen",
+      "Mouse, touch and keyboard controls",
     ],
     faq: [
       {
@@ -414,6 +508,14 @@ const content: Record<string, GameContent> = {
       "The exit is sealed until you carry all three embers. Once it opens, stay near the ring but keep a round in the chamber — it will not stop hunting just because you are close to freedom.",
       "When the ammo count drops to three or less, stop shooting at anything you cannot see clearly. A dry click is a death sentence here, so treat three rounds as your real emergency line and walk — do not run — toward the nearest ammo box.",
     ],
+    features: [
+      "First-person survival horror through a procedural maze",
+      "Synthesized audio: whispers, drips, chimes and more",
+      "Three difficulties that change maze size and stalker count",
+      "Minimap tracks your path, the embers and the hunters",
+      "Ammo and medkit economy that demands careful planning",
+      "Keyboard, mouse and touch controls",
+    ],
     faq: [
       {
         q: "Is Mazewhisper really free to play?",
@@ -448,6 +550,14 @@ const content: Record<string, GameContent> = {
       "Savage thinks three moves deep and punishes every loose pawn. Push only when you mean it: a passed pawn is a promotion waiting to happen, but a pushed pawn is a hole your rival will live in.",
       "Castle early, but never through fire. Kingside castling tucks your king away in three moves - if the squares you need are attacked, keep the king home until the danger passes.",
       "Endgames are won by the active king. With few pieces left, walk your king forward and let it support the pawns - the extra king move is worth more than any subtlety the middlegame offered.",
+    ],
+    features: [
+      "Full classical chess with castling, en passant and promotion",
+      "Three CPU difficulties from Casual to Savage",
+      "Two Players pass-and-play on the same board",
+      "Play as White, Black or Random",
+      "Undo, board flip and mute shortcuts",
+      "Scoreboard tracks your match results",
     ],
     faq: [
       {
@@ -484,6 +594,13 @@ const content: Record<string, GameContent> = {
       "Savage draws three, so watch the order. The top card of the waste is your only free choice in Draw 3 - plan the next two draws ahead and avoid trapping a card you need under the one on top.",
       "Do not hoard the hint. If the table looks dead, press H - the drake will point out a real move. When nothing moves, draw again: a fresh card always reshuffles your options.",
     ],
+    features: [
+      "Full classical Klondike solitaire in a dragon-hoard theme",
+      "Casual draws one card, Savage draws three with a penalty",
+      "Four towers to build from Ace to King",
+      "Hint, auto-place, undo and mute shortcuts",
+      "Scoring system saves your best to the leaderboard",
+    ],
     faq: [
       {
         q: "Is Klondrake really free to play?",
@@ -519,6 +636,13 @@ const content: Record<string, GameContent> = {
       "Do not skip the forges and warp collectors. Forges stack the per-second flow and warp collectors multiply the whole hoard — together they turn a nice grind into a hoard that snowballs on its own.",
       "When the shop feels slow, that is the milestone whisper. Each milestone chime marks a real jump in the pace, so save toward the next tier instead of dribbling dust into small buys — the shop catches up faster than you think.",
     ],
+    features: [
+      "Incremental clicker with satisfying tap feedback and evolving visuals",
+      "Idle progress: auto-grinders, drone swarms and forges earn while you rest",
+      "Golden asteroid bonus events with big one-time dust payouts",
+      "Progress saved automatically in your browser",
+      "Completely free, ad-free and runs instantly in your browser",
+    ],
     faq: [
       {
         q: "Is Nebula Grinder really free to play?",
@@ -549,6 +673,13 @@ const content: Record<string, GameContent> = {
       "When the board reshuffles, that is your reset, not your loss. It happens the moment no move is left and means a fresh grid, so take a breath and hunt the new patterns instead of panic-swapping into a dead end.",
       "Keep your eyes on the score, not the timer. The clock is the pressure, but the score is the prize — a steady rhythm of real matches outruns a frantic spray of failed swaps every single time.",
       "On desktop, let the keyboard do the talking. Arrows move the cursor and Enter picks and swaps, which is faster and far more precise than chasing shards with the mouse while a cascade is building.",
+    ],
+    features: [
+      "Match-3 puzzle with chain cascades that double your points",
+      "Six colours and shapes keep every board a fresh read",
+      "Auto-reshuffle the moment no move is left, so you never stall",
+      "Sixty-second rounds with a saved personal best",
+      "Keyboard and touch controls for desktop and mobile",
     ],
     faq: [
       {
@@ -581,6 +712,12 @@ const content: Record<string, GameContent> = {
       "Unlock new pieces by playing, not by paying. Every round you complete adds fresh items to the wardrobe, so the fastest way to a bigger wardrobe is one more round, not one more purchase.",
       "Watch the score preview before confirming. The game shows you a rough point estimate as you build — if the number feels low, swap one piece and the whole outfit can shift from mediocre to stunning.",
     ],
+    features: [
+      "Rotating mannequin with a full wardrobe of items",
+      "Unlock new hairstyles and clothing by playing rounds",
+      "Colour-matching and combo multipliers reward good taste",
+      "Wardrobe and best score saved in your browser",
+    ],
     faq: [
       {
         q: "Is Style Salon free to play?",
@@ -607,6 +744,13 @@ const content: Record<string, GameContent> = {
       "Save the shield power-up for the boss. Regular waves are survivable without it, but a boss that fills the screen with projectiles is where the extra hit point makes the difference between a clear and a crash.",
       "Strafe in short bursts, not long sweeps. Moving one direction for too long puts you on a predictable line that the AI learns to target — short, sharp direction changes keep you alive longer.",
       "Watch the wave counter, not just the score. Every fifth wave is a boss, and knowing it is coming means you can save your charged power-up and position yourself in the centre before the arena fills.",
+    ],
+    features: [
+      "Cockpit-style arcade shooter with a big cannon",
+      "Four power-ups: spread shot, rapid fire, shield and repair",
+      "Endless waves with a boss every fifth wave",
+      "WASD, arrows and touch controls",
+      "High score saved in your browser",
     ],
     faq: [
       {
@@ -639,6 +783,13 @@ const content: Record<string, GameContent> = {
       "Watch the timer colour, not just the number. The bar shifts from green to yellow to red as time runs out — a quick colour glance tells you how much pressure you are under without reading the digits.",
       "Do not rush the ingredient order to save a tenth of a second. A correct dish at the last moment still earns full points, but a wrong dish earns nothing and resets the streak.",
     ],
+    features: [
+      "Fast recipe-matching with a race against the timer",
+      "Combo multiplier for consecutive perfect orders",
+      "Priority system rewards smart order selection",
+      "Touch-friendly ingredient buttons",
+      "Best score and level saved automatically",
+    ],
     faq: [
       {
         q: "Is Kitchen Rush free to play?",
@@ -669,6 +820,13 @@ const content: Record<string, GameContent> = {
       "Coins usually line up with the safe path. Following the coin trail is a decent shortcut to the easiest route through the next cluster, but always glance ahead before committing.",
       "The retry button is one tap away. Use it. Every death teaches you the rhythm of the next obstacle cluster, and the fastest way to learn is to start again immediately.",
       "Watch the ground colour. The track shifts from dark to bright as the speed climbs, which tells you how fast the next obstacle is approaching without needing to read a speed indicator.",
+    ],
+    features: [
+      "Neon endless runner with a fearless stickman",
+      "Double-jump and slide mechanics for varied obstacles",
+      "Coin trails that mark the safe path",
+      "Progressive speed that keeps each run fresh",
+      "Best run and coin totals saved on your device",
     ],
     faq: [
       {
@@ -701,6 +859,13 @@ const content: Record<string, GameContent> = {
       "Confetti and colour shifts are not just cosmetic. Each visual change signals a new tier of income, so if the Blorb looks the same, you are not growing fast enough.",
       "The shop handle pulls up with one tap. Do not let the shop sit closed when you have enough Bits to buy — every second the shop is closed is a second of missed upgrades.",
     ],
+    features: [
+      "Tap-based idle clicker with a wobbling hero",
+      "Shop upgrades: click power, auto-tappers and multipliers",
+      "Milestones that evolve the Blorb's look and income",
+      "Idle income keeps growing while you are away",
+      "Progress saved automatically in your browser",
+    ],
     faq: [
       {
         q: "Is Blorb Bonanza free to play?",
@@ -731,6 +896,13 @@ const content: Record<string, GameContent> = {
       "Speed is the real danger, not distance. The corridor tightens and the walls rush past faster every second, so a clean dodge at high speed is worth ten cautious metres at low speed.",
       "The speed bar at the bottom is your early warning. When it fills toward red, the next obstacle is closer than it looks — start your correction early.",
       "Your best distance sits at the top of the screen. Use it as a pacing target — if you are ahead of it, play safe; if you are behind, push a little harder but not recklessly.",
+    ],
+    features: [
+      "Endless voxel corridor with rising speed",
+      "Energy orbs guide you through the safe gaps",
+      "A/D on desktop or swipe on mobile",
+      "Speed bar gives early warning of danger",
+      "Best distance saved to beat on every flight",
     ],
     faq: [
       {
@@ -763,6 +935,13 @@ const content: Record<string, GameContent> = {
       "Watch the floor counter, not just your health. Knowing you are on floor fifteen of twenty tells you how much danger to expect — the deeper you go, the tougher every room becomes.",
       "Health potions stack. Do not use a potion at full health hoping it will heal you later — pick them up and use them when you actually need the heal, not before.",
     ],
+    features: [
+      "Twenty procedurally generated dungeon floors",
+      "Slimes, skeletons, bats and tougher enemies each level",
+      "Shop between floors to upgrade sword and health",
+      "Health potions you can stock and use when needed",
+      "WASD or arrow keys to move, Space or click to attack",
+    ],
     faq: [
       {
         q: "Is Gemfall Depths free to play?",
@@ -794,6 +973,13 @@ const content: Record<string, GameContent> = {
       "Watch the AI's position, not just the ball. If the AI is deep in its court, a short lob over its head can catch it off guard. If it is at the net, a hard drive past it is the play.",
       "Hold your nerve in the tiebreak. The last few points of a tight set are where most people rush their shots — slow down, aim carefully, and trust the racket to do the work.",
     ],
+    features: [
+      "Fast-paced tennis rally against a sharp AI opponent",
+      "Drag or swipe to move the racket",
+      "Power smash on double-tap for heavier returns",
+      "First to seven points wins a set, best of three",
+      "Match record saved automatically",
+    ],
     faq: [
       {
         q: "Is Racket Rumble free to play?",
@@ -824,6 +1010,13 @@ const content: Record<string, GameContent> = {
       "Corner tiles are the trickiest. A corner connects two adjacent sides, so rotating it wrong can silently block power from flowing.",
       "Use the power percentage at the bottom of the screen to track your progress. If it stalls, you likely have a single dead tile blocking everything.",
       "Tap the same tile multiple times to cycle through all four rotations. Sometimes the answer is just one more spin.",
+    ],
+    features: [
+      "Pipe-connection puzzle with glowing neon tiles",
+      "Four tile shapes: straight, corner, T-junction and cross",
+      "Eleven levels scaling from 3x3 up to 5x5 grids",
+      "Power percentage readout tracks your progress",
+      "Level progress and move counter saved in your browser",
     ],
     faq: [
       {
