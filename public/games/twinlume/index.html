@@ -328,15 +328,15 @@ function draw(){
     const tT="Time "+fmt(state.t),pT=`Pairs ${state.matched}/${state.pairs}`,mT=`Moves ${state.moves}`;
     let f=Math.min(W*0.10,H*0.075);
     X.font=`700 ${f}px "Segoe UI",sans-serif`;
-    const m=W*0.03,gap=W*0.028;
-    while(f>10&&X.measureText(tT).width+X.measureText(pT).width+X.measureText(mT).width+m*2+gap*2>W){f-=1;X.font=`700 ${f}px "Segoe UI",sans-serif`;}
-    const y=H*0.05;
+    let gap=f*0.6;
+    while(f>10&&X.measureText(tT).width+X.measureText(pT).width+X.measureText(mT).width+gap*2>W*0.94){f-=1;gap=f*0.6;X.font=`700 ${f}px "Segoe UI",sans-serif`;}
+    const tw=X.measureText(tT).width,pw=X.measureText(pT).width,mw=X.measureText(mT).width;
+    const total=tw+pw+mw+gap*2;
+    const x0=(W-total)/2,y=H*0.05;
     X.fillStyle="#94a3b8";X.textAlign="left";
-    X.fillText(tT,W*0.02,y);
-    X.textAlign="center";
-    X.fillText(pT,W/2,y);
-    X.textAlign="right";
-    X.fillText(mT,W-m,y);
+    X.fillText(tT,x0,y);
+    X.fillText(pT,x0+tw+gap,y);
+    X.fillText(mT,x0+tw+gap+pw+gap,y);
   };
   inf();
 
