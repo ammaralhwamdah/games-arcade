@@ -84,13 +84,14 @@ function buildLevel(){
 function layout(){
   const L=LEVELS[state.level];
   const nx=L.cols,ny=L.rows;
-  const padX=W*0.06,padY=H*0.2;
-  const availW=W-padX*2,availH=H-padY*2;
-  const gap=Math.min(availW,availH)*0.04;
+  const padX=W*0.05,padTop=H*0.155,padBot=H*0.045;
+  const availW=W-padX*2,availH=H-padTop-padBot;
+  const gap=Math.min(availW,availH)*0.035;
   let cw=(availW-(nx-1)*gap)/nx,ch=(availH-(ny-1)*gap)/ny;
   if(cw>ch)cw=ch;else ch=cw;
+  cw*=0.98;ch*=0.98;
   const totalW=nx*cw+(nx-1)*gap,totalH=ny*ch+(ny-1)*gap;
-  const ox=(W-totalW)/2,oy=(H-totalH)/2;
+  const ox=(W-totalW)/2,oy=padTop+((availH-totalH)/2);
   state.cards.forEach(c=>{
     const r=Math.floor(c.pos/nx),col=c.pos%nx;
     c.x=ox+col*(cw+gap);c.y=oy+r*(ch+gap);c.w=cw;c.h=ch;
@@ -207,21 +208,23 @@ function drawFace(x,y,w,h,f,pair){
 function drawLevelChooser(){
   X.fillStyle="#07071a";X.fillRect(0,0,W,H);
   X.textAlign="center";X.textBaseline="middle";
-  X.font=`900 ${Math.min(W,H)*0.085}px "Segoe UI",sans-serif`;
+  X.font=`900 ${Math.max(26,Math.min(W*0.11,H*0.22))}px "Segoe UI",sans-serif`;
   X.fillStyle="#fff";
   X.shadowColor="#a78bfa";X.shadowBlur=24;
-  X.fillText("Twinlume",W/2,H*0.16);
+  X.fillText("Twinlume",W/2,H*0.18);
   X.shadowBlur=0;
 
   const subs=["Match the hidden pairs to clear the board.","Tap any two cards to flip them together.","Beat your best time on every grid."];
-  X.font=`500 ${Math.min(W,H)*0.026}px "Segoe UI",sans-serif`;
+  X.font=`500 ${Math.max(11,Math.min(W*0.030,H*0.05))}px "Segoe UI",sans-serif`;
   X.fillStyle="#94a3b8";
-  subs.forEach((s,i)=>X.fillText(s,W/2,H*0.26+Math.min(W,H)*0.035*i));
+  subs.forEach((s,i)=>X.fillText(s,W/2,H*0.28+Math.min(H*0.11,W*0.040)*i));
 
-  const bw=Math.min(W*0.8,420),bh=Math.min(H*0.085,62),x0=(W-bw)/2,y0=H*0.5;
+  const bw=Math.min(W*0.86,480),bh=Math.max(40,Math.min(H*0.13,W*0.14)),x0=(W-bw)/2;
+  const step=bh+Math.min(H*0.12,W*0.035);
+  const y0=Math.max(H*0.34,H*0.55-(3*step)/2);
   const cols=["#a78bfa","#22d3ee","#fb7185"];
   LEVELS.forEach((L,i)=>{
-    const y=y0+i*(bh+Math.min(W,H)*0.018);
+    const y=y0+i*step;
     X.shadowColor=cols[i];X.shadowBlur=18;
     rr(x0,y,bw,bh,14);X.fillStyle=i===0?"#221547":"#10122e";X.fill();
     X.shadowBlur=0;
@@ -249,9 +252,11 @@ function hitCards(px,py){
 C.addEventListener("pointerdown",e=>{
   const px=e.clientX,py=e.clientY;
   if(state.phase==="menu"){
-    const bw=Math.min(W*0.8,420),bh=Math.min(H*0.085,62),x0=(W-bw)/2,y0=H*0.5;
+    const bw=Math.min(W*0.86,480),bh=Math.max(40,Math.min(H*0.13,W*0.14)),x0=(W-bw)/2;
+    const step=bh+Math.min(H*0.12,W*0.035);
+    const y0=Math.max(H*0.34,H*0.55-(3*step)/2);
     LEVELS.forEach((L,i)=>{
-      const y=y0+i*(bh+Math.min(W,H)*0.018);
+      const y=y0+i*step;
       if(px>=x0&&px<=x0+bw&&py>=y&&py<=y+bh)state.level=i;
     });
     buildLevel();return;
@@ -319,16 +324,16 @@ function draw(){
   layout();
 
   X.textBaseline="middle";
-  X.font=`700 ${Math.min(W,H)*0.032}px "Segoe UI",sans-serif`;
+  X.font=`700 ${Math.max(12,W*0.09)}px "Segoe UI",sans-serif`;
   X.fillStyle="#94a3b8";X.textAlign="left";
-  X.fillText("Time "+fmt(state.t),W*0.06,H*0.06);
+  X.fillText("Time "+fmt(state.t),W*0.05,H*0.06);
   X.fillStyle="#94a3b8";X.textAlign="center";
   X.fillText(`Pairs ${state.matched}/${state.pairs}`,W/2,H*0.06);
   X.fillStyle="#94a3b8";X.textAlign="right";
-  X.fillText(`Moves ${state.moves}`,W*0.94,H*0.06);
+  X.fillText(`Moves ${state.moves}`,W*0.95,H*0.06);
 
   X.shadowColor="rgba(167,139,250,0.4)";X.shadowBlur=12;
-  X.fillStyle="#fff";X.font=`800 ${Math.min(W,H)*0.026}px "Segoe UI",sans-serif`;
+  X.fillStyle="#fff";X.font=`800 ${Math.max(11,W*0.073)}px "Segoe UI",sans-serif`;
   X.textAlign="center";
   X.fillText("Twinlume",W/2,H*0.125);
   X.shadowBlur=0;
