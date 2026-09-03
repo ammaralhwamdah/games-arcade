@@ -16,7 +16,7 @@ canvas{display:block;width:100%;height:100%}
 "use strict";
 const C=document.getElementById("c"),X=C.getContext("2d");
 let W,H,dpr;
-function resize(){dpr=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;C.width=W*dpr;C.height=H*dpr;X.setTransform(dpr,0,0,dpr,0,0)}
+function resize(){dpr=Math.min(devicePixelRatio||1,1.5);W=innerWidth;H=innerHeight;C.width=W*dpr;C.height=H*dpr;X.setTransform(dpr,0,0,dpr,0,0);layout()}
 resize();addEventListener("resize",resize);
 
 const AC=new(window.AudioContext||window.webkitAudioContext)();
@@ -65,6 +65,7 @@ function buildLevel(){
     const seed=si<seedCount?pool[si++]:-1;
     state.grid.push({seed,bloom:false,pop:0,x:0,y:0,w:0,h:0,glow:0,pulse:Math.random()*6.28});
   }
+  layout();
 }
 
 function layout(){
@@ -87,19 +88,20 @@ function fmt(t){const m=Math.floor(t/60),s=Math.floor(t%60);return m+":"+String(
 
 function drawFlower(cx,cy,s,col,glow){
   X.save();X.translate(cx,cy);
-  X.fillStyle=col;X.strokeStyle=col;X.shadowColor=col;X.shadowBlur=glow?s*0.5:0;
-  for(let i=0;i<6;i++){const a=i*Math.PI/3-Math.PI/2;X.beginPath();X.ellipse(Math.cos(a)*s*0.42,Math.sin(a)*s*0.42,s*0.34,s*0.2,a,0,Math.PI*2);X.fill();}
-  X.beginPath();X.fillStyle="#fff";X.shadowColor=col;X.shadowBlur=glow?10:0;X.arc(0,0,s*0.2,0,Math.PI*2);X.fill();
+  X.fillStyle=col;
+  X.shadowColor=col;X.shadowBlur=glow?s*0.25:0;
+  for(let i=0;i<6;i++){const a=i*Math.PI/3-Math.PI/2;X.beginPath();X.ellipse(Math.cos(a)*s*0.42,Math.sin(a)*s*0.42,s*0.32,s*0.19,a,0,Math.PI*2);X.fill();}
+  X.beginPath();X.fillStyle="#fff";X.shadowBlur=0;X.arc(0,0,s*0.2,0,Math.PI*2);X.fill();
   X.restore();
 }
 
 function drawSeed(x,y,s,seed,pulse){
   const col=COLORS[seed];
   X.save();X.translate(x,y);
-  X.strokeStyle=col;X.lineWidth=Math.max(1.5,s*0.06);X.shadowColor=col;X.shadowBlur=8+Math.sin(pulse)*4;
-  const R=s*0.16*(1+0.08*Math.sin(pulse));
+  X.strokeStyle=col;X.lineWidth=Math.max(1.5,s*0.06);X.shadowColor=col;X.shadowBlur=6;
+  const R=s*0.16;
   X.beginPath();X.arc(0,0,R,0,Math.PI*2);X.stroke();
-  X.beginPath();X.arc(0,0,R*0.42,0,Math.PI*2);X.fillStyle=col;X.fill();
+  X.beginPath();X.arc(0,0,R*0.45,0,Math.PI*2);X.fillStyle=col;X.fill();
   X.restore();
 }
 
@@ -262,29 +264,25 @@ function drawInfoBar(){
 function draw(){
   if(state.phase==="menu"){drawMenu();return;}
   X.fillStyle="#07071a";X.fillRect(0,0,W,H);
-  layout();
   drawInfoBar();
   for(let i=0;i<state.grid.length;i++){
     const g=state.grid[i];
     rr(g.x,g.y,g.w,g.h,10);
-    const base=X.createLinearGradient(0,g.y,0,g.y+g.h);
-    if(g.bloom){base.addColorStop(0,"#0b2417");base.addColorStop(1,"#07120d");}
-    else{base.addColorStop(0,"#14122e");base.addColorStop(1,"#0c0b22");}
-    X.fillStyle=base;X.fill();
-    X.lineWidth=1.2;X.strokeStyle=g.bloom?"rgba(74,222,128,0.7)":"rgba(167,139,250,0.3)";X.stroke();
+    X.fillStyle=g.bloom?"#0b2417":"#131130";X.fill();
+    X.lineWidth=1;X.strokeStyle=g.bloom?"rgba(74,222,128,0.6)":"rgba(167,139,250,0.28)";X.stroke();
     const cx=g.x+g.w/2,cy=g.y+g.h/2,s=Math.min(g.w,g.h);
     if(g.bloom){
       if(g.pop>0){X.globalAlpha=g.pop;drawFlower(cx,cy,s*0.52,g.seed>=0?COLORS[g.seed]:"#4ade80",true);X.globalAlpha=1;}
       else drawFlower(cx,cy,s*0.5,g.seed>=0?COLORS[g.seed]:"#4ade80",false);
-      if(g.glow>0){X.save();X.globalAlpha=0.5*g.glow;X.strokeStyle="#4ade80";X.lineWidth=2;X.shadowColor="#4ade80";X.shadowBlur=14;rr(g.x-5,g.y-5,g.w+10,g.h+10,14);X.stroke();X.restore();}
+      if(g.glow>0){X.save();X.globalAlpha=0.4*g.glow;X.strokeStyle="#4ade80";X.lineWidth=1.5;rr(g.x-4,g.y-4,g.w+8,g.h+8,13);X.stroke();X.restore();}
     }else if(g.seed>=0){
       drawSeed(cx,cy,s*0.4,g.seed,g.pulse);
     }
   }
-  for(const p of state.burst){X.beginPath();X.arc(p.x,p.y,p.r,0,Math.PI*2);X.globalAlpha=Math.max(0,1-p.r/60)*0.7;X.strokeStyle=p.c;X.lineWidth=3;X.shadowColor=p.c;X.shadowBlur=12;X.stroke();X.globalAlpha=1;}
+  for(const p of state.burst){X.beginPath();X.arc(p.x,p.y,p.r,0,Math.PI*2);X.globalAlpha=Math.max(0,1-p.r/60)*0.6;X.strokeStyle=p.c;X.lineWidth=2.5;X.stroke();X.globalAlpha=1;}
   if(state.phase==="play"&&state.picked&&state.energy>0){
     const g=state.picked,cx=g.x+g.w/2,cy=g.y+g.h/2;
-    X.save();X.globalAlpha=0.5+0.3*Math.sin(state.t*8);X.strokeStyle="#fff";X.lineWidth=2;X.shadowColor="#fff";X.shadowBlur=14;rr(g.x-6,g.y-6,g.w+12,g.h+12,14);X.stroke();X.restore();
+    X.save();X.globalAlpha=0.6+0.3*Math.sin(state.t*8);X.strokeStyle="#fff";X.lineWidth=2;rr(g.x-5,g.y-5,g.w+10,g.h+10,13);X.stroke();X.restore();
   }
   if(state.winConfetti)drawConfetti();
   if(state.phase==="win")drawWin();
