@@ -16,6 +16,8 @@ canvas{display:block;width:100%;height:100%}
 "use strict";
 const C=document.getElementById("c"),X=C.getContext("2d");
 let W,H,dpr;
+let muted=false;
+let state={level:0,grid:[],rows:0,cols:0,target:0,energy:0,bloomed:0,phase:"menu",best:[0,0,0],picked:null,burst:[],fx:[],t:0};
 function resize(){dpr=Math.min(devicePixelRatio||1,1.5);W=innerWidth;H=innerHeight;C.width=W*dpr;C.height=H*dpr;X.setTransform(dpr,0,0,dpr,0,0);layout()}
 resize();addEventListener("resize",resize);
 
@@ -42,9 +44,6 @@ const LEVELS=[
   {name:"Meadow",rows:6,cols:6,colors:4,target:12,energy:36},
   {name:"Bloomfield",rows:6,cols:7,colors:5,target:16,energy:46}
 ];
-
-let muted=false;
-let state={level:0,grid:[],rows:0,cols:0,target:0,energy:0,bloomed:0,phase:"menu",best:[0,0,0],picked:null,burst:[],fx:[],t:0};
 
 function loadBest(){try{const b=JSON.parse(localStorage.getItem("lumabloom")||"null");if(b&&b.length===3)state.best=b}catch(e){}}
 function saveBest(){try{localStorage.setItem("lumabloom",JSON.stringify(state.best))}catch(e){}}
