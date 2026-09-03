@@ -1041,6 +1041,48 @@ const content: Record<string, GameContent> = {
       },
     ],
   },
+  "lumabloom": {
+    tips: [
+      "Scan the whole garden before your first move. Instead of tapping the nearest pair, look for two matching seeds that line up in the same row or column - a clean line is always worth more than a door-to-door link.",
+      "Chains are the real win condition. A bloomed flower that touches another seed of the same color ignites it and keeps the chain going, so plan a path that passes through more matching seeds and one move can clear a huge patch.",
+      "Spend energy on the longest line you can. Linking two seeds far apart blooms every tile between them, so a long straight row fills far more board than a short one, even if it costs the same single point of energy.",
+      "Guard your colour count. Each garden has a fixed palette, so before your energy runs low, check which colors still have two or more seeds left in line - those are the chains that can still rescue a tight round.",
+      "Leave low-value colors for the end. If a color has only broken lines left, clear it early while energy is plentiful, and save the colors that can still chain for when you need one big cascade to hit the target.",
+    ],
+    features: [
+      "Bloom a path of neon flowers by linking two matching seeds in a line",
+      "Chain reactions that ignite every same-colored seed the path touches",
+      "Three gardens - Garden, Meadow and Bloomfield - with rising grid sizes and colors",
+      "Energy economy that rewards long, deliberate links over quick taps",
+      "Best score saved for every garden, plus offline play with zero ads",
+    ],
+    faq: [
+      {
+        q: "Is LumaBloom really free to play?",
+        a: "Yes. LumaBloom is completely free, runs directly in your browser and shows no ads inside the game. There is nothing to download, install or pay for - just tap two seeds and start growing.",
+      },
+      {
+        q: "How do I play LumaBloom?",
+        a: "Tap a seed pod to select it, then tap a second seed of the same color that lines up with it in the same row or column. Every tile between them blooms into a flower, and matching colors that touch ignite a chain. Bloom the target number of flowers before your energy runs out.",
+      },
+      {
+        q: "What is energy used for?",
+        a: "Energy is your limit on moves. Each link between two seeds spends one point of energy, and when energy reaches zero the garden wilts. Plan long, efficient lines so every point of energy blooms as many flowers as possible.",
+      },
+      {
+        q: "How do chains work?",
+        a: "When a path of flowers blossoms and touches another seed of the same color, that seed blooms for free and can set off another chain. One well-placed move can cascade across a large part of the garden.",
+      },
+      {
+        q: "How many gardens are there?",
+        a: "Three. The Garden is a five by five bed with three colors, the Meadow is a six by six plot with four colors, and Bloomfield is a six by seven field with five colors and a tougher target.",
+      },
+      {
+        q: "Does the game save my best score?",
+        a: "Yes. Your best remaining energy for each of the three gardens is saved in your browser automatically, so every round hands you a glowing target to beat on your next attempt.",
+      },
+    ],
+  },
   "twinlume": {
     tips: [
       "Start from the outside and sweep inward. Clearing the outer row first leaves fewer cards to misread later, and you build the grid's skeleton before the middle gets crowded.",

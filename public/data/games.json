@@ -1,6 +1,6 @@
 {
   "generated": "2026-09-02T12:00:00.000Z",
-  "total": 29,
+  "total": 30,
   "categories": 20,
   "categoriesMeta": [
     {
@@ -146,6 +146,7 @@
   ],
   "featured": [
     "twinlume",
+    "lumabloom",
     "emberwood-dash",
     "nebula-grinder",
     "shardlume",
@@ -841,6 +842,22 @@
       "year": 2026,
       "tags": ["exclusive", "html5", "memory", "puzzle", "neon", "match", "single-player", "kids"],
       "description": "Twinlume is a neon memory puzzle where every pair has a twin. Glowing cards hide cryptic forms - stars, moons, hearts, bolts and more - and your job is to flip two that match to dissolve them in light. Tap any card to turn it over, build a mental map of every symbol you see, and clear the whole board in the fewest moves you can. Three grids keep the challenge rising: an easy three by four layout for warming up, a balanced four by four for a proper test of recall, and a brutal four by six board that will stretch your memory to its limit. Each puzzle tracks your time and your best score is saved in your browser, so every round hands you a glowing target to beat. The neon aesthetic makes each match feel like a small celebration, and the Web Audio chimes give every flip a satisfying snap. It runs offline, shows no ads and asks for nothing - original to PlayKrux, pure brain-brightening memory play."
+    },
+    {
+      "id": "lumabloom",
+      "slug": "lumabloom",
+      "name": "LumaBloom",
+      "category": "puzzle",
+      "categories": ["puzzle", "hypercasual"],
+      "file": "games/lumabloom/index.html",
+      "src": "/games/lumabloom/index.html",
+      "image": "/images/games/lumabloom.svg",
+      "sizeKb": 18,
+      "rating": 4.9,
+      "plays": 0,
+      "year": 2026,
+      "tags": ["exclusive", "html5", "puzzle", "bloom", "neon", "flowers", "link", "single-player"],
+      "description": "LumaBloom is a glowing flower garden where matching seeds bloom into radiant petals. The grid is dotted with neon seed pods in a handful of colors, and your job is to tap two seeds of the same color that line up in a row or column to bloom a path of flowers between them. Every link spends a point of energy, but the blooms can chain - when a freshly bloomed flower touches another seed of the same color, it bursts and keeps the chain alive, turning one careful move into a whole cascade of blossoms. Three gardens raise the stakes: the Garden warms you up on a five by five bed, the Meadow adds an extra color and a bigger six by six plot, and Bloomfield packs a six by seven field full of tricky layouts and a hard target. Bloom enough flowers before your energy runs dry - spend energy wisely, plan every link, and chase a new best score saved right in your browser. The neon petals pulse, the Web Audio chimes celebrate every chain, and it all runs offline with zero ads - original to PlayKrux, pure radiant puzzle-growing fun."
     }
   ]
 }
