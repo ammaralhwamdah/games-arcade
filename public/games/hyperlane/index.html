@@ -135,7 +135,7 @@ function drawCar(x,y,w,h,col,player){
   X.save();X.translate(x,y);
   X.fillStyle=col;
   X.shadowColor=col;X.shadowBlur=player?18:10;
-  const cw=w*0.44,ch=h*0.8;
+  const cw=w*0.44,ch=Math.max(w*0.9,Math.min(w*1.7,h*0.8));
   // sleek vertical body (racing toward top of screen)
   X.beginPath();
   X.moveTo(-cw/2,ch/2);
