@@ -46,7 +46,7 @@ function startGame(){
 
 function layout(){
   const padTop=H*0.12,padBot=H*0.08;
-  return {x0:W*0.06,x1:W*0.94,top:padTop,bot:padBot};
+  return {x0:W*0.06,x1:W*0.94,top:padTop,bot:H-padBot};
 }
 
 function laneX(i){
@@ -64,53 +64,51 @@ function update(dt){
   state.dist+=state.speed*d;
 
   const L=layout();
-  const laneW=(L.x1-L.x0)/state.lanes;
+  const roadH=(L.bot-L.top);
+  const PLAY_REF=0.8;
 
-  // spawn traffic
+  // spawn traffic (ahead on the road, above the player)
   const spawnInterval=Math.max(0.3,1.1-state.speed/420);
   if(Math.random()<d*(1/spawnInterval)){
     const lanes=availableLane();
     if(lanes.length){
       const li=lanes[Math.floor(Math.random()*lanes.length)];
-      state.traffic.push({lane:li,rel:-0.2,v:state.speed*(0.45+Math.random()*0.2),col:LANE_COLORS[Math.floor(Math.random()*LANE_COLORS.length)]});
+      state.traffic.push({lane:li,rel:-0.15,v:state.speed*(0.45+Math.random()*0.25),col:LANE_COLORS[Math.floor(Math.random()*LANE_COLORS.length)]});
     }
   }
   // spawn coins
-  if(Math.random()<d*1.2){
-    const li=Math.floor(Math.random()*state.lanes);
-    state.special.push({lane:li,rel:-0.25,type:"coin"});
+  if(Math.random()<d*1.4){
+    state.special.push({lane:Math.floor(Math.random()*state.lanes),rel:-0.2,type:"coin"});
   }
 
-  // move traffic
+  // move traffic (slower cars drift down past the player)
   for(let i=state.traffic.length-1;i>=0;i--){
     const t=state.traffic[i];
-    t.rel+=(state.speed-t.v)*d/(H*0.8);
-    if(t.rel>1.4)state.traffic.splice(i,1);
+    if(state.speed-t.v>0){ t.rel+=(state.speed-t.v)*d/roadH; }
+    if(t.rel>1.2)state.traffic.splice(i,1);
   }
   // move special
   for(let i=state.special.length-1;i>=0;i--){
     const s=state.special[i];
-    s.rel+=(state.speed*0.7)*d/(H*0.8);
-    if(s.rel>1.4)state.special.splice(i,1);
+    s.rel+=state.speed*0.7*d/roadH;
+    if(s.rel>1.2)state.special.splice(i,1);
   }
 
-  // collision with traffic
-  const carLane=state.car;
-  const carRel=0.85;
+  // collision with traffic (same lane and alongside)
   for(const t of state.traffic){
-    if(t.lane===carLane&&Math.abs(t.rel-carRel)<0.09&&t.v<state.speed*0.9){
+    if(t.lane===state.car&&Math.abs(t.rel-PLAY_REF)<0.055&&t.v<state.speed*0.9){
       crash();return;
     }
   }
-  // passing counter
+  // passing counter: cars that slip by below the player
   let passed=0;
-  for(const t of state.traffic){if(t.rel<carRel-0.08&&!t.passed){t.passed=true;passed++;}}
+  for(const t of state.traffic){ if(t.rel>PLAY_REF+0.06&&!t.passed){t.passed=true;passed++;} }
   if(passed>0){state.score+=passed*10;if(!muted)sfxPass();}
 
   // coins
   for(let i=state.special.length-1;i>=0;i--){
     const s=state.special[i];
-    if(s.lane===carLane&&Math.abs(s.rel-carRel)<0.1){
+    if(s.lane===state.car&&Math.abs(s.rel-PLAY_REF)<0.07){
       state.score+=25;state.special.splice(i,1);if(!muted)sfxCoin();
     }
   }
@@ -174,17 +172,17 @@ function drawRoad(){
 function drawPlayer(){
   const L=layout();
   const laneW=(L.x1-L.x0)/state.lanes;
-  const x=laneX(state.car),y=L.bot+H*0.05;
+  const roadH=L.bot-L.top;
+  const x=laneX(state.car),y=L.top+0.8*roadH;
   drawCar(x,y,laneW*0.7,H*0.16,LANE_COLORS[state.car],true);
 }
 
 function drawTraffic(){
   const L=layout();
   const laneW=(L.x1-L.x0)/state.lanes;
-  const playRef=0.85;
+  const roadH=L.bot-L.top;
   for(const t of state.traffic){
-    if(t.rel<playRef)continue;
-    const y=H*0.05+(playRef-t.rel)*(H*0.7);
+    const y=L.top+t.rel*roadH;
     const x=laneX(t.lane);
     drawCar(x,y,laneW*0.7,H*0.15,t.col,false);
   }
@@ -193,10 +191,9 @@ function drawTraffic(){
 function drawSpecial(){
   const L=layout();
   const laneW=(L.x1-L.x0)/state.lanes;
-  const playRef=0.85;
+  const roadH=L.bot-L.top;
   for(const s of state.special){
-    if(s.rel<playRef)continue;
-    const y=H*0.05+(playRef-s.rel)*(H*0.7);
+    const y=L.top+s.rel*roadH;
     const x=laneX(s.lane);
     if(s.type==="coin"){
       X.save();X.translate(x,y);
