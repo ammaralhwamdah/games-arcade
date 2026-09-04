@@ -135,15 +135,30 @@ function drawCar(x,y,w,h,col,player){
   X.save();X.translate(x,y);
   X.fillStyle=col;
   X.shadowColor=col;X.shadowBlur=player?18:10;
-  const bw=w*0.7,bh=h*0.62;
-  X.fillRect(-bw/2,-bh/2,bw,bh);
-  // windshield
-  X.fillStyle="rgba(10,15,40,0.85)";
-  X.fillRect(-bw*0.3,-bh*0.15,bw*0.6,bh*0.22);
-  // headlights
-  X.fillStyle="#fff";X.shadowColor=player?"#fff":"#fff";X.shadowBlur=6;
-  X.fillRect(-bw*0.28,bh*0.38,bw*0.14,bh*0.08);
-  X.fillRect(bw*0.14,bh*0.38,bw*0.14,bh*0.08);
+  const cw=w*0.44,ch=h*0.8;
+  // sleek vertical body (racing toward top of screen)
+  X.beginPath();
+  X.moveTo(-cw/2,ch/2);
+  X.lineTo(-cw/2,-ch*0.22);
+  X.quadraticCurveTo(-cw*0.2,-ch*0.5,cw/2,-ch*0.22);
+  X.lineTo(cw/2,ch/2);
+  X.closePath();X.fill();
+  // cabin / rear window
+  X.fillStyle="rgba(8,12,32,0.9)";
+  X.beginPath();
+  X.moveTo(-cw*0.26,-ch*0.08);
+  X.lineTo(-cw*0.13,-ch*0.42);
+  X.quadraticCurveTo(0,-ch*0.34,cw*0.13,-ch*0.42);
+  X.lineTo(cw*0.26,-ch*0.08);
+  X.closePath();X.fill();
+  // headlights at the nose (top)
+  X.fillStyle="#fff";X.shadowColor=player?"#fff":"#fff";X.shadowBlur=7;
+  X.fillRect(-cw*0.3,-ch*0.46,cw*0.16,ch*0.05);
+  X.fillRect(cw*0.14,-ch*0.46,cw*0.16,ch*0.05);
+  // wheels
+  X.fillStyle="#0a0a14";
+  X.fillRect(-cw*0.46,ch*0.14,cw*0.14,ch*0.16);
+  X.fillRect(cw*0.32,ch*0.14,cw*0.14,ch*0.16);
   X.shadowBlur=0;
   X.restore();
 }
