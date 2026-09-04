@@ -135,10 +135,6 @@ export default async function PlayPage({ params }: Props) {
             </Link>
           </div>
 
-          <GameFrame src={src} title={game.name} slug={game.slug} />
-
-          <RegisterPrompt />
-
           <div className="mt-4 flex items-start gap-3 rounded-xl border border-amber-500/25 bg-amber-500/5 px-4 py-3">
             <span className="mt-0.5 text-sm" aria-hidden>⚠️</span>
             <p className="text-xs leading-6 text-slate-400 sm:text-[13px]">
@@ -220,6 +216,10 @@ export default async function PlayPage({ params }: Props) {
               </div>
             </div>
           )}
+
+          <GameFrame src={src} title={game.name} slug={game.slug} />
+
+          <RegisterPrompt />
 
           <Comments slug={game.slug} />
         </div>
