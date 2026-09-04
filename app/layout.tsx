@@ -84,8 +84,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <head>
         <meta name="msvalidate.01" content="0260A71124945E310E69BC523F086B61" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('consent','default',{'ad_storage':'denied','ad_user_data':'denied','ad_personalization':'denied','analytics_storage':'denied','wait_for_update':500});gtag('set','url_passthrough',true);",
+          }}
+        />
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-GR5DG65ZK7"></script>
-        <script dangerouslySetInnerHTML={{ __html: "window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-GR5DG65ZK7');" }} />
+        <script dangerouslySetInnerHTML={{ __html: "gtag('js',new Date());gtag('config','G-GR5DG65ZK7',{'anonymize_ip':true});" }} />
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3801707354489723" crossOrigin="anonymous" />
         <script dangerouslySetInnerHTML={{ __html: "window.maeExportApis_=window.maeExportApis_||function(){};" }} />
         <script
           dangerouslySetInnerHTML={{

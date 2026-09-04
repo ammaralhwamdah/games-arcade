@@ -4,25 +4,21 @@ import { useState, useEffect } from "react";
 
 const CONSENT_KEY = "playkrux-cookie-consent";
 
-function loadScripts() {
-  if (typeof window === "undefined") return;
-
-  const adsenseClient = process.env.NEXT_PUBLIC_ADSENSE_CLIENT;
-
-  // AdSense (requires consent)
-  if (adsenseClient && !document.querySelector('script[src*="adsbygoogle"]')) {
-    const link = document.createElement("link");
-    link.rel = "preconnect";
-    link.href = "https://pagead2.googlesyndication.com";
-    link.crossOrigin = "anonymous";
-    document.head.appendChild(link);
-
-    const s = document.createElement("script");
-    s.async = true;
-    s.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-${adsenseClient}`;
-    s.crossOrigin = "anonymous";
-    document.head.appendChild(s);
+declare global {
+  interface Window {
+    gtag?: (...args: unknown[]) => void;
   }
+}
+
+function setConsent(granted: boolean) {
+  if (typeof window === "undefined" || !window.gtag) return;
+  const state = granted ? "granted" : "denied";
+  window.gtag("consent", "update", {
+    ad_storage: state,
+    ad_user_data: state,
+    ad_personalization: state,
+    analytics_storage: state,
+  });
 }
 
 export default function CookieConsent() {
@@ -31,8 +27,10 @@ export default function CookieConsent() {
   useEffect(() => {
     const consent = localStorage.getItem(CONSENT_KEY);
     if (consent === "accepted") {
-      loadScripts();
-    } else if (!consent) {
+      setConsent(true);
+    } else if (consent === "rejected") {
+      setConsent(false);
+    } else {
       setShow(true);
     }
   }, []);
@@ -40,12 +38,13 @@ export default function CookieConsent() {
   const accept = () => {
     localStorage.setItem(CONSENT_KEY, "accepted");
     setShow(false);
-    loadScripts();
+    setConsent(true);
   };
 
   const reject = () => {
     localStorage.setItem(CONSENT_KEY, "rejected");
     setShow(false);
+    setConsent(false);
   };
 
   if (!show) return null;
