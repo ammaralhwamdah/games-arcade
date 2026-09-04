@@ -17,7 +17,7 @@ canvas{display:block;width:100%;height:100%}
 const C=document.getElementById("c"),X=C.getContext("2d");
 let W,H,dpr;
 let muted=false;
-let state={phase:"menu",best:0,score:0,dist:0,over:false,t:0,lanes:5,car:0,traffic:[],special:[],speed:0,acc:0,hint:0};
+let state={phase:"menu",best:0,score:0,dist:0,over:false,t:0,lanes:7,car:0,traffic:[],special:[],speed:0,acc:0,hint:0};
 function resize(){dpr=Math.min(devicePixelRatio||1,1.6);W=innerWidth;H=innerHeight;C.width=W*dpr;C.height=H*dpr;X.setTransform(dpr,0,0,dpr,0,0)}
 resize();addEventListener("resize",resize);
 
@@ -37,10 +37,10 @@ function sfxCrash(){snd(180,0.3,"sawtooth",0.1,70)}
 function sfxCoin(){snd(980,0.08,"sine",0.09);setTimeout(()=>snd(1300,0.1,"sine",0.08),70)}
 function sfxStart(){snd(420,0.12,"triangle",0.1);setTimeout(()=>snd(640,0.14,"triangle",0.1),140)}
 
-const LANE_COLORS=["#22d3ee","#e879f9","#4ade80","#fbbf24","#fb7185"];
+const LANE_COLORS=["#22d3ee","#e879f9","#4ade80","#fbbf24","#fb7185","#38bdf8","#c084fc"];
 
 function startGame(){
-  state.phase="play";state.score=0;state.dist=0;state.over=false;state.lanes=5;state.car=2;state.traffic=[];state.special=[];state.speed=0;state.acc=0;state.hint=0;
+  state.phase="play";state.score=0;state.dist=0;state.over=false;state.lanes=7;state.car=3;state.traffic=[];state.special=[];state.speed=0;state.acc=0;state.hint=0;
   if(!muted)sfxStart();
 }
 
