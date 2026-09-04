@@ -468,7 +468,8 @@
       "categories": [
         "sports",
         "2-player",
-        "arcade"
+        "arcade",
+        "soccer"
       ],
       "file": "games/pitch-battle/index.html",
       "src": "/games/pitch-battle/index.html",
