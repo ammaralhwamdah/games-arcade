@@ -1,6 +1,6 @@
 {
   "generated": "2026-09-02T12:00:00.000Z",
-  "total": 30,
+  "total": 31,
   "categories": 20,
   "categoriesMeta": [
     {
@@ -145,6 +145,7 @@
     }
   ],
   "featured": [
+    "hyperlane",
     "twinlume",
     "lumabloom",
     "emberwood-dash",
@@ -859,6 +860,22 @@
       "year": 2026,
       "tags": ["exclusive", "html5", "puzzle", "bloom", "neon", "flowers", "link", "single-player"],
       "description": "LumaBloom is a glowing flower garden where matching seeds bloom into radiant petals. The grid is dotted with neon seed pods in a handful of colors, and your job is to tap two seeds of the same color that line up in a row or column to bloom a path of flowers between them. Every link spends a point of energy, but the blooms can chain - when a freshly bloomed flower touches another seed of the same color, it bursts and keeps the chain alive, turning one careful move into a whole cascade of blossoms. Three gardens raise the stakes: the Garden warms you up on a five by five bed, the Meadow adds an extra color and a bigger six by six plot, and Bloomfield packs a six by seven field full of tricky layouts and a hard target. Bloom enough flowers before your energy runs dry - spend energy wisely, plan every link, and chase a new best score saved right in your browser. The neon petals pulse, the Web Audio chimes celebrate every chain, and it all runs offline with zero ads - original to PlayKrux, pure radiant puzzle-growing fun."
+    },
+    {
+      "id": "hyperlane",
+      "slug": "hyperlane",
+      "name": "HyperLane",
+      "category": "racing",
+      "categories": ["racing", "arcade"],
+      "file": "games/hyperlane/index.html",
+      "src": "/games/hyperlane/index.html",
+      "image": "/images/games/hyperlane.svg",
+      "sizeKb": 11,
+      "rating": 4.8,
+      "plays": 0,
+      "year": 2026,
+      "tags": ["exclusive", "html5", "racing", "arcade", "lane", "neon", "score", "single-player"],
+      "description": "HyperLane is a blazing neon racing dash where your only rival is the open road. You pilot a glowing car across five scrolling lanes, weaving through slower traffic, dodging at the last second, and skimming side by side with rivals before slicing past them. Every car you overtake banks points, and the coins scattered across the asphalt spike your score - but one brush with traffic and it is all over. The engine builds speed the longer you survive, so the road ahead gets tighter, faster, and far less forgiving. Tap any lane to dart sideways, or use the arrow keys and A / D to weave, and chase a personal best distance that stays saved right in your browser. The neon glow, the chime of each overtake, and the heart-stopping close calls make every run feel like a midnight race through a city of lights. Purely original to PlayKrux, entirely offline, and completely free - how far can you make it before the road takes you down?"
     }
   ]
 }

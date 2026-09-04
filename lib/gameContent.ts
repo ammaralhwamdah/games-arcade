@@ -1043,8 +1043,7 @@ const content: Record<string, GameContent> = {
   },
   "lumabloom": {
     tips: [
-      "Scan the whole garden before your first move. Instead of tapping the nearest pair, look for two matching seeds that line up in the same row or column - a clean line is always worth more than a door-to-door link.",
-      "Chains are the real win condition. A bloomed flower that touches another seed of the same color ignites it and keeps the chain going, so plan a path that passes through more matching seeds and one move can clear a huge patch.",
+      "Scan the whole garden before your first move. Instead of tapping the nearest pair, look for two matching seeds that line up in the same row or column - a clean line is always worth more than a door-to-door link.",      "Chains are the real win condition. A bloomed flower that touches another seed of the same color ignites it and keeps the chain going, so plan a path that passes through more matching seeds and one move can clear a huge patch.",
       "Spend energy on the longest line you can. Linking two seeds far apart blooms every tile between them, so a long straight row fills far more board than a short one, even if it costs the same single point of energy.",
       "Guard your colour count. Each garden has a fixed palette, so before your energy runs low, check which colors still have two or more seeds left in line - those are the chains that can still rescue a tight round.",
       "Leave low-value colors for the end. If a color has only broken lines left, clear it early while energy is plentiful, and save the colors that can still chain for when you need one big cascade to hit the target.",
@@ -1083,10 +1082,51 @@ const content: Record<string, GameContent> = {
       },
     ],
   },
+  "hyperlane": {
+    tips: [
+      "Stay in the middle lanes early. The two outer edges of the road leave little room to react, but the central lanes give you time to read the traffic ahead and pick a clean overtaking line.",
+      "Tap one lane at a time instead of darting across two. A single careful lane change clears most of the chaos, while a long sideways dash is when you clip the car you are trying to pass.",
+      "Coins are bait, not a magnet. Grabbing every coin takes you across the road and straight into traffic, so collect the ones that sit in your current lane and let risky ones go.",
+      "Anticipate the speed build. The road gets faster the longer you survive, so start leaving the overtaking move earlier - by the high-speed stretch, reaction time alone is not enough.",
+      "Chain close overtakes for bonus points. Passing several cars in a quick burst banks more points than single skims, so line up two or three rivals in neighbouring lanes before you slice through.",
+    ],
+    features: [
+      "Five-lane neon freeway that builds speed the longer you survive",
+      "Overtake traffic and skim coins to bank a high score",
+      "Tap any lane or use arrows / A-D to weave side by side",
+      "Personal best distance saved automatically in your browser",
+      "Offline play with zero ads - original racing fun from PlayKrux",
+    ],
+    faq: [
+      {
+        q: "Is HyperLane really free to play?",
+        a: "Yes. HyperLane is completely free, runs directly in your browser and shows no ads inside the game. There is nothing to download, install or pay for - just pick a lane and start racing.",
+      },
+      {
+        q: "How do I control my car?",
+        a: "Tap any of the five lanes to dart your car sideways, or use the left and right arrow keys together with A and D on desktop. The goal is to weave through traffic without touching another car.",
+      },
+      {
+        q: "What makes the road harder?",
+        a: "Your engine speed rises the longer you survive, so traffic comes at you faster and the gaps feel tighter. Early runs teach you the lanes, and late runs test your timing under pressure.",
+      },
+      {
+        q: "How do I score points?",
+        a: "Every car you overtake earns points, and the coins scattered across the road add more. Bank a high score over a long run, but one collision with traffic ends the race immediately.",
+      },
+      {
+        q: "Does the game save my best distance?",
+        a: "Yes. Your best distance is saved in your browser automatically, so every run gives you a glowing goal to smash on your next attempt.",
+      },
+      {
+        q: "Can I play on my phone?",
+        a: "Yes. HyperLane works with touch - just tap the lane you want to move to - and with the keyboard on desktop. It runs smoothly in any modern browser.",
+      },
+    ],
+  },
   "twinlume": {
     tips: [
-      "Start from the outside and sweep inward. Clearing the outer row first leaves fewer cards to misread later, and you build the grid's skeleton before the middle gets crowded.",
-      "Say the symbol out loud as you flip it. Naming what you see - star, moon, bolt - anchors it better than a silent glance, and paired positions start to stick after just a few rounds.",
+      "Start from the outside and sweep inward. Clearing the outer row first leaves fewer cards to misread later, and you build the grid's skeleton before the middle gets crowded.",      "Say the symbol out loud as you flip it. Naming what you see - star, moon, bolt - anchors it better than a silent glance, and paired positions start to stick after just a few rounds.",
       "Watch the edges between flips. A lot of players only look at the card they just turned. Scanning the whole board while the next card animates is where the real recall advantage lives.",
       "When you find a match, do not rush the third move. Take one beat to review everything you still have memorised, because the board shuffles nothing - your attention just drifts.",
       "Move economy beats speed. Fewer mistakes beat faster taps, so if you are unsure, flip a card you have already seen rather than gambling on an unknown corner. Your best score rewards deliberate play.",

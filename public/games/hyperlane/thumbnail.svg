@@ -1,0 +1,38 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#06060f"/>
+      <stop offset="100%" stop-color="#0a1e33"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="200" height="200" rx="20" fill="url(#bg)"/>
+  <rect x="30" y="14" width="140" height="172" rx="8" fill="#0d0d1f" stroke="rgba(34,211,238,0.5)" stroke-width="2"/>
+  <g stroke="rgba(255,255,255,0.16)" stroke-width="2">
+    <path d="M70 14 L70 186"/>
+    <path d="M110 14 L110 186"/>
+  </g>
+  <g filter="url(#glow)">
+    <g fill="#22d3ee">
+      <rect x="46" y="40" width="24" height="15" rx="4"/>
+      <rect x="82" y="40" width="22" height="14" rx="4" fill="#e879f9"/>
+      <rect x="118" y="40" width="24" height="15" rx="4" fill="#4ade80"/>
+      <rect x="60" y="70" width="24" height="15" rx="4" fill="#fbbf24"/>
+      <rect x="98" y="70" width="24" height="15" rx="4" fill="#fb7185"/>
+      <rect x="56" y="100" width="26" height="16" rx="4" fill="#e879f9"/>
+    </g>
+    <g>
+      <rect x="78" y="135" width="32" height="20" rx="5" fill="#22d3ee"/>
+      <rect x="84" y="140" width="20" height="6" fill="rgba(10,15,40,0.85)"/>
+      <circle cx="84" cy="158" r="4" fill="#0a0a18"/>
+      <circle cx="104" cy="158" r="4" fill="#0a0a18"/>
+    </g>
+  </g>
+  <text x="100" y="192" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="800" fill="#fff" filter="url(#glow)">HyperLane</text>
+</svg>
