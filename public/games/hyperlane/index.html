@@ -68,12 +68,12 @@ function update(dt){
   const PLAY_REF=0.8;
 
   // spawn traffic (ahead on the road, above the player)
-  const spawnInterval=Math.max(0.95,2.1-state.speed/380);
+  const spawnInterval=Math.max(2.0,3.4-state.speed/300);
   if(Math.random()<d*(1/spawnInterval)){
     const lanes=availableLane();
     if(lanes.length){
       const li=lanes[Math.floor(Math.random()*lanes.length)];
-      state.traffic.push({lane:li,rel:-0.15,v:state.speed*(0.5+Math.random()*0.3),col:LANE_COLORS[Math.floor(Math.random()*LANE_COLORS.length)]});
+      state.traffic.push({lane:li,rel:-0.15,v:state.speed*(0.55+Math.random()*0.3),col:LANE_COLORS[Math.floor(Math.random()*LANE_COLORS.length)]});
     }
   }
   // spawn coins
