@@ -200,7 +200,7 @@ function drawTraffic(){
   for(const t of state.traffic){
     const y=L.top+t.rel*roadH;
     const x=laneX(t.lane);
-    drawCar(x,y,laneW*0.7,H*0.15,t.col,false,false);
+    drawCar(x,y,laneW*0.7,H*0.15,t.col,false,true);
   }
 }
 
