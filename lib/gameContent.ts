@@ -1091,7 +1091,7 @@ const content: Record<string, GameContent> = {
       "Chain close overtakes for bonus points. Passing several cars in a quick burst banks more points than single skims, so line up two or three rivals in neighbouring lanes before you slice through.",
     ],
     features: [
-      "Five-lane neon freeway that builds speed the longer you survive",
+      "Seven-lane neon freeway that builds speed the longer you survive",
       "Overtake traffic and skim coins to bank a high score",
       "Tap any lane or use arrows / A-D to weave side by side",
       "Personal best distance saved automatically in your browser",
@@ -1104,7 +1104,7 @@ const content: Record<string, GameContent> = {
       },
       {
         q: "How do I control my car?",
-        a: "Tap any of the five lanes to dart your car sideways, or use the left and right arrow keys together with A and D on desktop. The goal is to weave through traffic without touching another car.",
+        a: "Tap any of the seven lanes to dart your car sideways, or use the left and right arrow keys together with A and D on desktop. The goal is to weave through traffic without touching another car.",
       },
       {
         q: "What makes the road harder?",
