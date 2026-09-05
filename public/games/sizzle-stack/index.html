@@ -82,21 +82,24 @@ function update(dt){
   }
 }
 
-function tapIndex(px,py){
-  const cols=4;
-  const padX=W*0.04,padTop=H*0.06,padBot=H*0.02;
-  const availW=W-padX*2;
-  const cellW=availW/cols;
+function gridGeo(){
+  const cols=4,padX=W*0.04;
+  const cellW=(W-padX*2)/cols;
   const rows=Math.ceil(INGREDIENTS.length/cols);
-  const cellH=(H*0.24)/rows;
-  const gridTop=H*0.30;
-  const c=Math.floor((px-padX)/cellW);
-  const r=Math.floor((py-gridTop)/cellH);
-  const idx=r*cols+c;
-  if(r<0||r>=rows||c<0||c>=cols||idx>=INGREDIENTS.length)return -1;
+  const gridBot=H*0.96;
+  const cellH=Math.min(Math.max(34,(gridBot-H*0.42)/rows),cellW*0.75);
+  return {cols,padX,cellW,cellH,rows,gridTop:gridBot-cellH*rows};
+}
+
+function tapIndex(px,py){
+  const g=gridGeo();
+  const c=Math.floor((px-g.padX)/g.cellW);
+  const r=Math.floor((py-g.gridTop)/g.cellH);
+  const idx=r*g.cols+c;
+  if(r<0||r>=g.rows||c<0||c>=g.cols||idx>=INGREDIENTS.length)return -1;
   // hit check within cell bounds
-  const gx=padX+c*cellW,gy=gridTop+r*cellH;
-  if(px<gx+2||px>gx+cellW-2||py<gy+2||py>gy+cellH-2)return -1;
+  const gx=g.padX+c*g.cellW,gy=g.gridTop+r*g.cellH;
+  if(px<gx+2||px>gx+g.cellW-2||py<gy+2||py>gy+g.cellH-2)return -1;
   return idx;
 }
 
@@ -207,32 +210,35 @@ function drawPlay(){
     dx+=itemS;
   }
 
-  // built stack label
+  // built stack label + layers (fills the middle band)
+  const g2=gridGeo();
+  const stackY=(g2.gridTop+H*0.22)/2;
   X.fillStyle="#64748b";X.font=`600 ${Math.min(W*0.04,H*0.03)}px "Segoe UI",sans-serif`;
-  X.textAlign="left";X.fillText("Built so far:",W*0.05,H*0.22);
+  X.textAlign="left";X.fillText("Built so far:",W*0.05,stackY-H*0.07);
+  const sS=Math.min(W*0.09,H*0.07);
+  let sdx=W*0.05;
+  for(const n of state.stack){
+    const idx=ingredientIndex(n);
+    drawIngredientIcon(sdx+sS/2,stackY,sS,INGREDIENTS[idx].col,INGREDIENTS[idx].emoji);
+    sdx+=sS*0.85;
+  }
 
-  // ingredient grid (buttons)
-  const cols=4;
-  const padX=W*0.04;
-  const availW=W-padX*2;
-  const cellW=availW/cols;
-  const rows=Math.ceil(INGREDIENTS.length/cols);
-  const cellH=(H*0.24)/rows;
-  const gridTop=H*0.30;
+  // ingredient grid (buttons) anchored to bottom of play area
+  const g=gridGeo();
   for(let i=0;i<INGREDIENTS.length;i++){
-    const c=i%cols,r=Math.floor(i/cols);
-    const gx=padX+c*cellW,gy=gridTop+r*cellH;
+    const c=i%g.cols,r=Math.floor(i/g.cols);
+    const gx=g.padX+c*g.cellW,gy=g.gridTop+r*g.cellH;
     const it=INGREDIENTS[i];
-    rr(gx+3,gy+3,cellW-6,cellH-6,10);
+    rr(gx+3,gy+3,g.cellW-6,g.cellH-6,10);
     const active=state.pending[0]===it.name;
     X.fillStyle=active?"rgba(74,222,128,0.18)":"rgba(255,255,255,0.06)";
     X.fill();
     X.lineWidth=2;X.strokeStyle=active?"#4ade80":"rgba(255,255,255,0.12)";X.stroke();
-    drawIngredientIcon(gx+cellW/2,gy+cellH/2-3,cellH*0.32,it.col,it.emoji);
+    drawIngredientIcon(gx+g.cellW/2,gy+g.cellH/2-3,g.cellH*0.32,it.col,it.emoji);
     X.fillStyle=active?"#4ade80":"#cbd5e1";
-    X.font=`600 ${Math.max(9,Math.min(cellW*0.12,cellH*0.12))}px "Segoe UI",sans-serif`;
+    X.font=`600 ${Math.max(9,Math.min(g.cellW*0.12,g.cellH*0.12))}px "Segoe UI",sans-serif`;
     X.textAlign="center";X.textBaseline="middle";
-    X.fillText(it.name, gx+cellW/2, gy+cellH-7);
+    X.fillText(it.name, gx+g.cellW/2, gy+g.cellH-7);
   }
 
   // feedback
