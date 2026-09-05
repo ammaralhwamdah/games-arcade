@@ -162,9 +162,14 @@ function drawPlay(){
       X.fill();
       X.lineWidth=1.5;X.strokeStyle=sel?"#f472b6":"rgba(255,255,255,0.12)";X.stroke();
       X.fillStyle=COSTY[i][j];X.beginPath();X.arc(gx+cellH*0.16,gy+cellH/2,cellH*0.18,0,Math.PI*2);X.fill();
+      const label=""+prettify(cat.choices[j]);
+      let fs=Math.min(cellW*0.13,cellH*0.3);
+      const tx=gx+cellH*0.34, maxW=cellW-cellH*0.34-8;
       X.fillStyle=sel?"#fff":"#cbd5e1";
-      X.font=`600 ${Math.max(8,Math.min(cellW*0.13,cellH*0.24))}px "Segoe UI",sans-serif`;
-      X.fillText(prettify(cat.choices[j]),gx+cellH*0.36,gy+cellH/2);
+      X.textAlign="left";X.textBaseline="middle";
+      X.font=`600 ${fs}px "Segoe UI",sans-serif`;
+      while(fs>7&&X.measureText(label).width>maxW){fs-=1;X.font=`600 ${fs}px "Segoe UI",sans-serif`;}
+      X.fillText(label,tx,gy+cellH/2);
     }
   }
   // msg
