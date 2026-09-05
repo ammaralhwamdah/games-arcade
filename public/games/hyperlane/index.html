@@ -168,6 +168,8 @@ function drawRoad(){
   X.fillStyle="#0a0a18";X.fillRect(0,0,W,H);
   const L=layout();
   const laneW=(L.x1-L.x0)/state.lanes;
+  X.save();
+  X.beginPath();X.rect(L.x0,L.top,L.x1-L.x0,L.bot-L.top);X.clip();
   // asphalt
   X.fillStyle="#0d0d1f";X.fillRect(L.x0,L.top,L.x1-L.x0,L.bot-L.top);
   // road edges glow
@@ -183,6 +185,7 @@ function drawRoad(){
       X.fillRect(x-1,y,2,dashH);
     }
   }
+  X.restore();
 }
 
 function drawPlayer(){
