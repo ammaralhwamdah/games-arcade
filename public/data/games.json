@@ -1,6 +1,6 @@
 {
   "generated": "2026-09-02T12:00:00.000Z",
-  "total": 31,
+  "total": 32,
   "categories": 20,
   "categoriesMeta": [
     {
@@ -145,6 +145,7 @@
     }
   ],
   "featured": [
+    "sizzle-stack",
     "hyperlane",
     "twinlume",
     "lumabloom",
@@ -876,6 +877,22 @@
       "year": 2026,
       "tags": ["exclusive", "html5", "racing", "arcade", "lane", "neon", "score", "single-player"],
       "description": "HyperLane is a blazing neon racing dash where your only rival is the open road. You pilot a glowing car across five scrolling lanes, weaving through slower traffic, dodging at the last second, and skimming side by side with rivals before slicing past them. Every car you overtake banks points, and the coins scattered across the asphalt spike your score - but one brush with traffic and it is all over. The engine builds speed the longer you survive, so the road ahead gets tighter, faster, and far less forgiving. Tap any lane to dart sideways, or use the arrow keys and A / D to weave, and chase a personal best distance that stays saved right in your browser. The neon glow, the chime of each overtake, and the heart-stopping close calls make every run feel like a midnight race through a city of lights. Purely original to PlayKrux, entirely offline, and completely free - how far can you make it before the road takes you down?"
+    },
+    {
+      "id": "sizzle-stack",
+      "slug": "sizzle-stack",
+      "name": "Sizzle Stack",
+      "category": "cooking",
+      "categories": ["cooking", "food"],
+      "file": "games/sizzle-stack/index.html",
+      "src": "/games/sizzle-stack/index.html",
+      "image": "/images/games/sizzle-stack.svg",
+      "sizeKb": 11,
+      "rating": 4.8,
+      "plays": 0,
+      "year": 2026,
+      "tags": ["exclusive", "html5", "cooking", "food", "burger", "stacking", "casual", "single-player"],
+      "description": "Sizzle Stack puts you behind a sizzling burger grill with a stack of orders and a ticking clock. Each recipe on the screen shows the exact tower you need to build, and you tap the ingredients one at a time - bottom bun, patty, cheese, top bun - to pile up a perfect burger before the timer runs out. Every correct layer banks points, and building a full order in a clean run chains juicy combo multipliers that push your score skyward. Read the order carefully, because the burgers get taller as you go: classic cheeseburgers, clubs stacked with bacon and lettuce, and monstrous eight-tier towers that test your memory and your speed. The sizzle of the grill, the snap of each ingredient dropping into place, and the confetti of a perfectly finished order make every round feel like a rush-hour shift. Original to PlayKrux, fully offline, and completely free - stack the patties, feed the crowd, and chase a new high score saved right in your browser."
     }
   ]
 }

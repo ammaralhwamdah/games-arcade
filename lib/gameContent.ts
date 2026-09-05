@@ -1124,6 +1124,48 @@ const content: Record<string, GameContent> = {
       },
     ],
   },
+  "sizzle-stack": {
+    tips: [
+      "Assemble from the bottom up, exactly as the order shows. Each burger is drawn from base to crown - bottom bun first, then patty, then the rest - so read the recipe top to bottom and tap in that precise sequence every time.",
+      "Learn the two or three small burgers cold. Cheeseburger and lettuce-tomato orders repeat constantly, so locking their ingredient order into your fingers means you can fly through the easy rounds with time to spare.",
+      "Do not mash taps during the tall towers. The eight-tier burgers demand care: one misplaced layer and the combo resets, so slow down by one beat on the big orders and keep every layer clean.",
+      "Watch the timer, not just the tower. Speed matters once the clock starts running down, but accuracy beats panic - a perfect burger in time pays more than a fumbled stack that resets your streak.",
+      "Chain your completes for the multiplier. Building orders back-to-back without dropping an ingredient keeps the combo climbing, so keep the rhythm steady through the rush and the points pour in.",
+    ],
+    features: [
+      "Stack sizzling burgers layer by layer before the timer runs out",
+      "A growing menu from cheeseburgers to eight-tier towers",
+      "Combos multiply your score when you chain perfect orders",
+      "Best score saved automatically in your browser",
+      "Runs offline with zero ads - original kitchen fun from PlayKrux",
+    ],
+    faq: [
+      {
+        q: "Is Sizzle Stack really free to play?",
+        a: "Yes. Sizzle Stack is completely free, runs directly in your browser and shows no ads inside the game. There is nothing to download, install or pay for - just tap the ingredients and start stacking.",
+      },
+      {
+        q: "How do I play Sizzle Stack?",
+        a: "Read the order at the top of the screen, then tap the burger ingredients one by one in that exact sequence - bottom bun, patty, cheese, top bun and beyond. Finish the tower before the timer runs out and you bank the points.",
+      },
+      {
+        q: "How do I score points?",
+        a: "Every correct layer you place earns points, and finishing a full order chains combos that multiply your score. A misplaced ingredient resets the combo, so clean, careful stacks beat frantic tapping.",
+      },
+      {
+        q: "Does the game get harder?",
+        a: "Yes. The orders grow from simple cheeseburgers to tall eight-tier towers with bacon, lettuce, tomato and onion. Taller recipes take longer to build while the timer keeps ticking, so you must stack fast and accurately.",
+      },
+      {
+        q: "Does the game save my best score?",
+        a: "Yes. Your best score is saved in your browser automatically, so every shift hands you a sizzling target to beat on your next attempt.",
+      },
+      {
+        q: "Can I play on my phone?",
+        a: "Yes. Sizzle Stack is built for touch - just tap the ingredient you want with your finger - and it works with mouse clicks on desktop too. It runs smoothly in any modern browser.",
+      },
+    ],
+  },
   "twinlume": {
     tips: [
       "Start from the outside and sweep inward. Clearing the outer row first leaves fewer cards to misread later, and you build the grid's skeleton before the middle gets crowded.",      "Say the symbol out loud as you flip it. Naming what you see - star, moon, bolt - anchors it better than a silent glance, and paired positions start to stick after just a few rounds.",
