@@ -131,8 +131,9 @@ function crash(){
   if(!muted)sfxCrash();
 }
 
-function drawCar(x,y,w,h,col,player){
+function drawCar(x,y,w,h,col,player,up=true){
   X.save();X.translate(x,y);
+  if(!up)X.scale(1,-1);
   X.fillStyle=col;
   X.shadowColor=col;X.shadowBlur=player?18:10;
   const cw=w*0.44,ch=Math.max(w*0.9,Math.min(w*1.7,h*0.8));
@@ -172,12 +173,12 @@ function drawRoad(){
   // road edges glow
   X.fillStyle="rgba(34,211,238,0.6)";X.fillRect(L.x0-2,L.top,3,L.bot-L.top);
   X.fillStyle="rgba(232,121,249,0.6)";X.fillRect(L.x1-1,L.top,3,L.bot-L.top);
-  // moving dashes
+  // moving dashes (road streams downward, opposite the car heading up)
   const dashH=H*0.06;
   for(let i=1;i<state.lanes;i++){
     const x=L.x0+i*laneW;
     const off=(state.dist*0.06)%(dashH*2);
-    for(let y=L.top-off;y<L.bot;y+=dashH*2){
+    for(let y=L.top+off-dashH;y<L.bot;y+=dashH*2){
       X.fillStyle="rgba(255,255,255,0.18)";
       X.fillRect(x-1,y,2,dashH);
     }
@@ -199,7 +200,7 @@ function drawTraffic(){
   for(const t of state.traffic){
     const y=L.top+t.rel*roadH;
     const x=laneX(t.lane);
-    drawCar(x,y,laneW*0.7,H*0.15,t.col,false);
+    drawCar(x,y,laneW*0.7,H*0.15,t.col,false,false);
   }
 }
 
