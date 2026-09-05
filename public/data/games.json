@@ -1,6 +1,6 @@
 {
   "generated": "2026-09-02T12:00:00.000Z",
-  "total": 32,
+  "total": 33,
   "categories": 20,
   "categoriesMeta": [
     {
@@ -145,6 +145,7 @@
     }
   ],
   "featured": [
+    "glam-swap",
     "sizzle-stack",
     "hyperlane",
     "twinlume",
@@ -893,6 +894,22 @@
       "year": 2026,
       "tags": ["exclusive", "html5", "cooking", "food", "burger", "stacking", "casual", "single-player"],
       "description": "Sizzle Stack puts you behind a sizzling burger grill with a stack of orders and a ticking clock. Each recipe on the screen shows the exact tower you need to build, and you tap the ingredients one at a time - bottom bun, patty, cheese, top bun - to pile up a perfect burger before the timer runs out. Every correct layer banks points, and building a full order in a clean run chains juicy combo multipliers that push your score skyward. Read the order carefully, because the burgers get taller as you go: classic cheeseburgers, clubs stacked with bacon and lettuce, and monstrous eight-tier towers that test your memory and your speed. The sizzle of the grill, the snap of each ingredient dropping into place, and the confetti of a perfectly finished order make every round feel like a rush-hour shift. Original to PlayKrux, fully offline, and completely free - stack the patties, feed the crowd, and chase a new high score saved right in your browser."
+    },
+    {
+      "id": "glam-swap",
+      "slug": "glam-swap",
+      "name": "Glam Swap",
+      "category": "girls",
+      "categories": ["girls", "casual", "dressup"],
+      "file": "games/glam-swap/index.html",
+      "src": "/games/glam-swap/index.html",
+      "image": "/images/games/glam-swap.svg",
+      "sizeKb": 11,
+      "rating": 4.8,
+      "plays": 0,
+      "year": 2026,
+      "tags": ["exclusive", "html5", "girls", "dressup", "fashion", "style", "memory", "single-player"],
+      "description": "Glam Swap is a playful fashion studio where you dress the model and chase a perfect style score. Four wardrobe racks line up across the screen - tops, bottoms, shoes and accessories - each holding five fresh pieces with their own colors and vibes. Tap a garment to swap it onto the model and instantly watch the score reel in: stick to a clean color story for a trend bonus, lock pieces that need a second look, and mix every category to chase the elusive perfect 100-point runway look. Experiment freely - every outfit you try reveals how close you are to catwalk gold, and the best style score stays saved in your browser for the next season. The neon palette, the soft shuffle of each swap, and the confetti burst when you hit a killer combo make every bra look like a personal runway moment. Original to PlayKrux, fully offline, and completely free - swap the wardrobe, perfect the look, and strut away with the crown."
     }
   ]
 }

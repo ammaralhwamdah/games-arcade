@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>Glam Swap</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#160b22;font-family:'Segoe UI',system-ui,sans-serif;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+canvas{display:block;width:100%;height:100%}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+"use strict";
+const C=document.getElementById("c"),X=C.getContext("2d");
+let W,H,dpr;
+let muted=false;
+let state={phase:"menu",style:0,best:0,category:0,lookups:[0,0,0,0],lookRows:[],locked:[0,0,0,0],t:0,msg:"",msgT:0,confetti:[]};
+const CATS=[
+  {name:"Top",choices:["Radiant Tee","Denim Jacket","Silk Blouse","Crop Sweater","Rosette Tank"]},
+  {name:"Bottoms",choices:["Midi Skirt","Boyfriend Jeans","Pleated Skirt","Tailored Trousers","Flowy Shorts"]},
+  {name:"Shoes",choices:["Sneakers","Heeled Sandals","Ballet Flats","Chunky Boots","Glitter Pumps"]},
+  {name:"Accessory",choices:["Gold Hoops","Pearl Choker","Rose Headband","Fringe Clutch","Starlight Necklace"]}
+];
+const COSTY=[["#22d3ee","#ef4444","#f472b6","#4ade80","#facc15"],["#3b82f6","#8b5cf6","#ec4899","#10b981","#f97316"],["#fb923c","#a855f7","#14b8a6","#ef4444","#eab308"],["#f59e0b","#e879f9","#fda4af","#38bdf8","#a3e635"]];
+function resize(){dpr=Math.min(devicePixelRatio||1,1.6);W=innerWidth;H=innerHeight;C.width=W*dpr;C.height=H*dpr;X.setTransform(dpr,0,0,dpr,0,0)}
+resize();addEventListener("resize",resize);
+const AC=new(window.AudioContext||window.webkitAudioContext)();
+function snd(freq,dur,type="sine",vol=0.1,slide=0){
+  if(AC.state==="suspended")AC.resume();
+  const o=AC.createOscillator(),g=AC.createGain();
+  o.type=type;o.frequency.setValueAtTime(freq,AC.currentTime);
+  if(slide)o.frequency.exponentialRampToValueAtTime(slide,AC.currentTime+dur);
+  g.gain.setValueAtTime(vol,AC.currentTime);g.gain.exponentialRampToValueAtTime(0.001,AC.currentTime+dur);
+  o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+dur);
+}
+function sfxPick(){snd(600,0.07,"triangle",0.08)}
+function sfxScore(){snd(700,0.08,"sine",0.1);setTimeout(()=>snd(980,0.1,"sine",0.09),70)}
+function sfxComplete(){[740,880,1040].forEach((f,i)=>setTimeout(()=>snd(f,0.14,"triangle",0.1),i*90))}
+
+function startGame(){
+  state.phase="play";state.style=0;state.lookups=[0,0,0,0];state.locked=[0,0,0,0];state.msg="";state.msgT=0;state.confetti=[];
+}
+
+function prettify(name){
+  let out=name.replace(/([A-Z])/g," $1").trim();
+  return out.charAt(0).toUpperCase()+out.slice(1);
+}
+
+function scoreStyle(){
+  let total=0;
+  const rows=Math.ceil(Math.max(...CATS.map(c=>c.choices.length))/2);
+  // color harmony: prefer not all same
+  const distinct=new Set(state.lookups.map((v,i)=>COSTY[i][v]||"#999")).size;
+  total+=distinct*8;
+  // match colortone: if 3+ choices picked, bonus
+  total+=state.locked.filter(Boolean).length*5;
+  // trendiness per category
+  total+=state.lookups.reduce((s,v,i)=>s+((v%5)+1)*4,0);
+  total+=Math.max(0,(distinct-1)*10);
+  return Math.min(100,total);
+}
+
+function update(dt){
+  const d=dt/1000;
+  state.t+=d;
+  if(state.msgT>0)state.msgT-=d;
+  for(let i=state.confetti.length-1;i>=0;i--){const p=state.confetti[i];p.y+=p.vy;p.x+=p.vx;p.rot+=p.vr;if(p.y>H+20)state.confetti.splice(i,1);}
+}
+
+function rr(x,y,w,h,r){X.beginPath();X.moveTo(x+r,y);X.arcTo(x+w,y,x+w,y+h,r);X.arcTo(x+w,y+h,x,y+h,r);X.arcTo(x,y+h,x,y,r);X.arcTo(x,y,x+w,y,r);X.closePath();}
+
+function drawMenu(){
+  X.fillStyle="#160b22";X.fillRect(0,0,W,H);
+  X.textAlign="center";X.textBaseline="middle";
+  X.font=`900 ${Math.max(24,Math.min(W*0.11,H*0.19))}px "Segoe UI",sans-serif`;
+  X.fillStyle="#fff";X.shadowColor="#f472b6";X.shadowBlur=26;
+  X.fillText("Glam Swap",W/2,H*0.2);
+  X.shadowBlur=0;
+  const subs=["Dress the model and chase a perfect style score.","Pick a top, bottoms, shoes and an accessory.","Mix and match to unlock runway looks."];
+  X.font=`500 ${Math.max(11,Math.min(W*0.029,H*0.046))}px "Segoe UI",sans-serif`;
+  X.fillStyle="#94a3b8";
+  subs.forEach((s,i)=>X.fillText(s,W/2,H*0.29+Math.min(H*0.09,W*0.045)*i));
+  const bw=Math.min(W*0.82,420),bh=Math.max(52,Math.min(H*0.13,W*0.14)),x0=(W-bw)/2,y0=Math.max(H*0.52,H*0.5);
+  X.shadowColor="#f472b6";X.shadowBlur=18;
+  rr(x0,y0,bw,bh,14);X.fillStyle="#3a0f2e";X.fill();
+  X.shadowBlur=0;
+  X.fillStyle="#f472b6";X.font=`700 ${bh*0.32}px "Segoe UI",sans-serif`;
+  X.fillText("OPEN WARDROBE",W/2,y0+bh*0.5);
+  X.font=`600 ${Math.min(W,H)*0.022}px "Segoe UI",sans-serif`;
+  X.fillStyle="#64748b";
+  X.fillText("Tap a garment to swap it · M to mute"+(muted?" (muted)":""),W/2,H*0.9);
+  if(state.best>0){X.font=`700 ${Math.min(W,H)*0.03}px "Segoe UI",sans-serif`;X.fillStyle="#4ade80";X.fillText("Best Style "+state.best,W/2,H*0.42);}
+}
+
+function drawModel(x,y,h){
+  X.save();X.translate(x,y);
+  const u=h/100;
+  // head
+  X.fillStyle="#ffe0bd";X.beginPath();X.arc(0,-46*u,13*u,0,Math.PI*2);X.fill();
+  // hair
+  X.fillStyle="#5b3a29";X.beginPath();X.arc(0,-48*u,14*u,Math.PI,0);X.fill();
+  X.fillRect(-14*u,-50*u,28*u,14*u);X.beginPath();X.arc(0,-42*u,14*u,0,Math.PI);X.fill();
+  // top (torso)
+  const topCol=COSTY[0][state.lookups[0]]||"#f472b6";
+  X.fillStyle=topCol;
+  X.beginPath();X.moveTo(-13*u,0);X.lineTo(-14*u,-36*u);X.quadraticCurveTo(0,-46*u,14*u,-36*u);X.lineTo(13*u,0);X.closePath();X.fill();
+  X.fillStyle="rgba(255,255,255,0.25)";X.fillRect(-13*u,-24*u,26*u,3*u);
+  // arms
+  X.fillStyle="#ffe0bd";X.fillRect(-18*u,-34*u,5*u,24*u);X.fillRect(13*u,-34*u,5*u,24*u);
+  // bottoms
+  const botCol=COSTY[1][state.lookups[1]]||"#3b82f6";
+  X.fillStyle=botCol;X.fillRect(-13*u,0,26*u,24*u);
+  // legs
+  X.fillStyle="#ffe0bd";X.fillRect(-12*u,24*u,7*u,26*u);X.fillRect(5*u,24*u,7*u,26*u);
+  // shoes
+  const shoeCol=COSTY[2][state.lookups[2]]||"#fb923c";
+  X.fillStyle=shoeCol;rr(-13*u,48*u,10*u,5*u,2);X.fill();rr(3*u,48*u,10*u,5*u,2);X.fill();
+  // accessory
+  const accCol=COSTY[3][state.lookups[3]]||"#f59e0b";
+  X.fillStyle=accCol;X.beginPath();X.arc(0,-40*u,12*u,Math.PI*0.6,Math.PI*2.4);X.lineWidth=2*u;X.strokeStyle=accCol;X.stroke();
+  X.restore();
+}
+
+function drawPlay(){
+  X.fillStyle="#160b22";X.fillRect(0,0,W,H);
+  // header
+  X.textAlign="center";X.textBaseline="middle";
+  X.fillStyle="#fff";X.font=`800 ${Math.max(12,Math.min(W*0.05,H*0.04))}px "Segoe UI",sans-serif`;
+  X.fillText("Glam Swap",W/2,H*0.045);
+  const s=Math.round(state.style);
+  X.textAlign="right";X.font=`700 ${Math.min(W*0.07,H*0.05)}px "Segoe UI",sans-serif`;
+  X.fillStyle=s>=80?"#4ade80":(s>=50?"#facc15":"#94a3b8");
+  X.fillText("Style "+s+"/100",W*0.96,H*0.06);
+  X.textAlign="left";X.fillStyle="#94a3b8";X.font=`600 ${Math.min(W*0.05,H*0.035)}px "Segoe UI",sans-serif`;
+  X.fillText("Wardrobe",W*0.05,H*0.045);
+
+  // model on left
+  drawModel(W*0.22,H*0.6,H*0.52);
+
+  // wardrobe grid of 4 categories, 2 columns each with choices
+  const cols=2;
+  const padX=W*0.5;
+  const availW=W-padX-W*0.04;
+  const cellW=availW/cols;
+  const rows=Math.ceil(Math.max(...CATS.map(c=>c.choices.length))/2);
+  const cellH=Math.min((H*0.88-0)/rows, H*0.075);
+  const gridTop=H*0.06;
+  X.textAlign="left";
+  for(let i=0;i<4;i++){
+    const cat=CATS[i];
+    X.fillStyle="#f472b6";X.font=`700 ${Math.min(W*0.04,H*0.03)}px "Segoe UI",sans-serif`;
+    X.fillText(cat.name.toUpperCase(),padX+2,gridTop-8+i*(cellH*2+4));
+    for(let j=0;j<cat.choices.length;j++){
+      const c=j%cols,r=Math.floor(j/cols);
+      const gx=padX+c*cellW,gy=gridTop+r*cellH+(i*(cellH*rows+3));
+      const sel=state.lookups[i]===j;
+      rr(gx+2,gy+2,cellW-4,cellH-4,8);
+      X.fillStyle=sel?"rgba(244,114,182,0.25)":"rgba(255,255,255,0.06)";
+      X.fill();
+      X.lineWidth=1.5;X.strokeStyle=sel?"#f472b6":"rgba(255,255,255,0.12)";X.stroke();
+      X.fillStyle=COSTY[i][j];X.beginPath();X.arc(gx+cellH*0.16,gy+cellH/2,cellH*0.18,0,Math.PI*2);X.fill();
+      X.fillStyle=sel?"#fff":"#cbd5e1";
+      X.font=`600 ${Math.max(8,Math.min(cellW*0.13,cellH*0.24))}px "Segoe UI",sans-serif`;
+      X.fillText(prettify(cat.choices[j]),gx+cellH*0.36,gy+cellH/2);
+    }
+  }
+  // msg
+  if(state.msgT>0){
+    X.globalAlpha=Math.min(1,state.msgT);
+    X.textAlign="center";X.font=`900 ${Math.min(W*0.06,H*0.05)}px "Segoe UI",sans-serif`;
+    X.fillStyle="#4ade80";X.shadowColor="#4ade80";X.shadowBlur=16;
+    X.fillText(state.msg,W/2,H*0.035);
+    X.globalAlpha=1;X.shadowBlur=0;
+  }
+}
+
+function tapWardrobe(px,py){
+  const cols=2;
+  const padX=W*0.5;
+  const availW=W-padX-W*0.04;
+  const cellW=availW/cols;
+  const rows=Math.ceil(Math.max(...CATS.map(c=>c.choices.length))/2);
+  const cellH=Math.min((H*0.88)/rows,H*0.075);
+  const gridTop=H*0.06;
+  for(let i=0;i<4;i++){
+    for(let j=0;j<CATS[i].choices.length;j++){
+      const c=j%cols,r=Math.floor(j/cols);
+      const gx=padX+c*cellW+ (c===0?0:0);
+      const gy=gridTop+r*cellH+(i*(cellH*rows+3));
+      if(px>=gx&&px<=gx+cellW&&py>=gy&&py<=gy+cellH){
+        return {i,j};
+      }
+    }
+  }
+  return null;
+}
+
+function tapModel(px,py){
+  const mx=W*0.22,my=H*0.6,mh=H*0.52;
+  const u=mh/100;
+  const headR=13*u;
+  const dx=px-mx,dy=py-my;
+  const d=Math.hypot(dx,dy);
+  // hat/accessory ring near head
+  // click head = randomize accessory
+  return d<headR*1.3;
+}
+
+C.addEventListener("pointerdown",e=>{
+  if(state.phase==="menu"){
+    const bw=Math.min(W*0.82,420),bh=Math.max(52,Math.min(H*0.13,W*0.14)),x0=(W-bw)/2,y0=Math.max(H*0.52,H*0.5);
+    if(e.clientX>=x0&&e.clientX<=x0+bw&&e.clientY>=y0&&e.clientY<=y0+bh){startGame();sfxComplete();}
+    return;
+  }
+  const w=tapWardrobe(e.clientX,e.clientY);
+  if(w){
+    state.lookups[w.i]=w.j;
+    state.style=scoreStyle();
+    if(!muted)sfxPick();
+    const s=Math.round(state.style);
+    if(s>=90){state.msg="RUNWAY READY!";state.msgT=1.5;if(!muted)sfxComplete();launchConfetti(W/2,H*0.1);}
+    else if(s>=70){state.msg="Great look!";state.msgT=1.2;if(!muted)sfxScore();}
+    return;
+  }
+  if(tapModel(e.clientX,e.clientY)){
+    state.lookups[3]=(state.lookups[3]+1)%CATS[3].choices.length;
+    state.style=scoreStyle();if(!muted)sfxPick();
+  }
+});
+
+addEventListener("keydown",e=>{
+  if(e.key==="m"||e.key==="M"){muted=!muted;return;}
+  if(state.phase==="menu"&&(e.key===" "||e.key==="Enter")){startGame();sfxComplete();return;}
+});
+
+function launchConfetti(x,y){for(let i=0;i<50;i++)state.confetti.push({x,y,vx:(Math.random()-0.5)*5,vy:-2-Math.random()*4,s:3+Math.random()*5,rot:Math.random()*6.28,vr:(Math.random()-0.5)*0.3,col:["#f472b6","#facc15","#22d3ee","#4ade80"][i%4]});}
+
+function draw(){
+  if(state.phase==="menu"){drawMenu();return;}
+  drawPlay();
+  for(const p of state.confetti){X.save();X.translate(p.x,p.y);X.rotate(p.rot);X.fillStyle=p.col;X.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6);X.restore();}
+}
+
+function loadBest(){try{const b=parseInt(localStorage.getItem("glam-swap")||"0",10);if(b>0)state.best=b}catch(e){}}
+
+let last=performance.now();
+function loop(t){
+  const dt=Math.min(50,t-last);last=t;
+  update(dt);
+  draw();
+  requestAnimationFrame(loop);
+}
+loadBest();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

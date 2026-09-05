@@ -1166,6 +1166,48 @@ const content: Record<string, GameContent> = {
       },
     ],
   },
+  "glam-swap": {
+    tips: [
+      "Build one color story first. Pick a top in a strong shade, then match your bottoms, shoes and accessory close to that hue - a coherent palette banks the biggest trend bonus instead of five clashing singles.",
+      "Lock pieces you already love. The whole look is judged at once, so when a rack piece nails the palette, keep it and experiment one category at a time to push the score higher.",
+      "Chase the perfect 100. A fully matched outfit scores the crown, so after you find a strong combo, keep swapping the weakest category to nudge the total into perfect territory.",
+      "Mix every category - don't ignore a rack. The style score rewards covering tops, bottoms, shoes and accessories together, so a half-dressed model can never reach runway gold.",
+      "Experiment freely, there is no penalty for swapping. Try bold combos and read the score feedback - each swap tells you whether the new piece lifts or drags the look.",
+    ],
+    features: [
+      "Dress the model across tops, bottoms, shoes and accessories",
+      "Match colors for trend bonuses and chase a perfect 100 score",
+      "Tap to swap anytime - no timers, no pressure, pure style",
+      "Best style score saved automatically in your browser",
+      "Runs offline with zero ads - original fashion fun from PlayKrux",
+    ],
+    faq: [
+      {
+        q: "Is Glam Swap really free to play?",
+        a: "Yes. Glam Swap is completely free, runs directly in your browser and shows no ads inside the game. There is nothing to download, install or pay for - just open the wardrobe and start styling.",
+      },
+      {
+        q: "How do I play Glam Swap?",
+        a: "Tap any garment in the racks to swap it onto the model - one for tops, one for bottoms, one for shoes and one for accessories. Mix and match pieces and watch your style score update with every swap.",
+      },
+      {
+        q: "How is my style scored?",
+        a: "Your look earns points for covering all four categories, for the trendiness of each piece, and for building a coherent color story. Stack all three and you can hit the perfect 100-point runway look.",
+      },
+      {
+        q: "What is the perfect score?",
+        a: "The maximum is 100 points. Reaching it means a fully dressed model whose top, bottoms, shoes and accessory all lock into one stylish palette - chase the crown and unlock that confetti moment.",
+      },
+      {
+        q: "Does the game save my best look?",
+        a: "Yes. Your best style score is saved in your browser automatically, so every new outfit gives you a stylish target to beat on your next visit.",
+      },
+      {
+        q: "Can I play on my phone?",
+        a: "Yes. Glam Swap is built for touch - just tap the pieces with your finger - and it works with mouse clicks on desktop too. It runs smoothly in any modern browser.",
+      },
+    ],
+  },
   "twinlume": {
     tips: [
       "Start from the outside and sweep inward. Clearing the outer row first leaves fewer cards to misread later, and you build the grid's skeleton before the middle gets crowded.",      "Say the symbol out loud as you flip it. Naming what you see - star, moon, bolt - anchors it better than a silent glance, and paired positions start to stick after just a few rounds.",
