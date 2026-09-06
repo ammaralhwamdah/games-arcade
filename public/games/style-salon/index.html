@@ -1020,9 +1020,12 @@ function drawGameScreen(){
   ctx.fill();
   ctx.globalAlpha = 1;
 
-  const charScale = Math.min(W,H) * 0.0028;
+  const panelTop = H*0.72;
+  const availH = panelTop - 50 - 6;
+  let charScale = Math.min(W,H) * 0.0028;
+  if(charScale > availH/250) charScale = availH/250;
   const charX = W/2;
-  const charY = H*0.38;
+  const charY = 50 + (availH - 240*charScale)/2 + 105*charScale;
 
   // Platform / stage
   ctx.fillStyle = "rgba(255,255,255,0.03)";
@@ -1080,7 +1083,6 @@ function drawGameScreen(){
   ctx.fillText(soundOn ? "\u{1F50A}" : "\u{1F507}", soundBtn.x+20, soundBtn.y+21);
 
   // Bottom panel
-  const panelTop = H*0.72;
   const panelH = H - panelTop;
 
   ctx.fillStyle = "rgba(15,23,42,0.9)";

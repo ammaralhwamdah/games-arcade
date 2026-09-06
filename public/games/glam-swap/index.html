@@ -118,9 +118,12 @@ function drawModel(x,y,h){
   // shoes
   const shoeCol=COSTY[2][state.lookups[2]]||"#fb923c";
   X.fillStyle=shoeCol;rr(-13*u,48*u,10*u,5*u,2);X.fill();rr(3*u,48*u,10*u,5*u,2);X.fill();
-  // accessory
+  // accessory (choker necklace at the neck line)
   const accCol=COSTY[3][state.lookups[3]]||"#f59e0b";
-  X.fillStyle=accCol;X.beginPath();X.arc(0,-40*u,12*u,Math.PI*0.6,Math.PI*2.4);X.lineWidth=2*u;X.strokeStyle=accCol;X.stroke();
+  X.fillStyle=accCol;X.shadowColor=accCol;X.shadowBlur=6;
+  rr(-8*u,-35*u,16*u,2.4*u,1.2*u);X.fill();
+  X.beginPath();X.arc(0,-29*u,2.6*u,0,Math.PI*2);X.fill();
+  X.shadowBlur=0;
   X.restore();
 }
 
@@ -152,7 +155,7 @@ function drawPlay(){
   for(let i=0;i<4;i++){
     const cat=CATS[i];
     X.fillStyle="#f472b6";X.font=`700 ${Math.min(W*0.04,H*0.03)}px "Segoe UI",sans-serif`;
-    X.fillText(cat.name.toUpperCase(),padX+2,gridTop-8+i*(cellH*2+4));
+    X.fillText(cat.name.toUpperCase(),padX+2,gridTop-14+i*(cellH*rows+3));
     for(let j=0;j<cat.choices.length;j++){
       const c=j%cols,r=Math.floor(j/cols);
       const gx=padX+c*cellW,gy=gridTop+r*cellH+(i*(cellH*rows+3));
