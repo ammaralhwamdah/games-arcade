@@ -104,15 +104,14 @@ canvas{background:#1a6b33;border-radius:10px;touch-action:none;outline:none;box-
   }
 
   function shootFrom(cx,cy){
-    var dx=cx-SPOT_X,dy=cy-SPOT_Y;
-    var d=Math.max(1,Math.hypot(dx,dy));
-    var dirx=dx/d,diry=dy/d;
-    var pow=Math.min(1,d/150);
-    var spd=Math.max(0.35,Math.min(1,pow))*(W*0.9);
-    ball.vx=dirx*spd;
-    ball.vy=diry*spd;
-    // never shoot downwards off the pitch
-    if(ball.vy>0)ball.vy=-Math.abs(ball.vx)*0.55;
+    var tx=Math.max(GL+8,Math.min(GR-8,cx));
+    var ty=Math.max(GT+8,Math.min(GB-8,cy));
+    var dx=tx-SPOT_X,dy=ty-SPOT_Y;
+    var dist=Math.hypot(dx,dy);
+    var t=Math.max(0.35,Math.min(0.82,dist/500));
+    ball.vx=dx/t;
+    ball.vy=(dy-0.5*W*0.62*0.55*t*t)/t;
+    if(ball.vy>-120)ball.vy=-120;
     ball.active=true;ball.fireT=0;
     phase="ball";
     shootAnim=1;
@@ -249,7 +248,7 @@ canvas{background:#1a6b33;border-radius:10px;touch-action:none;outline:none;box-
     var b=ball;
     b.x+=b.vx*dt;b.y+=b.vy*dt;
     b.vy+=W*0.62*dt*0.55;
-    b.vx*=Math.max(0,1-0.25*dt);b.vy*=Math.max(0,1-0.06*dt);
+    b.vx*=Math.max(0,1-0.04*dt);b.vy*=Math.max(0,1-0.04*dt);
     var prevY=b.y-b.vy*dt;
     // post collisions inside goal zone
     if(b.y<GB&&b.y>GT){
