@@ -1309,8 +1309,8 @@ const content: Record<string, GameContent> = {
     ],
     faq: [
       {
-        q: "Is Stickman Soccer free to play?",
-        a: "Yes. Stickman Soccer is completely free, runs directly in your browser and shows no ads inside the game. There is nothing to download, install or pay for - just step up to the spot.",
+        q: "Is Netbender free to play?",
+        a: "Yes. Netbender is completely free, runs directly in your browser and shows no ads inside the game. There is nothing to download, install or pay for - just step up to the spot.",
       },
       {
         q: "How do I shoot?",

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
-<title>Stickman Soccer</title>
+<title>Netbender</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;overflow:hidden;background:#0a2e12;font-family:'Segoe UI',system-ui,sans-serif;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
@@ -15,15 +15,15 @@ canvas{background:#1a6b33;border-radius:10px;touch-action:none;outline:none;box-
 </head>
 <body>
 <div class="seo-text" aria-hidden="true" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap">
-<h1>Stickman Soccer - Free Online Game</h1>
-<p>Stickman Soccer is a penalty showdown where you own the spot and battle the keeper to knock the ball into the net. Drag and release to bend your shot across the goal mouth - place it top corner to outwrestle the keeper, or send it low and hard down the middle. First to five goals takes the match, and the net never forgets. Face a keeper who reads your aim in Solo mode, then hand a friend the gloves and settle it head-to-head: one player shoots while the other guards the box with a stickman keeper who dives left and right. The pitch hums with a full whistle, the crowd of one roars on every goal, and a clean strike off the post is always a highlight worth a replay. Your best solo run stays saved in your browser. Original to PlayKrux, fully offline and completely free - no downloads, no ads, just the spot, the ball and the last word.</p>
-<p>Play Stickman Soccer for free in your browser at PlayKrux. No downloads and no registration needed - the game runs instantly on any device. PlayKrux hosts only original, hand-built games, reviewed by our editors and safe for all ages.</p>
+<h1>Netbender - Free Online Game</h1>
+<p>Netbender is a penalty duel in stick figures where the ball bends whichever way you pull. Drag across the screen, hold your angle, and let go â€” the kick arcs toward the corner you aimed at. Going high is flashy but tight; going low past the keeper's legs is safe but predictable. The keeper watches your drag line and dives the side it leans toward, so faking him out by switching direction at the last instant is the real game. You get five shots in Solo against a keeper that sharpens as the rounds tick by, or grab a friend for a proper head-to-head: one shoots while the other takes the gloves and dives with the arrow keys. The goal rings when a clean strike finds the net, the post stings when you miss by a whisker, and your best score stays saved in the browser. Runs offline, no ads, no sign-up â€” just the spot, the ball, and the keeper's patience running out.</p>
+<p>Play Netbender for free in your browser at PlayKrux. No downloads and no registration needed - the game runs instantly on any device. PlayKrux hosts only original, hand-built games, reviewed by our editors and safe for all ages.</p>
 </div>
 <div id="wrap"><canvas id="c" width="960" height="600" tabindex="0"></canvas></div>
 <div id="hint">Drag &amp; release to shoot · Arrow Keys / A D steer the keeper · M mute</div>
 <script>
 "use strict";
-/* Stickman Soccer - original PlayKrux Exclusive Edition code */
+/* Netbender - original PlayKrux Exclusive Edition code */
 (function(){
   var canvas=document.getElementById("c");
   var ctx=canvas.getContext("2d");
@@ -447,7 +447,7 @@ canvas{background:#1a6b33;border-radius:10px;touch-action:none;outline:none;box-
     ctx.textAlign="center";ctx.textBaseline="middle";
     ctx.font="900 62px system-ui,sans-serif";ctx.fillStyle="#fff";
     ctx.shadowColor="rgba(0,0,0,0.6)";ctx.shadowBlur=14;
-    ctx.fillText("STICKMAN SOCCER",0,0);
+    ctx.fillText("NETBENDER",0,0);
     ctx.shadowBlur=0;
     ctx.font="600 18px system-ui,sans-serif";ctx.fillStyle="#c7f0d2";
     ctx.fillText("Penalty Showdown · beat the keeper, own the net",0,44);
