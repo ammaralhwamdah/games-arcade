@@ -1,6 +1,6 @@
 {
   "generated": "2026-09-02T12:00:00.000Z",
-  "total": 35,
+  "total": 36,
   "categories": 20,
   "categoriesMeta": [
     {
@@ -942,6 +942,22 @@
       "year": 2026,
       "tags": ["exclusive", "html5", "cards", "blackjack", "casino", "strategy", "single-player"],
       "description": "Royal 21 is a stately game of blackjack at a banker's table. You start with a bankroll and place a bet each round - Hit when the hand is light, Stand when you trust it, let your Ace count as 1 or 11, and try to run your total to twenty-one without blasting past it. A natural blackjack wins the round outright, the dealer must hit until at least seventeen, and busting hands give up their stake while winning hands win double. Push your piles, read the flow of the deck, and rebuild when the table empties - every win builds the bank, every best balance stays saved in your browser. The clean felt, the soft snap of each dealt card, and the low clink of coin on polish make each hand feel like a serious stakes table. Original to PlayKrux, right down to the cards - no download, no age gate, just pure blackjack. Hit, stand, stay, and take the house."
+    },
+    {
+      "id": "stickman-soccer",
+      "slug": "stickman-soccer",
+      "name": "Stickman Soccer",
+      "category": "stickman",
+      "categories": ["stickman", "soccer", "sports", "boys", "2-player"],
+      "file": "games/stickman-soccer/index.html",
+      "src": "/games/stickman-soccer/index.html",
+      "image": "/images/games/stickman-soccer.svg",
+      "sizeKb": 16,
+      "rating": 4.9,
+      "plays": 0,
+      "year": 2026,
+      "tags": ["exclusive", "html5", "stickman", "soccer", "football", "penalty", "2-player", "sports", "single-player"],
+      "description": "Stickman Soccer is a penalty showdown where you own the spot and battle the keeper to knock the ball into the net. Drag and release to bend your shot across the goal mouth - place it top corner to outwrestle the keeper, or send it low and hard down the middle. First to five goals takes the match, and the net never forgets. Face a keeper who reads your aim in Solo mode, then hand a friend the gloves and settle it head-to-head: one player shoots while the other guards the box with a stickman keeper who dives left and right. The pitch hums with a full whistle, the crowd of one roars on every goal, and a clean strike off the post is always a highlight worth a replay. Your best solo run stays saved in your browser. Original to PlayKrux, fully offline and completely free - no downloads, no ads, just the spot, the ball and the last word."
     }
   ]
 }

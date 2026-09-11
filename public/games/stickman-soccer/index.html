@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>Stickman Soccer</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#0a2e12;font-family:'Segoe UI',system-ui,sans-serif;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+#wrap{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+canvas{background:#1a6b33;border-radius:10px;touch-action:none;outline:none;box-shadow:0 10px 40px rgba(0,0,0,0.55)}
+#hint{position:fixed;bottom:8px;left:0;right:0;text-align:center;color:#b8e0c2;font:12px system-ui;pointer-events:none}
+</style>
+<meta name="robots" content="noindex, nofollow" />
+</head>
+<body>
+<div class="seo-text" aria-hidden="true" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap">
+<h1>Stickman Soccer - Free Online Game</h1>
+<p>Stickman Soccer is a penalty showdown where you own the spot and battle the keeper to knock the ball into the net. Drag and release to bend your shot across the goal mouth - place it top corner to outwrestle the keeper, or send it low and hard down the middle. First to five goals takes the match, and the net never forgets. Face a keeper who reads your aim in Solo mode, then hand a friend the gloves and settle it head-to-head: one player shoots while the other guards the box with a stickman keeper who dives left and right. The pitch hums with a full whistle, the crowd of one roars on every goal, and a clean strike off the post is always a highlight worth a replay. Your best solo run stays saved in your browser. Original to PlayKrux, fully offline and completely free - no downloads, no ads, just the spot, the ball and the last word.</p>
+<p>Play Stickman Soccer for free in your browser at PlayKrux. No downloads and no registration needed - the game runs instantly on any device. PlayKrux hosts only original, hand-built games, reviewed by our editors and safe for all ages.</p>
+</div>
+<div id="wrap"><canvas id="c" width="960" height="600" tabindex="0"></canvas></div>
+<div id="hint">Drag &amp; release to shoot · Arrow Keys / A D steer the keeper · M mute</div>
+<script>
+"use strict";
+/* Stickman Soccer - original PlayKrux Exclusive Edition code */
+(function(){
+  var canvas=document.getElementById("c");
+  var ctx=canvas.getContext("2d");
+  var W=960,H=600;
+  var DPR=Math.min(window.devicePixelRatio||1,2);
+
+  function resize(){
+    var cw=window.innerWidth,ch=window.innerHeight;
+    var s=Math.min(cw/W,ch/H);
+    canvas.style.width=cw+"px";canvas.style.height=ch+"px";
+    canvas.width=Math.round(cw*DPR);canvas.height=Math.round(ch*DPR);
+    ctx.setTransform(s*DPR,0,0,s*DPR,(cw-W*s)/2*DPR,(ch-H*s)/2*DPR);
+  }
+  addEventListener("resize",resize);resize();
+
+  // pitch geometry (penalty scene on the top of the pitch)
+  var GX=W/2,GW=270,GL=GX-GW/2,GR=GX+GW/2,GT=78,GB=188,POST=6;
+  var SPOT_X=W/2,SPOT_Y=H-118;
+  var GROUND=H-40,BALL_R=11;
+  var ROUNDS=5;
+
+  // audio
+  var muted=false,AC=null;
+  function ac(){ if(!AC){ try{AC=new(window.AudioContext||window.webkitAudioContext)();}catch(e){} } if(AC&&AC.state==="suspended")AC.resume(); return AC; }
+  function snd(f,dur,type,vol,slide){
+    var a=ac();if(!a)return;
+    var o=a.createOscillator(),g=a.createGain();
+    o.type=type||"sine";o.frequency.setValueAtTime(f,a.currentTime);
+    if(slide)o.frequency.exponentialRampToValueAtTime(slide,a.currentTime+dur);
+    g.gain.setValueAtTime(vol||0.1,a.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,a.currentTime+dur);
+    o.connect(g);g.connect(a.destination);o.start();o.stop(a.currentTime+dur);
+  }
+  function sWhistle(){ if(muted)return; snd(2100,0.16,"square",0.05); snd(1550,0.22,"square",0.05,1800); }
+  function sKick(){ if(muted)return; snd(160,0.12,"triangle",0.22,340); }
+  function sGoal(){ if(muted)return;[523,659,784].forEach(function(f,i){setTimeout(function(){snd(f,0.16,"triangle",0.12)},i*95)}); }
+  function sSave(){ if(muted)return; snd(120,0.22,"sawtooth",0.2,55); }
+  function sPost(){ if(muted)return; snd(880,0.18,"square",0.12,720); }
+  function sClick(){ if(muted)return; snd(700,0.06,"sine",0.08); }
+
+  // state
+  var mode="title",overMsg="",flash=0,shake=0;
+  var duo=false,turn=1,totalRounds=0,soloGoals=0,p1g=0,p2g=0,shot=0;
+  var best=0;
+  var phase="aim",msg="",msgT=0,nextT=0;
+  var t=0;
+  var ball={x:0,y:0,vx:0,vy:0,active:false,fireT:0,result:""};
+  var keeper={x:GX,tx:GX,lean:0,anim:0};
+  var shootAnim=0;
+  var particles=[];
+  var aim={on:false,sx:0,sy:0,cx:0,cy:0};
+  var key={l:false,r:false};
+
+  function loadBest(){ try{var b=parseInt(localStorage.getItem("stickman-soccer")||"0",10);if(b>0)best=b;}catch(e){} }
+  function saveBest(v){ try{if(v>best){best=v;localStorage.setItem("stickman-soccer",String(v));}}catch(e){} }
+
+  function resetRound(){
+    ball.x=SPOT_X;ball.y=SPOT_Y;ball.vx=0;ball.vy=0;ball.active=false;ball.result="";
+    keeper.tx=GX;keeper.x=GX;keeper.lean=0;keeper.anim=0;
+    aim.on=false;phase="aim";shootAnim=0;
+    nextT=0;msg="";msgT=0;
+  }
+
+  function startMatch(two){
+    duo=two;turn=1;shot=0;soloGoals=0;p1g=0;p2g=0;totalRounds=0;
+    mode="play";phase="aim";
+    resetRound();roundBanner();
+    sWhistle();
+  }
+
+  function roundBanner(){
+    if(duo){
+      msg=(turn===1)?("PLAYER 1 SHOOTS  ·  ROUND "+(shot+1)+"/"+ROUNDS):("PLAYER 2 SHOOTS  ·  ROUND "+(shot+1)+"/"+ROUNDS);
+    }else{
+      msg="PENALTY "+(shot+1)+"/"+ROUNDS;
+    }
+    msgT=1.4;
+  }
+
+  function shootFrom(cx,cy){
+    var dx=cx-SPOT_X,dy=cy-SPOT_Y;
+    var d=Math.max(1,Math.hypot(dx,dy));
+    var dirx=dx/d,diry=dy/d;
+    var pow=Math.max(0.3,aimPower());
+    var spd=pow*(W*0.85);
+    ball.vx=dirx*spd;
+    ball.vy=diry*spd;
+    // never shoot downwards off the pitch
+    if(ball.vy>0)ball.vy=-Math.abs(ball.vx)*0.55;
+    ball.active=true;ball.fireT=0;
+    phase="ball";
+    shootAnim=1;
+    sKick();
+    burst(SPOT_X,SPOT_Y,"#ffffff",10);
+    keeperTargetX();
+  }
+
+  function keeperTargetX(){
+    // predicted x where the ball crosses the goal mouth
+    var crossY=(GT+GB)/2;
+    var tCross=(crossY-ball.y)/ball.vy; // vy<0 going up
+    var px=(tCross>0&&tCross<2.5)?(ball.x+ball.vx*tCross):GX;
+    var err=duo?30:38;
+    if(!duo&&shot%3===2)err=10; // keeper sharper later
+    var rx=px+(Math.random()*2-1)*err;
+    rx=Math.max(GL+18,Math.min(GR-18,rx));
+    keeper.tx=rx;
+  }
+
+  function keeperStep(dt){
+    var maxSpd;
+    if(duo){
+      maxSpd=W*1.6;
+    }else{
+      maxSpd=(ball.active?W*0.85:W*0.22);
+    }
+    var tx=keeper.tx;
+    if(!duo){
+      tx=(ball.active||phase==="result")?keeper.tx:GX;
+    }
+    if(duo&&(key.l||key.r)){
+      tx=keeper.x+(key.l?-26:26);
+      keeper.tx=tx;
+    }
+    var dx=tx-keeper.x;
+    var step=Math.max(-maxSpd*dt*0.6,Math.min(maxSpd*dt*0.6,dx));
+    keeper.x+=step;
+    keeper.x=Math.max(GL+10,Math.min(GR-10,keeper.x));
+    keeper.lean=Math.max(-1.2,Math.min(1.2,(GX-keeper.x)/90));
+    keeper.anim+=dt*(Math.abs(step)>0.5?12:3);
+  }
+
+  function resolve(which){
+    phase="result";nextT=t+1.6;
+    ball.result=which;
+    if(which==="GOAL"){
+      if(duo){ if(turn===1)p1g++;else p2g++; }else{ soloGoals++; }
+      burst(ball.x,ball.y,"#fbbf24",26);burst(ball.x,ball.y,"#ffffff",16);
+      sGoal();shotFlash();shake=0.4;
+      if(!duo)saveBest(soloGoals);
+    }else if(which==="SAVE"){
+      burst(keeper.x,GB-20,"#fca5a5",14);sSave();shake=0.3;
+    }else if(which==="POST"){
+      burst(ball.x,ball.y,"#ffffff",10);sPost();
+    }else{
+      sWhistle();
+    }
+    setPostMsg(which);
+  }
+
+  function setPostMsg(r){
+    if(r==="GOAL")msg="GOAL!";
+    else if(r==="SAVE")msg="SAVED!";
+    else if(r==="POST")msg="OFF THE POST!";
+    else msg="MISS!";
+    msgT=1.6;
+  }
+
+  function shotFlash(){ flash=0.35; }
+
+  function nextRoundOrOver(){
+    if(duo){
+      if(turn===1){
+        if(shot+1>=ROUNDS){turn=2;shot=0;}else{shot++;}
+        resetRound();roundBanner();
+      }else{
+        if(shot+1>=ROUNDS){
+          if(p1g===p2g){
+            // sudden death
+            mode="play";turn=1;shot=0;resetRound();roundBanner();msg="SUDDEN DEATH! "+p1g+"-"+p2g;msgT=1.6;return;
+          }
+          mode="over";
+          overMsg=(p1g>p2g)?"PLAYER 1 WINS!":"PLAYER 2 WINS!";
+          flash=0.5;
+        }else{shot++;resetRound();roundBanner();}
+      }
+    }else{
+      if(shot+1>=ROUNDS){
+        mode="over";
+        overMsg="YOU SCORED "+soloGoals+"/"+ROUNDS;
+        if(best===soloGoals&&soloGoals>0)overMsg+="  ·  NEW BEST!";
+        flash=0.5;
+      }else{shot++;resetRound();roundBanner();}
+    }
+  }
+
+  function burst(x,y,c,n){
+    for(var i=0;i<n;i++){
+      var a=Math.random()*Math.PI*2,sp=Math.random()*150+40;
+      particles.push({x:x,y:y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,l:0.45+Math.random()*0.4,t:0,c:c});
+    }
+  }
+  function tickParticles(dt){
+    for(var i=particles.length-1;i>=0;i--){
+      var p=particles[i];p.t+=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=160*dt;
+      if(p.t>p.l)particles.splice(i,1);
+    }
+  }
+
+  function update(dt){
+    t+=dt;
+    if(flash>0)flash-=dt;
+    if(shake>0)shake-=dt*2;
+    if(msgT>0)msgT-=dt;
+    if(shootAnim>0)shootAnim-=dt*4;
+    if(mode==="title"||mode==="over"){tickParticles(dt);return;}
+    if(phase==="ball"){
+      ball.fireT+=dt;
+      keeperStep(dt);
+      moveBall(dt);
+      tickParticles(dt);
+      return;
+    }
+    if(phase==="result"){
+      keeperStep(dt);tickParticles(dt);
+      if(t>=nextT){nextRoundOrOver();}
+      return;
+    }
+    keeperStep(dt);tickParticles(dt);
+  }
+
+  function moveBall(dt){
+    var b=ball;
+    b.x+=b.vx*dt;b.y+=b.vy*dt;
+    b.vy+=W*0.62*dt*0.55;
+    b.vx*=Math.max(0,1-0.25*dt);b.vy*=Math.max(0,1-0.06*dt);
+    var prevY=b.y-b.vy*dt;
+    // post collisions inside goal zone
+    if(b.y<GB&&b.y>GT){
+      if(Math.abs(b.x-GL)<POST+BALL_R&&b.vx<0){b.x=GL-POST-BALL_R;b.vx=Math.abs(b.vx)*0.5;resolve("POST");return;}
+      if(Math.abs(b.x-GR)<POST+BALL_R&&b.vx>0){b.x=GR+POST+BALL_R;b.vx=-Math.abs(b.vx)*0.5;resolve("POST");return;}
+    }
+    // crossing the goal line plane
+    if(prevY>=GT&&b.y<GT){
+      if(b.x<GL+BALL_R||b.x>GR-BALL_R){
+        // missed wide: deflect off the wall behind
+        b.y=GT;b.vy=Math.abs(b.vy)*0.3;
+        if(!b.result)resolve("MISS");
+        return;
+      }
+      resolve("GOAL");
+      return;
+    }
+    // hit ground
+    if(b.y>GROUND-BALL_R){
+      b.y=GROUND-BALL_R;
+      if(Math.abs(b.vy)>60){
+        b.vy=-Math.abs(b.vy)*0.4;
+        burst(b.x,b.y,"#86efac",6);
+      }else{
+        b.vy=0;b.vx*=0.6;
+      }
+    }
+    if(b.x<BALL_R){b.x=BALL_R;b.vx=Math.abs(b.vx)*0.6;}
+    if(b.x>W-BALL_R){b.x=W-BALL_R;b.vx=-Math.abs(b.vx)*0.6;}
+    // save: keeper reaches the ball near the goal plane
+    if(b.y<GB&&b.y>GT-6&&Math.abs(keeper.x-b.x)<BALL_R+16&&!b.result){
+      b.vy=Math.abs(b.vy)*0.3;b.y=GT;
+      resolve("SAVE");
+      return;
+    }
+    // timeout miss
+    if(b.fireT>4&&!b.result){resolve("MISS");return;}
+  }
+
+  /* ---------- drawing ---------- */
+  function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+
+  function drawStick(x,y,s,c,lean,armL,armR,kick){
+    ctx.save();ctx.translate(x,y);ctx.scale(s,s);ctx.rotate(lean||0);
+    ctx.lineCap="round";ctx.lineWidth=3.4;ctx.strokeStyle=c;
+    var sw=Math.sin((kick||0)*6)*6;
+    ctx.beginPath();ctx.moveTo(0,-30);ctx.lineTo(-9,30-sw);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,-30);ctx.lineTo(9,30-sw*0.6);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,-30);ctx.lineTo(0,-2);ctx.stroke();
+    var alx=(armL==null?-10:-armL),arx=(armR==null?10:armR);
+    ctx.beginPath();ctx.moveTo(0,-24);ctx.lineTo(alx,-8);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,-24);ctx.lineTo(arx,-8);ctx.stroke();
+    ctx.fillStyle="#e9d8c4";
+    ctx.beginPath();ctx.arc(0,-38,6.5,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle=c;ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,-38,6.5,0,Math.PI*2);ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawKeeper(){
+    ctx.save();
+    var baseX=keeper.x,baseY=GB-6;
+    var lean=keeper.lean;
+    var lift=Math.abs(lean);
+    ctx.translate(baseX,baseY);
+    if(lift>0.25){
+      ctx.rotate(-lean*0.9);
+      ctx.translate(0,-10);
+    }
+    drawStick(0,-4,0.95,"#e0f2fe",lean*0.5,16,-16,0);
+    // gloves
+    ctx.strokeStyle="#fca5a5";ctx.lineWidth=5;
+    ctx.lineCap="round";
+    ctx.beginPath();ctx.moveTo(-16,-36);ctx.lineTo(-22,-20);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(16,-36);ctx.lineTo(22,-20);ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawShooter(){
+    ctx.save();
+    ctx.translate(SPOT_X,SPOT_Y);
+    drawStick(0,-18,1.05,"#7dd3fc",-0.06,shootAnim>0?18:8,0,shootAnim>0?0.7:0.4);
+    ctx.restore();
+  }
+
+  function drawBall(bx,by){
+    ctx.save();ctx.translate(bx,by);
+    ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(0,0,BALL_R,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle="#1e293b";ctx.lineWidth=1.4;
+    ctx.beginPath();ctx.arc(0,0,BALL_R-0.5,0,Math.PI*2);ctx.stroke();
+    ctx.fillStyle="#1e293b";
+    ctx.beginPath();ctx.moveTo(0,-4);ctx.lineTo(4,-1);ctx.lineTo(2.5,3.5);ctx.lineTo(-2.5,3.5);ctx.lineTo(-4,-1);ctx.closePath();ctx.fill();
+    ctx.restore();
+  }
+
+  function drawPitch(){
+    var i;
+    for(i=0;i<8;i++){
+      ctx.fillStyle=(i%2===0)?"#1a6b33":"#1b7437";
+      ctx.fillRect(i*(W/8),0,W/8,H);
+    }
+    ctx.strokeStyle="rgba(255,255,255,0.85)";ctx.lineWidth=2;
+    ctx.strokeRect(GX-GW/2-2,GT,GW+4,GB-GT);
+    ctx.strokeRect(GX-GW*0.62-2,GT,GW*1.24+4,GB-GT+40);
+    ctx.fillStyle="rgba(255,255,255,0.9)";ctx.beginPath();ctx.arc(SPOT_X,H-158,4,0,Math.PI*2);ctx.fill();
+    // net
+    ctx.fillStyle="rgba(220,235,245,0.12)";
+    ctx.fillRect(GL+4,GT-10,GW-8,GB-GT-4);
+    ctx.save();ctx.translate(GL,GT-12);
+    ctx.strokeStyle="rgba(255,255,255,0.16)";ctx.lineWidth=1;
+    var nx,ny;
+    for(nx=8;nx<GW-6;nx+=9){ctx.beginPath();ctx.moveTo(nx,0);ctx.lineTo(nx,GB-GT);ctx.stroke();}
+    for(ny=12;ny<GB-GT;ny+=10){ctx.beginPath();ctx.moveTo(0,ny);ctx.lineTo(GW,ny);ctx.stroke();}
+    ctx.restore();
+    // posts + crossbar
+    ctx.fillStyle="#f8fafc";
+    ctx.fillRect(GL-POST,GT-POST,POST*2,GB-GT+POST*2);
+    ctx.fillRect(GR-POST,GT-POST,POST*2,GB-GT+POST*2);
+    ctx.fillRect(GL-POST,GT-POST,GW+POST*2,POST);
+  }
+
+  function drawHud(){
+    ctx.font="900 22px system-ui,sans-serif";
+    ctx.textAlign="left";ctx.textBaseline="top";
+    if(duo){
+      ctx.fillStyle="#7dd3fc";ctx.fillText("P1 "+p1g,20,14);
+      ctx.fillStyle="#fca5a5";ctx.fillText("P2 "+p2g,W-90,14);
+    }else{
+      ctx.fillStyle="#fff";ctx.fillText(soloGoals+" / "+ROUNDS+"  GOALS",20,14);
+      ctx.fillStyle="#fbbf24";ctx.fillText("BEST "+best,W-90,14);
+    }
+    if(phase==="aim"&&!ball.active&&mode==="play"){
+      ctx.fillStyle="rgba(255,255,255,0.65)";ctx.font="700 14px system-ui,sans-serif";
+      ctx.fillText(duo?"P1 drag to shoot · P2 arrows to defend":"Drag & release to shoot",20,H-22);
+    }
+  }
+
+  function aimPower(){
+    if(!aim.on)return 0;
+    var dx=aim.cx-SPOT_X,dy=aim.cy-SPOT_Y;
+    var d=Math.hypot(dx,dy);
+    return Math.max(0.3,Math.min(1,d/150));
+  }
+
+  function drawAim(){
+    if(!aim.on)return;
+    ctx.save();
+    var tx=aim.cx,ty=aim.cy;
+    ctx.strokeStyle="rgba(255,255,255,0.9)";ctx.lineWidth=2;ctx.setLineDash([6,8]);
+    ctx.beginPath();ctx.moveTo(SPOT_X,SPOT_Y);ctx.lineTo(tx,ty);ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.strokeStyle="#fff";
+    ctx.beginPath();ctx.arc(tx,ty,12,0,Math.PI*2);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(tx-18,ty);ctx.lineTo(tx-6,ty);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(tx+6,ty);ctx.lineTo(tx+18,ty);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(tx,ty-18);ctx.lineTo(tx,ty-6);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(tx,ty+6);ctx.lineTo(tx,ty+18);ctx.stroke();
+    // power meter
+    var pow=aimPower();
+    ctx.fillStyle="rgba(0,0,0,0.35)";rr(14,H-96,16,88,8);ctx.fill();
+    var ph=Math.round(pow*80);
+    ctx.fillStyle=pow>0.85?"#f87171":(pow>0.5?"#fbbf24":"#4ade80");
+    rr(17,H-92+(80-ph),10,ph,5);ctx.fill();
+    ctx.fillStyle="#fff";ctx.font="700 12px system-ui,sans-serif";ctx.textAlign="left";
+    ctx.fillText("PWR",18,H-102);
+    ctx.restore();
+  }
+
+  function drawBanner(){
+    if(msgT<=0)return;
+    ctx.globalAlpha=Math.min(1,msgT*2);
+    var bannerY=H*0.5;
+    ctx.fillStyle="rgba(4,14,8,0.78)";
+    rr(GX-210,bannerY-28,420,56,16);ctx.fill();
+    ctx.fillStyle="#fff";ctx.font="900 26px system-ui,sans-serif";
+    ctx.textAlign="center";ctx.textBaseline="middle";
+    ctx.fillText(msg,GX,bannerY+2);
+    ctx.globalAlpha=1;
+  }
+
+  function buttonBox(cx,cy,w,h,col){
+    ctx.fillStyle="rgba(0,0,0,0.35)";
+    rr(cx-w/2,cy-h/2,w,h,14);ctx.fill();
+    ctx.strokeStyle="rgba(255,255,255,0.25)";ctx.lineWidth=1;rr(cx-w/2,cy-h/2,w,h,14);ctx.stroke();
+    ctx.fillStyle=col;rr(cx-w/2+4,cy-h/2+4,w-8,h-8,12);ctx.fill();
+  }
+
+  function drawTitle(){
+    var i;
+    ctx.fillStyle="#0e4d20";ctx.fillRect(0,0,W,H);
+    for(i=0;i<8;i++){
+      ctx.fillStyle=(i%2===0)?"#1a6b33":"#1b7437";
+      ctx.fillRect(i*(W/8),0,W/8,H);
+    }
+    ctx.save();ctx.translate(W/2,H*0.22);
+    ctx.textAlign="center";ctx.textBaseline="middle";
+    ctx.font="900 62px system-ui,sans-serif";ctx.fillStyle="#fff";
+    ctx.shadowColor="rgba(0,0,0,0.6)";ctx.shadowBlur=14;
+    ctx.fillText("STICKMAN SOCCER",0,0);
+    ctx.shadowBlur=0;
+    ctx.font="600 18px system-ui,sans-serif";ctx.fillStyle="#c7f0d2";
+    ctx.fillText("Penalty Showdown · beat the keeper, own the net",0,44);
+    ctx.restore();
+
+    var y1=H*0.52,y2=H*0.52+92;
+    buttonBox(W/2,y1,W*0.5,54,"#1e3a8a");
+    ctx.fillStyle="#fff";ctx.font="900 20px system-ui,sans-serif";
+    ctx.textAlign="center";ctx.textBaseline="middle";
+    ctx.fillText("1 PLAYER  ·  BEAT THE KEEPER",W/2,y1+1);
+    buttonBox(W/2,y2,W*0.5,54,"#831843");
+    ctx.fillText("2 PLAYERS  ·  SHOOTOUT DUEL",W/2,y2+1);
+
+    ctx.fillStyle="rgba(255,255,255,0.6)";ctx.font="500 15px system-ui,sans-serif";
+    ctx.fillText("Drag to aim & shoot · After the kick, defend with A/D or Arrow Keys",W/2,H-22);
+  }
+
+  function drawOver(){
+    ctx.fillStyle="rgba(4,14,8,0.82)";ctx.fillRect(0,0,W,H);
+    ctx.textAlign="center";ctx.textBaseline="middle";
+    ctx.font="900 50px system-ui,sans-serif";ctx.fillStyle="#fff";
+    ctx.shadowColor=flash>0?"#fbbf24":"rgba(0,0,0,0.6)";ctx.shadowBlur=flash>0?30:10;
+    ctx.fillText(overMsg,W/2,H*0.38);
+    ctx.shadowBlur=0;
+    if(duo){
+      ctx.fillStyle="#7dd3fc";ctx.font="900 30px system-ui,sans-serif";
+      ctx.fillText("PLAYER 1  "+p1g+"  -  "+p2g+"  PLAYER 2",W/2,H*0.5);
+    }else{
+      ctx.fillStyle="#fbbf24";ctx.font="900 28px system-ui,sans-serif";
+      ctx.fillText("BEST "+best,W/2,H*0.5);
+    }
+    ctx.fillStyle="rgba(255,255,255,0.6)";ctx.font="600 17px system-ui,sans-serif";
+    ctx.fillText("Tap anywhere to play again",W/2,H*0.64);
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    ctx.save();
+    if(shake>0){
+      ctx.translate((Math.random()*2-1)*shake*4,(Math.random()*2-1)*shake*4);
+    }
+    drawPitch();
+    if(mode==="title"){drawTitle();ctx.restore();return;}
+    if(mode==="over"){drawOver();ctx.restore();return;}
+    drawKeeper();
+    drawShooter();
+    if(ball.active||phase==="result"){
+      drawBall(ball.x,ball.y);
+    }else{
+      drawBall(SPOT_X-14,SPOT_Y+6);
+    }
+    if(phase==="aim"&&!ball.active)drawAim();
+    var i;
+    for(i=0;i<particles.length;i++){
+      ctx.fillStyle=particles[i].c;ctx.beginPath();ctx.arc(particles[i].x,particles[i].y,3,0,Math.PI*2);ctx.fill();
+    }
+    drawHud();
+    drawBanner();
+    ctx.restore();
+    if(flash>0){
+      ctx.fillStyle="rgba(255,255,255,"+(flash*0.35).toFixed(3)+")";ctx.fillRect(0,0,W,H);
+    }
+  }
+
+  /* ---------- input ---------- */
+  function toCanvas(e){
+    var r=canvas.getBoundingClientRect();
+    var cw=parseFloat(canvas.style.width)||r.width;
+    var ch=parseFloat(canvas.style.height)||r.height;
+    return {x:(e.clientX-r.left)/cw*W,y:(e.clientY-r.top)/ch*H};
+  }
+
+  function menuHit(p){
+    var w=W*0.5,h=54;
+    var y1=H*0.52,y2=H*0.52+92;
+    if(Math.abs(p.x-W/2)<=w/2&&Math.abs(p.y-y1)<=h/2){sClick();startMatch(false);return;}
+    if(Math.abs(p.x-W/2)<=w/2&&Math.abs(p.y-y2)<=h/2){sClick();startMatch(true);return;}
+  }
+
+  function returnToTitle(){
+    mode="title";resetRound();sWhistle();
+  }
+
+  canvas.addEventListener("pointerdown",function(e){
+    e.preventDefault();
+    var p=toCanvas(e);
+    if(mode==="title"){menuHit(p);return;}
+    if(mode==="over"){sClick();returnToTitle();return;}
+    if(phase==="aim"&&!ball.active){
+      aim.on=true;aim.sx=p.x;aim.sy=p.y;aim.cx=p.x;aim.cy=p.y;
+      aim.px=p.x;aim.py=p.y;
+    }
+  });
+  canvas.addEventListener("pointermove",function(e){
+    if(aim.on){
+      var p=toCanvas(e);aim.cx=p.x;aim.cy=p.y;
+    }
+  });
+  canvas.addEventListener("pointerup",function(e){
+    if(!aim.on)return;
+    var p=toCanvas(e);
+    var d=Math.hypot(p.x-aim.sx,p.y-aim.sy);
+    aim.on=false;
+    if(d<24){
+      aim.cx=GX;aim.cy=GT-40;
+    }else{
+      aim.cx=p.x;aim.cy=p.y;
+    }
+    shootFrom(aim.cx,aim.cy);
+  });
+
+  addEventListener("keydown",function(e){
+    if(e.key==="m"||e.key==="M"){muted=!muted;return;}
+    if(e.key==="ArrowLeft"||e.key==="a"||e.key==="A")key.l=true;
+    if(e.key==="ArrowRight"||e.key==="d"||e.key==="D")key.r=true;
+    if(mode==="title"&&(e.key===" "||e.key==="Enter"))startMatch(false);
+  });
+  addEventListener("keyup",function(e){
+    if(e.key==="ArrowLeft"||e.key==="a"||e.key==="A")key.l=false;
+    if(e.key==="ArrowRight"||e.key==="d"||e.key==="D")key.r=false;
+  });
+
+  loadBest();
+  var last=performance.now();
+  function loop(now){
+    var dt=Math.min(0.05,(now-last)/1000);last=now;
+    update(dt);
+    draw();
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

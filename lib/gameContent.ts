@@ -1292,6 +1292,48 @@ const content: Record<string, GameContent> = {
       },
     ],
   },
+  "stickman-soccer": {
+    tips: [
+      "Drag a generous distance before releasing. A long, controlled drag gives you fine aim AND full power - short flicks lose both direction control and pace.",
+      "Postage stamps beat corners. The very top edge of the net is impossible to save; a smaller target close to the post beats a confident center aim the keeper already read.",
+      "Sell your eyes, not your feet. The keeper tracks your drag line, so aim one side, then slide your release toward the other at the last instant to freeze him in the diving pose.",
+      "Low and hard beats slow and high. Across the ground the keeper has a fraction of a second - a fast grounded strike scores far more often than a lobbed ball he can track.",
+      "Read the keeper's early dives in Solo mode. If he guesses the side before you release, ping the opposite corner and punish the overcommit."
+    ],
+    features: [
+      "Penalty shootout showdown: fold your aim onto the ball and release for a curling striker",
+      "Solo mode with a keeper who reads your drag - and sharpens up on the late rounds",
+      "Two-player head-to-head duel: one shoots, the other guards the box with a diving keeper",
+      "Power meter, post clank, goal roar and a whistle that knows the moment",
+      "Best solo score saved in your browser - free, offline and original to PlayKrux",
+    ],
+    faq: [
+      {
+        q: "Is Stickman Soccer free to play?",
+        a: "Yes. Stickman Soccer is completely free, runs directly in your browser and shows no ads inside the game. There is nothing to download, install or pay for - just step up to the spot.",
+      },
+      {
+        q: "How do I shoot?",
+        a: "Drag from anywhere on the pitch and release to strike the ball toward where you let go. Drag a long way for power, and aim high into the corners to get the ball past the keeper.",
+      },
+      {
+        q: "How does the two-player duel work?",
+        a: "Player 1 takes five penalties while Player 2 guards the goal, then they swap roles for five more. The keeper dives with the Arrow Keys or A and D. Highest score wins - and ties send you to sudden death.",
+      },
+      {
+        q: "Does the keeper get smarter?",
+        a: "In Solo mode the keeper tracks your drag and dives to where he thinks the ball is heading. On the later kicks he closes down tighter, so vary your placement and don't always take the same shot.",
+      },
+      {
+        q: "Does the game save my progress?",
+        a: "Your best solo score is saved in your browser automatically, so each shootout hands you a record to chase on your next visit.",
+      },
+      {
+        q: "Can I play on my phone?",
+        a: "Yes. The whole game is built for touch - drag with your finger to shoot and steer the keeper on the move. It works with mouse and keyboard on desktop and runs in any modern browser.",
+      },
+    ],
+  },
   "twinlume": {
     tips: [
       "Start from the outside and sweep inward. Clearing the outer row first leaves fewer cards to misread later, and you build the grid's skeleton before the middle gets crowded.",      "Say the symbol out loud as you flip it. Naming what you see - star, moon, bolt - anchors it better than a silent glance, and paired positions start to stick after just a few rounds.",
