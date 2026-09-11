@@ -107,8 +107,8 @@ canvas{background:#1a6b33;border-radius:10px;touch-action:none;outline:none;box-
     var dx=cx-SPOT_X,dy=cy-SPOT_Y;
     var d=Math.max(1,Math.hypot(dx,dy));
     var dirx=dx/d,diry=dy/d;
-    var pow=Math.max(0.3,aimPower());
-    var spd=pow*(W*0.85);
+    var pow=Math.min(1,d/150);
+    var spd=Math.max(0.35,Math.min(1,pow))*(W*0.9);
     ball.vx=dirx*spd;
     ball.vy=diry*spd;
     // never shoot downwards off the pitch
