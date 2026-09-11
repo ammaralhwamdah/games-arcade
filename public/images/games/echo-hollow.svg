@@ -1,0 +1,28 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="75%">
+      <stop offset="0%" stop-color="#1a1a24"/>
+      <stop offset="100%" stop-color="#050507"/>
+    </radialGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="200" height="200" rx="20" fill="url(#bg)"/>
+  <circle cx="100" cy="100" r="52" fill="none" stroke="rgba(245,222,179,0.16)" stroke-width="28"/>
+  <g filter="url(#glow)">
+    <g fill="#d9e6f2">
+      <ellipse cx="86" cy="96" rx="5" ry="13"/>
+      <ellipse cx="114" cy="96" rx="5" ry="13"/>
+    </g>
+  </g>
+  <g filter="url(#glow)">
+    <rect x="82" y="118" width="36" height="30" rx="7" fill="#f6c177" stroke="#b45309" stroke-width="2"/>
+    <rect x="98" y="108" width="6" height="10" fill="#b45309"/>
+  </g>
+  <text x="100" y="192" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="13" font-weight="800" fill="#e2e8f0" filter="url(#glow)">Echo Hollow</text>
+</svg>

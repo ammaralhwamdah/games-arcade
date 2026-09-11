@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>Royal 21</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#0b1320;font-family:'Segoe UI',system-ui,sans-serif;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+canvas{display:block;width:100%;height:100%}
+</style>
+<meta name="robots" content="noindex, nofollow" />
+</head>
+<body>
+<div class="seo-text" aria-hidden="true" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap">
+<h1>Royal 21 - Free Online Game</h1>
+<p>Royal 21 is a stately game of blackjack at a banker's table. You start with a bankroll and place a bet each round - Hit when the hand is light, Stand when you trust it, let your Ace count as 1 or 11, and try to run your total to twenty-one without blasting past it. A natural blackjack wins the round outright, the dealer must hit until at least seventeen, and busting hands give up their stake while winning hands win double. Push your piles, read the flow of the deck, and rebuild when the table empties - every win builds the bank, every best balance stays saved in your browser. The clean felt, the soft snap of each dealt card, and the low clink of coin on polish make each hand feel like a serious stakes table. Original to PlayKrux, right down to the cards - no download, no age gate, just pure blackjack. Hit, stand, stay, and take the house.</p>
+<p>Play Royal 21 for free in your browser at PlayKrux. No downloads and no registration needed - the game runs instantly on any device. PlayKrux hosts only original, hand-built games, reviewed by our editors and safe for all ages.</p>
+</div>
+<canvas id="c"></canvas>
+<script>
+"use strict";
+const C=document.getElementById("c"),X=C.getContext("2d");
+let W,H,dpr;
+let muted=false;
+let state={phase:"menu",bank:100,bet:10,wins:0,best:0,deck:[],player:[],dealer:[],playerDone:false,msg:"",msgT:0,result:"",t:0,anim:[],dealI:0};
+const FACES=["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
+const SUITS=[["♠","#e2e8f0"],["♥","#ef4444"],["♦","#ef4444"],["♣","#e2e8f0"]];
+function resize(){dpr=Math.min(devicePixelRatio||1,1.6);W=innerWidth;H=innerHeight;C.width=W*dpr;C.height=H*dpr;X.setTransform(dpr,0,0,dpr,0,0)}
+resize();addEventListener("resize",resize);
+const AC=new(window.AudioContext||window.webkitAudioContext)();
+function snd(freq,dur,type="sine",vol=0.1,slide=0){
+  if(AC.state==="suspended")AC.resume();
+  const o=AC.createOscillator(),g=AC.createGain();
+  o.type=type;o.frequency.setValueAtTime(freq,AC.currentTime);
+  if(slide)o.frequency.exponentialRampToValueAtTime(slide,AC.currentTime+dur);
+  g.gain.setValueAtTime(vol,AC.currentTime);g.gain.exponentialRampToValueAtTime(0.001,AC.currentTime+dur);
+  o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+dur);
+}
+function sfxCard(){snd(520,0.06,"triangle",0.08)}
+function sfxWin(){[523,659,784].forEach((f,i)=>setTimeout(()=>snd(f,0.14,"triangle",0.1),i*90))}
+function sfxLose(){snd(200,0.28,"sawtooth",0.09,120)}
+function sfxDeal(){snd(640,0.07,"triangle",0.07,480)}
+
+function makeDeck(){
+  const d=[];
+  for(let s=0;s<4;s++)for(let f=0;f<13;f++)d.push({s,f});
+  return d;
+}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function value(c){const n=(c.f+1)%13;return n>10?10:(n===0?11:n);}
+function handValue(hand){
+  let v=0,a=0;
+  for(const c of hand){const n=value(c);if(n===11)a++;v+=n;}
+  while(v>21&&a>0){v-=10;a--;}
+  return v;
+}
+
+function startGame(){
+  const bet=Math.max(5,Math.min(50,Math.floor(state.bank/5)));
+  state.bet=bet;
+  state.bank-=bet;
+  state.deck=shuffle(makeDeck());
+  state.player=[];state.dealer=[];state.playerDone=false;state.result="";
+  state.player.push(state.deck.pop(),state.deck.pop());
+  state.dealer.push(state.deck.pop());
+  state.msg="Hit or Stand";state.msgT=2;state.anim=[];
+  dealAnim();
+  if(!muted)sfxDeal();
+}
+
+function dealAnim(){state.dealI=0;}
+
+function drawCard(c,x,y,w,h,faceUp){
+  X.save();const s=Math.min(w/90,h/130);
+  X.translate(x,y);
+  rr(-w/2,-h/2,w,h,6);
+  if(faceUp){
+    X.fillStyle="#f8fafc";X.fill();
+    X.strokeStyle="rgba(15,23,42,0.15)";X.lineWidth=1.5;X.stroke();
+    const r=8*s;
+    const color=SUITS[c.s][1];
+    X.fillStyle=color;
+    X.font=`800 ${13*s}px "Segoe UI",sans-serif`;
+    X.textAlign="left";X.textBaseline="top";
+    X.fillText(FACES[c.f],-w/2+5,-h/2+3);
+    X.font=`${12*s}px "Segoe UI",sans-serif`;
+    X.fillText(SUITS[c.s][0],-w/2+8,-h/2+16*s);
+    X.font=`${52*s}px "Segoe UI",sans-serif`;
+    X.textAlign="center";X.textBaseline="middle";
+    X.fillText(SUITS[c.s][0],0,4);
+  }else{
+    X.fillStyle="#1e3a8a";X.fill();
+    X.strokeStyle="#facc15";X.lineWidth=1.5;X.stroke();
+    X.fillStyle="#facc15";X.font=`900 ${14*s}px "Segoe UI",sans-serif`;
+    X.textAlign="center";X.textBaseline="middle";
+    X.fillText("♛",0,0);
+  }
+  X.restore();
+}
+
+function drawMenu(){
+  X.fillStyle="#0b1320";X.fillRect(0,0,W,H);
+  X.textAlign="center";X.textBaseline="middle";
+  X.font=`900 ${Math.max(24,Math.min(W*0.11,H*0.19))}px "Segoe UI",sans-serif`;
+  X.fillStyle="#fff";X.shadowColor="#facc15";X.shadowBlur=26;
+  X.fillText("Royal 21",W/2,H*0.2);
+  X.shadowBlur=0;
+  const subs=["Beat the dealer to 21 without going bust.","Hit to draw, Stand to hold your hand.","Risk your bank, chase wins and climb the table."];
+  X.font=`500 ${Math.max(11,Math.min(W*0.029,H*0.048))}px "Segoe UI",sans-serif`;
+  X.fillStyle="#94a3b8";
+  subs.forEach((s,i)=>X.fillText(s,W/2,H*0.29+Math.min(H*0.09,W*0.046)*i));
+  const bw=Math.min(W*0.82,420),bh=Math.max(52,Math.min(H*0.13,W*0.14)),x0=(W-bw)/2,y0=Math.max(H*0.52,H*0.5);
+  X.shadowColor="#facc15";X.shadowBlur=18;
+  rr(x0,y0,bw,bh,14);X.fillStyle="#1a2c14";X.fill();
+  X.shadowBlur=0;
+  X.fillStyle="#facc15";X.font=`700 ${bh*0.3}px "Segoe UI",sans-serif`;
+  X.fillText(state.bank>0?"DEAL A HAND":"RESTART",W/2,y0+bh*0.5);
+  X.font=`600 ${Math.min(W,H)*0.022}px "Segoe UI",sans-serif`;
+  X.fillStyle="#64748b";
+  X.fillText("Press H to Hit, S to Stand · M to mute"+(muted?" (muted)":""),W/2,H*0.9);
+  X.font=`700 ${Math.min(W,H)*0.03}px "Segoe UI",sans-serif`;
+  X.fillStyle="#4ade80";X.fillText("Bank "+state.bank+" · Wins "+state.wins,W/2,H*0.42);
+}
+
+function rr(x,y,w,h,r){X.beginPath();X.moveTo(x+r,y);X.arcTo(x+w,y,x+w,y+h,r);X.arcTo(x+w,y+h,x,y+h,r);X.arcTo(x,y+h,x,y,r);X.arcTo(x,y,x+w,y,r);X.closePath();}
+
+function button(x,y,w,h){
+  const hit={l:x,top:y,r:x+w,b:y+h};
+  hit.contains=(px,py)=>px>=hit.l&&px<=hit.r&&py>=hit.top&&py<=hit.b;
+  return hit;
+}
+
+function drawPlay(){
+  X.fillStyle="#0b1320";X.fillRect(0,0,W,H);
+  // felt table
+  X.fillStyle="#0f2b1d";rr(W*0.03,H*0.06,W*0.94,H*0.88,16);X.fill();
+  X.strokeStyle="rgba(250,204,21,0.5)";X.lineWidth=2;rr(W*0.03,H*0.06,W*0.94,H*0.88,16);X.stroke();
+
+  // dealer area
+  X.textAlign="center";X.textBaseline="middle";
+  X.fillStyle="#cbd5e1";X.font=`700 ${Math.min(W*0.045,H*0.035)}px "Segoe UI",sans-serif`;
+  X.fillText("DEALER · "+(state.result?handValue(state.dealer):"?")+"",W/2,H*0.12);
+  const dw=Math.min(W*0.11,H*0.13),dh=dw*1.4;
+  let dx=W/2-((Math.max(state.dealer.length,1)*dw*0.62)/2);
+  for(let i=0;i<state.dealer.length;i++){
+    const faceUp=state.result||i>0;
+    drawCard(state.dealer[i],dx+dw*0.31,H*0.20,dw,dh,faceUp);
+    dx+=dw*0.62;
+  }
+
+  // player area
+  X.fillStyle="#facc15";X.font=`700 ${Math.min(W*0.045,H*0.035)}px "Segoe UI",sans-serif`;
+  X.fillText("YOU · "+handValue(state.player)+"",W/2,H*0.36);
+  const pw=Math.min(W*0.11,H*0.13),ph=pw*1.4;
+  let px2=W/2-((state.player.length*0.62*pw)/2);
+  for(const c of state.player){
+    drawCard(c,px2+pw*0.31,H*0.44,pw,ph,true);
+    px2+=pw*0.62;
+  }
+
+  // result
+  if(state.result){
+    X.font=`900 ${Math.min(W*0.11,H*0.1)}px "Segoe UI",sans-serif`;
+    X.fillStyle=state.result.startsWith("WIN")?"#4ade80":(state.result.includes("PUSH")?"#94a3b8":"#ef4444");
+    X.shadowColor=X.fillStyle;X.shadowBlur=24;
+    X.fillText(state.result.toUpperCase(),W/2,H*0.72);
+    X.shadowBlur=0;
+  }
+
+  // actions + buttons
+  const bw2=Math.min(W*0.62,300),bh2=Math.max(46,Math.min(H*0.09,W*0.11)),bx=(W-bw2)/2,by=H*0.84;
+  const gap=Math.min(W*0.02,12);
+  const hw=bw2/2-gap/2;
+  if(!state.result){
+    drawActionBtn(bx,by,hw,bh2,"HIT (#)","#1e3a8a",state.playerDone);
+    drawActionBtn(bx+hw+gap,by,hw,bh2,"STAND","#8b5cf6",state.playerDone);
+  }else{
+    drawActionBtn(bx,by,bw2,bh2,"NEXT HAND","#166534",false);
+  }
+  X.fillStyle="#64748b";X.font=`600 ${Math.min(W*0.03,H*0.024)}px "Segoe UI",sans-serif`;
+  X.textAlign="center";X.fillText("Bank "+state.bank+"  ·  Bet "+state.bet,W*0.5,H*0.97);
+
+  if(state.msgT>0){
+    X.globalAlpha=Math.min(1,state.msgT);
+    X.font=`700 ${Math.min(W*0.05,H*0.04)}px "Segoe UI",sans-serif`;
+    X.fillStyle="#facc15";X.fillText(state.msg,W/2,H*0.62);
+    X.globalAlpha=1;
+  }
+}
+
+function drawActionBtn(x,y,w,h,label,col,disabled){
+  X.save();
+  X.globalAlpha=disabled?0.45:1;
+  rr(x,y,w,h,12);
+  X.fillStyle=col;X.fill();
+  X.fillStyle="#fff";X.font=`700 ${Math.min(w*0.14,h*0.3)}px "Segoe UI",sans-serif`;
+  X.textAlign="center";X.textBaseline="middle";
+  X.fillText(label,x+w/2,y+h/2);
+  X.restore();
+}
+
+function draw(){
+  if(state.phase==="menu"){drawMenu();return;}
+  drawPlay();
+}
+
+function playerHit(){
+  if(state.playerDone)return;
+  state.player.push(state.deck.pop());
+  if(!muted)sfxCard();
+  const v=handValue(state.player);
+  if(v>21){
+    state.result="BUST";resolve(false);
+  }else if(v===21){
+    resolve(true);
+  }
+}
+
+function stand(){
+  if(state.playerDone)return;
+  state.playerDone=true;
+  // dealer plays
+  while(handValue(state.dealer)<17&&state.deck.length)state.dealer.push(state.deck.pop());
+  if(!muted)sfxDeal();
+  const pv=handValue(state.player),dv=handValue(state.dealer);
+  if(dv>21)resolve(true,pv+" beats "+dv);
+  else if(dv>pv)resolve(false);
+  else if(dv===pv)resolve("PUSH");
+  else resolve(true);
+}
+
+function resolve(win,detail){
+  // defer dealer reveal: mark result
+  state.result=win===true?"WIN":(win===false?"LOSE":"PUSH");
+  if(win===true){state.bank+=state.bet*2;state.wins++;if(!muted)sfxWin();}
+  else if(win===false){if(!muted)sfxLose();if(state.bank<=0)state.bank=0;}
+  else {state.bank+=state.bet;if(!muted)sfxCard();}
+  if(state.bank>state.best)state.best=state.bank;
+  try{localStorage.setItem("royal-21",String(state.best))}catch(e){}
+}
+
+C.addEventListener("pointerdown",e=>{
+  if(state.phase==="menu"){
+    const bw=Math.min(W*0.82,420),bh=Math.max(52,Math.min(H*0.13,W*0.14)),x0=(W-bw)/2,y0=Math.max(H*0.52,H*0.5);
+    if(e.clientX>=x0&&e.clientX<=x0+bw&&e.clientY>=y0&&e.clientY<=y0+bh){
+      startGame();
+      if(!muted)sfxDeal();
+    }
+    return;
+  }
+  const bw2=Math.min(W*0.62,300),bh2=Math.max(46,Math.min(H*0.09,W*0.11)),bx=(W-bw2)/2,by=H*0.84;
+  const gap=Math.min(W*0.02,12),hw=bw2/2-gap/2;
+  if(state.result){
+    if(e.clientX>=bx&&e.clientX<=bx+bw2&&e.clientY>=by&&e.clientY<=by+bh2){
+      if(state.bank<=0){
+        state.bank=100;state.wins=0;startGame();
+      }else startGame();
+      if(!muted)sfxDeal();
+    }
+    return;
+  }
+  if(e.clientX>=bx&&e.clientX<=bx+hw&&e.clientY>=by&&e.clientY<=by+bh2)playerHit();
+  else if(e.clientX>=bx+hw+gap&&e.clientX<=bx+bw2&&e.clientY>=by&&e.clientY<=by+bh2)stand();
+});
+
+addEventListener("keydown",e=>{
+  if(e.key==="m"||e.key==="M"){muted=!muted;return;}
+  if(state.phase==="menu"&&(e.key===" "||e.key==="Enter")){startGame();if(!muted)sfxDeal();return;}
+  if(state.phase!=="play")return;
+  if(state.result&&(e.key===" "||e.key==="Enter")){if(state.bank<=0){state.bank=100;state.wins=0;}startGame();if(!muted)sfxDeal();return;}
+  if(state.result)return;
+  if(e.key==="h"||e.key==="H")playerHit();
+  if(e.key==="s"||e.key==="S")stand();
+});
+
+function loadBest(){try{const b=parseInt(localStorage.getItem("royal-21")||"0",10);if(b>0)state.best=b;state.bank=b}catch(e){}}
+
+let last=performance.now();
+function loop(t){
+  const dt=Math.min(50,t-last);last=t;
+  if(state.msgT>0)state.msgT-=dt/1000;
+  draw();
+  requestAnimationFrame(loop);
+}
+loadBest();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

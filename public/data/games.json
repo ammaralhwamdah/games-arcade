@@ -1,6 +1,6 @@
 {
   "generated": "2026-09-02T12:00:00.000Z",
-  "total": 33,
+  "total": 35,
   "categories": 20,
   "categoriesMeta": [
     {
@@ -910,6 +910,38 @@
       "year": 2026,
       "tags": ["exclusive", "html5", "girls", "dressup", "fashion", "style", "memory", "single-player"],
       "description": "Glam Swap is a playful fashion studio where you dress the model and chase a perfect style score. Four wardrobe racks line up across the screen - tops, bottoms, shoes and accessories - each holding five fresh pieces with their own colors and vibes. Tap a garment to swap it onto the model and instantly watch the score reel in: stick to a clean color story for a trend bonus, lock pieces that need a second look, and mix every category to chase the elusive perfect 100-point runway look. Experiment freely - every outfit you try reveals how close you are to catwalk gold, and the best style score stays saved in your browser for the next season. The neon palette, the soft shuffle of each swap, and the confetti burst when you hit a killer combo make every bra look like a personal runway moment. Original to PlayKrux, fully offline, and completely free - swap the wardrobe, perfect the look, and strut away with the crown."
+    },
+    {
+      "id": "echo-hollow",
+      "slug": "echo-hollow",
+      "name": "Echo Hollow",
+      "category": "horror",
+      "categories": ["horror", "boys", "action"],
+      "file": "games/echo-hollow/index.html",
+      "src": "/games/echo-hollow/index.html",
+      "image": "/images/games/echo-hollow.svg",
+      "sizeKb": 11,
+      "rating": 4.9,
+      "plays": 0,
+      "year": 2026,
+      "tags": ["exclusive", "html5", "horror", "dark", "flashlight", "atmospheric", "single-player"],
+      "description": "Echo Hollow turns your screen into a hushed, pitch-black hollow where something is waiting just outside the light. You hold a lantern that follows your mouse or finger, and somewhere in the dark drift the faint amber eyes of the Whisper - you have to sweep your beam across the void to find it, then keep it pinned in the light long enough to banish it back into the shadows. Every captured Whisper tops up your battery and lets you climb another level, but the hollow siphons your lantern while it haunts, so you must hunt quickly and never let the glow die - if the battery empties in the dark, the Whisper takes you. The stereo hum, the faint creak, and the cold flicker of a failing lamp build a tension few browser games ever reach. Your deepest level stays saved in your browser. Original to PlayKrux and completely free - step into the dark and see how deep you can go."
+    },
+    {
+      "id": "royal-21",
+      "slug": "royal-21",
+      "name": "Royal 21",
+      "category": "card",
+      "categories": ["card", "strategy", "casino"],
+      "file": "games/royal-21/index.html",
+      "src": "/games/royal-21/index.html",
+      "image": "/images/games/royal-21.svg",
+      "sizeKb": 11,
+      "rating": 4.8,
+      "plays": 0,
+      "year": 2026,
+      "tags": ["exclusive", "html5", "cards", "blackjack", "casino", "strategy", "single-player"],
+      "description": "Royal 21 is a stately game of blackjack at a banker's table. You start with a bankroll and place a bet each round - Hit when the hand is light, Stand when you trust it, let your Ace count as 1 or 11, and try to run your total to twenty-one without blasting past it. A natural blackjack wins the round outright, the dealer must hit until at least seventeen, and busting hands give up their stake while winning hands win double. Push your piles, read the flow of the deck, and rebuild when the table empties - every win builds the bank, every best balance stays saved in your browser. The clean felt, the soft snap of each dealt card, and the low clink of coin on polish make each hand feel like a serious stakes table. Original to PlayKrux, right down to the cards - no download, no age gate, just pure blackjack. Hit, stand, stay, and take the house."
     }
   ]
 }

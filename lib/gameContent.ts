@@ -1208,6 +1208,90 @@ const content: Record<string, GameContent> = {
       },
     ],
   },
+  "echo-hollow": {
+    tips: [
+      "Sweep the beam in slow, wide arcs instead of one long strip. The Whisper hides anywhere in the dark, and a calm full-circle scan catches its eyes far sooner than jittery twitching.",
+      "Lock onto where the eyes appear first. Once you spot the faint amber pair, keep the center of the beam pinned on that spot - the capture meter only fills while the light rests on the Whisper.",
+      "Do not chase around the edge. The Whisper drifts and bounces off the hollow walls, so moving in increasing circles around it corners it faster than following its path step by step.",
+      "Let the battery be your clock. Every capture restores it, so string quick, clean finds together to climb levels instead of letting a slow hunt drain your lamp.",
+      "When the light starts to flicker, stop panning. Keep the beam centered and breathe - panic swipes burn the most battery, and the scare strike comes only when the lamp dies."
+    ],
+    features: [
+      "Atmospheric hide-and-seek where you hunt a drifting Whisper with your lantern",
+      "Full dark required - the beam reveals only what it touches, and its eyes glow before the body",
+      "Capture the Whisper to restore battery and climb deeper, one level at a time",
+      "Stereo tension: timid hums, creaks and a cold scare sting when the light fails",
+      "Best depth saved in your browser - completely free, offline and original to PlayKrux",
+    ],
+    faq: [
+      {
+        q: "Is Echo Hollow free to play?",
+        a: "Yes. Echo Hollow is completely free, runs directly in your browser and shows no ads inside the game. There is nothing to download, install or pay for - just light the lantern and enter the dark.",
+      },
+      {
+        q: "How do I play Echo Hollow?",
+        a: "Move your mouse or finger to sweep the flashlight beam across the dark hollow. Find the Whisper's faint eyes, then hold the beam on it until it is banished. Keep the lantern lit to survive - when the battery hits zero, the dark takes you.",
+      },
+      {
+        q: "How do I catch the Whisper?",
+        a: "The Whisper drifts slowly and bounces off the walls. Point your beam at it and hold the light steady - a capture meter fills while the Whisper stays in your beam, and once it is about one third full, the creature flees and your battery is restored.",
+      },
+      {
+        q: "What makes the game harder?",
+        a: "Each level is a new Whisper that can surface further away, while your lantern must search quickly because the hollow saps battery continuously. Faster captures chain into deeper runs before the dark claims you.",
+      },
+      {
+        q: "What happens when the battery dies?",
+        a: "The screen stings with a scare moment and your run ends. Your deepest level is saved in your browser, so the next dive starts with a depth to beat.",
+      },
+      {
+        q: "Can I play on my phone?",
+        a: "Yes. Echo Hollow is built for touch - just drag your finger to aim the lantern - and it works with the mouse on desktop. Wear headphones for the full effect; it creates an atmosphere few browser games match.",
+      },
+    ],
+  },
+  "royal-21": {
+    tips: [
+      "Respect the dealer's up-card. If the dealer shows a weak card, standing on a modest hand like twelve or thirteen is safer; against a strong card you need to reach seventeen or better.",
+      "Let an Ace be flexible. It counts as eleven until that would bust you, then it turns into one - hands like Ace and Six are powerful because they adapt as cards come.",
+      "Do not chase every split into a deep push. When you double into a wide deck, the table can turn - the real longevity at Royal 21 is knowing when a hand is good enough to stand.",
+      "Watch the bank like the cards. Every bet is a slice of your bankroll, so a hot streak that doubles your pile is the moment to slow down and protect it.",
+      "Read your total against the seven-tons rule. The dealer is forced to hit below seventeen, so a stiff seventeen or a solid nineteen lets the dealer's forced hits do the losing for you."
+    ],
+    features: [
+      "Full blackjack against the banker - hit, stand, push, bust, win and double down sequences",
+      "Aces count as 1 or 11 with automatic softening, dealer hits until seventeen",
+      "Bet from your bankroll with wins returning double and pushes returning the stake",
+      "Clean felt table, crisp card sounds and coin chimes for every payout",
+      "Best bank saved in your browser - free, offline and original to PlayKrux",
+    ],
+    faq: [
+      {
+        q: "Is Royal 21 free to play?",
+        a: "Yes. Royal 21 is completely free, runs directly in your browser and shows no ads inside the game. There is nothing to download, install or pay for - no real money is involved, just a virtual bankroll.",
+      },
+      {
+        q: "How do I play Royal 21?",
+        a: "Tap or press Hit to take another card, and Stand to hold your total. The dealer must hit until at least seventeen. Get twenty-one without going over and you win - go over and you bust.",
+      },
+      {
+        q: "What is a blackjack?",
+        a: "A natural twenty-one from your first two cards, usually an Ace plus a ten or face card. It beats a dealer hand that reaches twenty-one in more than two cards, and it pays out double from your stake.",
+      },
+      {
+        q: "How do Aces work?",
+        a: "An Ace counts as 11 unless that would take you over twenty-one, in which case it is counted as 1. The game decides automatically, so hands with Aces stay flexible as new cards arrive.",
+      },
+      {
+        q: "What happens when my bankroll runs out?",
+        a: "The table tops you back up to a starting bankroll so you can keep playing with no barrier. Your best bank balance is saved in your browser as the score to beat.",
+      },
+      {
+        q: "Can I play on my phone?",
+        a: "Yes. Royal 21 works with both taps and clicks - use on-screen Hit and Stand buttons on mobile or the keyboard shortcuts H and S on desktop. It runs in any modern browser.",
+      },
+    ],
+  },
   "twinlume": {
     tips: [
       "Start from the outside and sweep inward. Clearing the outer row first leaves fewer cards to misread later, and you build the grid's skeleton before the middle gets crowded.",      "Say the symbol out loud as you flip it. Naming what you see - star, moon, bolt - anchors it better than a silent glance, and paired positions start to stick after just a few rounds.",
