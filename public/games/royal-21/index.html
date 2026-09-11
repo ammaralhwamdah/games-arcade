@@ -135,57 +135,60 @@ function button(x,y,w,h){
 function drawPlay(){
   X.fillStyle="#0b1320";X.fillRect(0,0,W,H);
   // felt table
-  X.fillStyle="#0f2b1d";rr(W*0.03,H*0.06,W*0.94,H*0.88,16);X.fill();
-  X.strokeStyle="rgba(250,204,21,0.5)";X.lineWidth=2;rr(W*0.03,H*0.06,W*0.94,H*0.88,16);X.stroke();
+  const pad=Math.max(6,W*0.02);
+  const tx=pad,ty=pad,tw=W-pad*2,th=H-pad*2;
+  X.fillStyle="#0f2b1d";rr(tx,ty,tw,th,16);X.fill();
+  X.strokeStyle="rgba(250,204,21,0.5)";X.lineWidth=2;rr(tx,ty,tw,th,16);X.stroke();
 
-  // dealer area
   X.textAlign="center";X.textBaseline="middle";
+
+  const cardH=Math.min(th*0.17,W*0.16);
+  const dw=Math.min(W*0.10,cardH/1.4),dh=Math.min(cardH,dw*1.4);
+
+  // dealer row
+  const dealY=ty+th*0.18;
   X.fillStyle="#cbd5e1";X.font=`700 ${Math.min(W*0.045,H*0.035)}px "Segoe UI",sans-serif`;
-  X.fillText("DEALER · "+(state.result?handValue(state.dealer):"?")+"",W/2,H*0.12);
-  const dw=Math.min(W*0.11,H*0.13),dh=dw*1.4;
+  X.fillText("DEALER · "+(state.result?handValue(state.dealer):"?")+"",W/2,ty+th*0.06);
   let dx=W/2-((Math.max(state.dealer.length,1)*dw*0.62)/2);
   for(let i=0;i<state.dealer.length;i++){
     const faceUp=state.result||i>0;
-    drawCard(state.dealer[i],dx+dw*0.31,H*0.20,dw,dh,faceUp);
+    drawCard(state.dealer[i],dx+dw*0.31,dealY,dw,dh,faceUp);
     dx+=dw*0.62;
   }
 
-  // player area
+  // player row
+  const playY=ty+th*0.44;
   X.fillStyle="#facc15";X.font=`700 ${Math.min(W*0.045,H*0.035)}px "Segoe UI",sans-serif`;
-  X.fillText("YOU · "+handValue(state.player)+"",W/2,H*0.36);
-  const pw=Math.min(W*0.11,H*0.13),ph=pw*1.4;
-  let px2=W/2-((state.player.length*0.62*pw)/2);
+  X.fillText("YOU · "+handValue(state.player)+"",W/2,ty+th*0.33);
+  let px2=W/2-((state.player.length*0.62*dw)/2);
   for(const c of state.player){
-    drawCard(c,px2+pw*0.31,H*0.44,pw,ph,true);
-    px2+=pw*0.62;
+    drawCard(c,px2+dw*0.31,playY,dw,dh,true);
+    px2+=dw*0.62;
   }
+
+  const btnW=Math.min(W*0.6,300),btnH=Math.max(46,Math.min(th*0.09,W*0.12));
+  const bx=(W-btnW)/2, by=ty+th*0.88-btnH/2;
+  const gap=Math.min(W*0.02,12), hw=btnW/2-gap/2;
 
   // result
   if(state.result){
     X.font=`900 ${Math.min(W*0.11,H*0.1)}px "Segoe UI",sans-serif`;
     X.fillStyle=state.result.startsWith("WIN")?"#4ade80":(state.result.includes("PUSH")?"#94a3b8":"#ef4444");
     X.shadowColor=X.fillStyle;X.shadowBlur=24;
-    X.fillText(state.result.toUpperCase(),W/2,H*0.72);
+    X.fillText(state.result.toUpperCase(),W/2,ty+th*0.72);
     X.shadowBlur=0;
-  }
-
-  // actions + buttons
-  const bw2=Math.min(W*0.62,300),bh2=Math.max(46,Math.min(H*0.09,W*0.11)),bx=(W-bw2)/2,by=H*0.84;
-  const gap=Math.min(W*0.02,12);
-  const hw=bw2/2-gap/2;
-  if(!state.result){
-    drawActionBtn(bx,by,hw,bh2,"HIT (H)","#1e3a8a",state.playerDone);
-    drawActionBtn(bx+hw+gap,by,hw,bh2,"STAND","#8b5cf6",state.playerDone);
+    drawActionBtn(bx,by,btnW,btnH,"NEXT HAND","#166534",false);
   }else{
-    drawActionBtn(bx,by,bw2,bh2,"NEXT HAND","#166534",false);
+    drawActionBtn(bx,by,hw,btnH,"HIT (H)","#1e3a8a",state.playerDone);
+    drawActionBtn(bx+hw+gap,by,hw,btnH,"STAND","#8b5cf6",state.playerDone);
   }
   X.fillStyle="#64748b";X.font=`600 ${Math.min(W*0.03,H*0.024)}px "Segoe UI",sans-serif`;
-  X.textAlign="center";X.fillText("Bank "+state.bank+"  ·  Bet "+state.bet,W*0.5,H*0.97);
+  X.fillText("Bank "+state.bank+"  ·  Bet "+state.bet,W/2,ty+th*0.97);
 
   if(state.msgT>0){
     X.globalAlpha=Math.min(1,state.msgT);
     X.font=`700 ${Math.min(W*0.05,H*0.04)}px "Segoe UI",sans-serif`;
-    X.fillStyle="#facc15";X.fillText(state.msg,W/2,H*0.62);
+    X.fillStyle="#facc15";X.fillText(state.msg,W/2,ty+th*0.62);
     X.globalAlpha=1;
   }
 }
@@ -250,7 +253,9 @@ C.addEventListener("pointerdown",e=>{
     }
     return;
   }
-  const bw2=Math.min(W*0.62,300),bh2=Math.max(46,Math.min(H*0.09,W*0.11)),bx=(W-bw2)/2,by=H*0.84;
+  const pad2=Math.max(6,W*0.02);
+  const condTh=H-pad2*2;
+  const bw2=Math.min(W*0.6,300),bh2=Math.max(46,Math.min(condTh*0.09,W*0.12)),bx=(W-bw2)/2,by=pad2+condTh*0.88-bh2/2;
   const gap=Math.min(W*0.02,12),hw=bw2/2-gap/2;
   if(state.result){
     if(e.clientX>=bx&&e.clientX<=bx+bw2&&e.clientY>=by&&e.clientY<=by+bh2){
