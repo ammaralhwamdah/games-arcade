@@ -103,16 +103,30 @@ canvas{background:#1a6b33;border-radius:10px;touch-action:none;outline:none;box-
     msgT=1.4;
   }
 
-  function shootFrom(cx,cy){
-    var tx=Math.max(GL+8,Math.min(GR-8,cx));
-    var ty=Math.max(GT+8,Math.min(GB-8,cy));
+  function aimTarget(sx,sy,cx,cy){
+    var dvx=cx-sx, dvy=cy-sy;
+    var d=Math.hypot(dvx,dvy);
+    if(d<24){ return {x:GX,y:(GT+GB)/2,d:d}; }
+    var tx=GX+dvx*1.5;
+    var ty=(GT+GB)/2+dvy*1.1;
+    tx=Math.max(GL-46,Math.min(GR+46,tx));
+    ty=Math.max(GT-30,Math.min(GB+30,ty));
+    return {x:tx,y:ty,d:d};
+  }
+
+  function shootFrom(sx,sy,cx,cy){
+    var tg=aimTarget(sx,sy,cx,cy);
+    var tx=tg.x,ty=tg.y,d=tg.d;
     var dx=tx-SPOT_X,dy=ty-SPOT_Y;
-    var dist=Math.hypot(dx,dy);
-    var t=Math.max(0.35,Math.min(0.82,dist/500));
+    var dist=Math.max(1,Math.hypot(dx,dy));
+    var t=0.62-Math.min(0.28,d/300);
+    t=Math.max(0.34,Math.min(0.62,t));
+    if(d<24)t=0.45;
+    var g=W*0.62*0.55;
     ball.vx=dx/t;
-    ball.vy=(dy-0.5*W*0.62*0.55*t*t)/t;
-    if(ball.vy>-120)ball.vy=-120;
-    ball.active=true;ball.fireT=0;
+    ball.vy=(dy-0.5*g*t*t)/t;
+    if(ball.vy>-140)ball.vy=-140;
+    ball.active=true;ball.fireT=0;ball.result="";
     phase="ball";
     shootAnim=1;
     sKick();
@@ -177,6 +191,8 @@ canvas{background:#1a6b33;border-radius:10px;touch-action:none;outline:none;box-
     if(r==="GOAL")msg="GOAL!";
     else if(r==="SAVE")msg="SAVED!";
     else if(r==="POST")msg="OFF THE POST!";
+    else if(r==="MISS-WIDE")msg="WIDE!";
+    else if(r==="MISS-OVER")msg="OVER THE BAR!";
     else msg="MISS!";
     msgT=1.6;
   }
@@ -250,20 +266,30 @@ canvas{background:#1a6b33;border-radius:10px;touch-action:none;outline:none;box-
     b.vy+=W*0.62*dt*0.55;
     b.vx*=Math.max(0,1-0.04*dt);b.vy*=Math.max(0,1-0.04*dt);
     var prevY=b.y-b.vy*dt;
+    // save: keeper reaches the ball near the goal mouth plane
+    if(Math.abs(b.y-GB)<14&&Math.abs(keeper.x-b.x)<BALL_R+16&&!b.result){
+      b.vy=Math.abs(b.vy)*0.3;b.y=GB;
+      resolve("SAVE");
+      return;
+    }
     // post collisions inside goal zone
-    if(b.y<GB&&b.y>GT){
+    if(b.y<=GB&&b.y>=GT){
       if(Math.abs(b.x-GL)<POST+BALL_R&&b.vx<0){b.x=GL-POST-BALL_R;b.vx=Math.abs(b.vx)*0.5;resolve("POST");return;}
       if(Math.abs(b.x-GR)<POST+BALL_R&&b.vx>0){b.x=GR+POST+BALL_R;b.vx=-Math.abs(b.vx)*0.5;resolve("POST");return;}
     }
-    // crossing the goal line plane
-    if(prevY>=GT&&b.y<GT){
+    // crossing the goal mouth plane (from out to in, going up) -> wide miss or goal
+    if(prevY>GB&&b.y<=GB){
       if(b.x<GL+BALL_R||b.x>GR-BALL_R){
-        // missed wide: deflect off the wall behind
-        b.y=GT;b.vy=Math.abs(b.vy)*0.3;
-        if(!b.result)resolve("MISS");
+        b.y=GB;b.vy=Math.abs(b.vy)*0.3;
+        if(!b.result)resolve("MISS-WIDE");
         return;
       }
       resolve("GOAL");
+      return;
+    }
+    // crossing the top crossbar plane (from below to above) -> shot safely over
+    if(prevY>=GT&&b.y<GT){
+      resolve("MISS-OVER");
       return;
     }
     // hit ground
@@ -278,12 +304,6 @@ canvas{background:#1a6b33;border-radius:10px;touch-action:none;outline:none;box-
     }
     if(b.x<BALL_R){b.x=BALL_R;b.vx=Math.abs(b.vx)*0.6;}
     if(b.x>W-BALL_R){b.x=W-BALL_R;b.vx=-Math.abs(b.vx)*0.6;}
-    // save: keeper reaches the ball near the goal plane
-    if(b.y<GB&&b.y>GT-6&&Math.abs(keeper.x-b.x)<BALL_R+16&&!b.result){
-      b.vy=Math.abs(b.vy)*0.3;b.y=GT;
-      resolve("SAVE");
-      return;
-    }
     // timeout miss
     if(b.fireT>4&&!b.result){resolve("MISS");return;}
   }
@@ -385,17 +405,22 @@ canvas{background:#1a6b33;border-radius:10px;touch-action:none;outline:none;box-
     }
   }
 
-  function aimPower(){
+  function aimRaw(){
     if(!aim.on)return 0;
-    var dx=aim.cx-SPOT_X,dy=aim.cy-SPOT_Y;
-    var d=Math.hypot(dx,dy);
+    var dx=aim.cx-aim.sx,dy=aim.cy-aim.sy;
+    return Math.hypot(dx,dy);
+  }
+
+  function aimPower(){
+    var d=aimRaw();
     return Math.max(0.3,Math.min(1,d/150));
   }
 
   function drawAim(){
     if(!aim.on)return;
     ctx.save();
-    var tx=aim.cx,ty=aim.cy;
+    var tg=aimTarget(aim.sx,aim.sy,aim.cx,aim.cy);
+    var tx=tg.x,ty=tg.y;
     ctx.strokeStyle="rgba(255,255,255,0.9)";ctx.lineWidth=2;ctx.setLineDash([6,8]);
     ctx.beginPath();ctx.moveTo(SPOT_X,SPOT_Y);ctx.lineTo(tx,ty);ctx.stroke();
     ctx.setLineDash([]);
@@ -548,14 +573,8 @@ canvas{background:#1a6b33;border-radius:10px;touch-action:none;outline:none;box-
   canvas.addEventListener("pointerup",function(e){
     if(!aim.on)return;
     var p=toCanvas(e);
-    var d=Math.hypot(p.x-aim.sx,p.y-aim.sy);
     aim.on=false;
-    if(d<24){
-      aim.cx=GX;aim.cy=GT-40;
-    }else{
-      aim.cx=p.x;aim.cy=p.y;
-    }
-    shootFrom(aim.cx,aim.cy);
+    shootFrom(aim.sx,aim.sy,p.x,p.y);
   });
 
   addEventListener("keydown",function(e){
