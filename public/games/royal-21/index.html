@@ -57,6 +57,7 @@ function handValue(hand){
 }
 
 function startGame(){
+  state.phase="play";
   const bet=Math.max(5,Math.min(50,Math.floor(state.bank/5)));
   state.bet=bet;
   state.bank-=bet;
@@ -173,7 +174,7 @@ function drawPlay(){
   const gap=Math.min(W*0.02,12);
   const hw=bw2/2-gap/2;
   if(!state.result){
-    drawActionBtn(bx,by,hw,bh2,"HIT (#)","#1e3a8a",state.playerDone);
+    drawActionBtn(bx,by,hw,bh2,"HIT (H)","#1e3a8a",state.playerDone);
     drawActionBtn(bx+hw+gap,by,hw,bh2,"STAND","#8b5cf6",state.playerDone);
   }else{
     drawActionBtn(bx,by,bw2,bh2,"NEXT HAND","#166534",false);
