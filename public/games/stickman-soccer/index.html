@@ -41,6 +41,7 @@ canvas{background:#1a6b33;border-radius:10px;touch-action:none;outline:none;box-
 
   // pitch geometry (penalty scene on the top of the pitch)
   var GX=W/2,GW=350,GL=GX-GW/2,GR=GX+GW/2,GT=56,GB=240,POST=6;
+  var KS=1.68,SS=1.6;
   var SPOT_X=W/2,SPOT_Y=H-118;
   var GROUND=H-40,BALL_R=11;
   var ROUNDS=5;
@@ -337,7 +338,8 @@ canvas{background:#1a6b33;border-radius:10px;touch-action:none;outline:none;box-
       ctx.rotate(-lean*0.9);
       ctx.translate(0,-10);
     }
-    drawStick(0,-4,0.95,"#e0f2fe",lean*0.5,16,-16,0);
+    ctx.scale(KS,KS);
+    drawStick(0,-4,1.0,"#e0f2fe",lean*0.5,16,-16,0);
     // gloves
     ctx.strokeStyle="#fca5a5";ctx.lineWidth=5;
     ctx.lineCap="round";
@@ -349,7 +351,8 @@ canvas{background:#1a6b33;border-radius:10px;touch-action:none;outline:none;box-
   function drawShooter(){
     ctx.save();
     ctx.translate(SPOT_X,SPOT_Y);
-    drawStick(0,-18,1.05,"#7dd3fc",-0.06,shootAnim>0?18:8,0,shootAnim>0?0.7:0.4);
+    ctx.scale(SS,SS);
+    drawStick(0,-18,1.0,"#7dd3fc",-0.06,shootAnim>0?18:8,0,shootAnim>0?0.7:0.4);
     ctx.restore();
   }
 
