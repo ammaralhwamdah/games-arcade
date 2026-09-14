@@ -314,17 +314,22 @@ canvas{background:#1a6b33;border-radius:10px;touch-action:none;outline:none;box-
 
   function drawStick(x,y,s,c,lean,armL,armR,kick){
     ctx.save();ctx.translate(x,y);ctx.scale(s,s);ctx.rotate(lean||0);
-    ctx.lineCap="round";ctx.lineWidth=3.4;ctx.strokeStyle=c;
-    var sw=Math.sin((kick||0)*6)*6;
-    ctx.beginPath();ctx.moveTo(0,-30);ctx.lineTo(-9,30-sw);ctx.stroke();
-    ctx.beginPath();ctx.moveTo(0,-30);ctx.lineTo(9,30-sw*0.6);ctx.stroke();
-    ctx.beginPath();ctx.moveTo(0,-30);ctx.lineTo(0,-2);ctx.stroke();
-    var alx=(armL==null?-10:-armL),arx=(armR==null?10:armR);
-    ctx.beginPath();ctx.moveTo(0,-24);ctx.lineTo(alx,-8);ctx.stroke();
-    ctx.beginPath();ctx.moveTo(0,-24);ctx.lineTo(arx,-8);ctx.stroke();
+    ctx.lineCap="round";ctx.lineJoin="round";ctx.strokeStyle=c;ctx.lineWidth=3.5;
+    var sw=Math.sin((kick||0)*6)*5;
+    // torso
+    ctx.beginPath();ctx.moveTo(0,-30);ctx.lineTo(0,2);ctx.stroke();
+    // legs with stride
+    ctx.beginPath();ctx.moveTo(0,-4);ctx.lineTo(-9,32-sw);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,-4);ctx.lineTo(9,32-sw*0.65);ctx.stroke();
+    // arms: hands land at (armL,armR); nulls default to a relaxed spread
+    var hl=(armL==null?-14:armL),hr=(armR==null?14:armR);
+    ctx.beginPath();ctx.moveTo(0,-25);ctx.lineTo(hl,-7);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,-25);ctx.lineTo(hr,-7);ctx.stroke();
+    // head
     ctx.fillStyle="#e9d8c4";
-    ctx.beginPath();ctx.arc(0,-38,6.5,0,Math.PI*2);ctx.fill();
-    ctx.strokeStyle=c;ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,-38,6.5,0,Math.PI*2);ctx.stroke();
+    ctx.beginPath();ctx.arc(0,-37,7,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle=c;ctx.lineWidth=2.2;
+    ctx.beginPath();ctx.arc(0,-37,7,0,Math.PI*2);ctx.stroke();
     ctx.restore();
   }
 
@@ -339,12 +344,11 @@ canvas{background:#1a6b33;border-radius:10px;touch-action:none;outline:none;box-
       ctx.translate(0,-10);
     }
     ctx.scale(KS,KS);
-    drawStick(0,-4,1.0,"#e0f2fe",lean*0.5,16,-16,0);
-    // gloves
-    ctx.strokeStyle="#fca5a5";ctx.lineWidth=5;
-    ctx.lineCap="round";
-    ctx.beginPath();ctx.moveTo(-16,-36);ctx.lineTo(-22,-20);ctx.stroke();
-    ctx.beginPath();ctx.moveTo(16,-36);ctx.lineTo(22,-20);ctx.stroke();
+    drawStick(0,-4,1.0,"#e0f2fe",lean*0.5,-16,16,0);
+    // gloves at hands
+    ctx.strokeStyle="#fca5a5";ctx.lineWidth=4.5;ctx.lineCap="round";
+    ctx.beginPath();ctx.moveTo(-16*KS,-11*KS);ctx.lineTo(-22*KS,-9*KS);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(16*KS,-11*KS);ctx.lineTo(22*KS,-9*KS);ctx.stroke();
     ctx.restore();
   }
 
@@ -352,7 +356,7 @@ canvas{background:#1a6b33;border-radius:10px;touch-action:none;outline:none;box-
     ctx.save();
     ctx.translate(SPOT_X,SPOT_Y);
     ctx.scale(SS,SS);
-    drawStick(0,-18,1.0,"#7dd3fc",-0.06,shootAnim>0?18:8,0,shootAnim>0?0.7:0.4);
+    drawStick(0,-18,1.0,"#7dd3fc",-0.06,shootAnim>0?-18:-8,0,shootAnim>0?0.7:0.4);
     ctx.restore();
   }
 
