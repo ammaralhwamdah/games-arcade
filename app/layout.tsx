@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BackToTop from "@/components/BackToTop";
+import AdUnit from "@/components/AdUnit";
 
 import CookieConsent from "@/components/CookieConsent";
 import { PointsProvider } from "@/components/PointsProvider";
@@ -124,6 +125,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <AuthProvider>
               <Header />
               <main className="flex-1">{children}</main>
+              <AdUnit />
               <Footer />
             </AuthProvider>
           </PointsProvider>
