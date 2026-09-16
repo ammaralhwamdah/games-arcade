@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BackToTop from "@/components/BackToTop";
+import AntiAdblock from "@/components/AntiAdblock";
 import CookieConsent from "@/components/CookieConsent";
 import { PointsProvider } from "@/components/PointsProvider";
 import { AuthProvider } from "@/components/AuthProvider";
@@ -120,6 +121,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             </AuthProvider>
           </PointsProvider>
           <BackToTop />
+          <AntiAdblock />
           <CookieConsent />
         </ThemeProvider>
       </body>
