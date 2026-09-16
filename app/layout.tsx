@@ -86,7 +86,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <head>
         <meta name="msvalidate.01" content="0260A71124945E310E69BC523F086B61" />
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-GR5DG65ZK7"></script>
+        <script async src="/gtag.js?id=G-GR5DG65ZK7"></script>
         <script
           dangerouslySetInnerHTML={{
             __html:
