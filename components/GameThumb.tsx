@@ -34,6 +34,7 @@ export default function GameThumb({
           src={game.image}
           alt={game.name}
           loading="lazy"
+          decoding="async"
           onError={() => setFailed(true)}
           className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
         />

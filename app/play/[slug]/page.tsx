@@ -101,6 +101,8 @@ export default async function PlayPage({ params }: Props) {
                   <img
                     src={game.image}
                     alt={game.name}
+                    loading="lazy"
+                    decoding="async"
                     className="h-20 w-28 shrink-0 rounded-xl border border-white/10 object-cover"
                   />
                 ) : null}
