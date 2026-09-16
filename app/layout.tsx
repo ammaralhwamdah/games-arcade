@@ -133,6 +133,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
 
           <CookieConsent />
         </ThemeProvider>
+        <script
+          defer
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon='{"token": "21ea0ba5a00d4b37a80448ef77e8cbc0"}'
+        />
       </body>
     </html>
   );
