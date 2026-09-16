@@ -584,22 +584,24 @@
 <script>
 (function(){
   if(sessionStorage.getItem("pk-adblock-dismissed"))return;
-  var p=document.createElement("div");
-  p.className="adsbox ad-banner text-ad ads doubleclick carbon-ads";
-  p.style.cssText="position:absolute;left:-9999px;top:0;width:1px;height:1px;overflow:hidden";
-  document.body.appendChild(p);
-  function check(){
-    var h=p.getBoundingClientRect().height;
-    var s=getComputedStyle(p);
-    var blocked=h===0||s.display==="none"||s.visibility==="hidden";
-    p.remove();
-    if(!blocked)return;
+  function show(){
     var ov=document.createElement("div");
     ov.style.cssText="position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.75);backdrop-filter:blur(4px)";
     ov.innerHTML='<div style="max-width:420px;width:calc(100% - 2rem);margin:0 auto;border-radius:16px;border:1px solid rgba(255,255,255,0.1);background:#0f172a;padding:2rem;text-align:center;color:#e2e8f0;font-family:system-ui,sans-serif">'+'<div style="font-size:2.5rem;margin-bottom:0.75rem">&#128737;&#65039;</div>'+'<h2 style="font-size:1.25rem;font-weight:700;color:#fff;margin:0 0 0.75rem">Ad blocker detected</h2>'+'<p style="font-size:0.875rem;line-height:1.6;color:#94a3b8;margin:0 0 1.5rem">PlayKrux is completely free and funded by ads. Please disable your ad blocker for this site so we can keep the games free for everyone.</p>'+'<div style="display:flex;flex-direction:column;gap:0.75rem">'+'<button onclick="sessionStorage.setItem(\'pk-adblock-dismissed\',\'1\');this.closest(\'div[style*=fixed]\').remove()" style="padding:0.625rem 1.25rem;border-radius:12px;background:linear-gradient(135deg,#8b5cf6,#d946ef);color:#fff;font-weight:700;font-size:0.875rem;border:none;cursor:pointer">I have disabled it</button>'+'<button onclick="sessionStorage.setItem(\'pk-adblock-dismissed\',\'1\');this.closest(\'div[style*=fixed]\').remove()" style="padding:0.625rem 1.25rem;border-radius:12px;background:rgba(255,255,255,0.05);color:#94a3b8;font-weight:600;font-size:0.875rem;border:1px solid rgba(255,255,255,0.1);cursor:pointer">Continue anyway</button>'+'</div>'+'</div>';
     document.body.appendChild(ov);
   }
-  requestAnimationFrame(function(){ setTimeout(check,1200); });
+  function detect(cb){
+    var settled=false;
+    function finish(b){ if(settled)return; settled=true; cb(b); }
+    if(typeof window.adsbygoogle!=="undefined"){ finish(false); return; }
+    var s=document.createElement("script");
+    s.src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?_bait="+Date.now();
+    s.onload=function(){ finish(false); };
+    s.onerror=function(){ finish(true); };
+    document.head.appendChild(s);
+    setTimeout(function(){ finish(true); },3000);
+  }
+  setTimeout(function(){ detect(function(blocked){ if(blocked)show(); }); },2500);
 })();
 </script>
 <!-- /PlayKrux Anti-Adblock -->

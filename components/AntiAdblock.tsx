@@ -6,37 +6,33 @@ const SESSION_KEY = "pk-adblock-dismissed";
 
 function detectAdblock(): Promise<boolean> {
   return new Promise((resolve) => {
-    const CLASSES = [
-      "adsbox",
-      "ad-banner",
-      "text-ad",
-      "ads",
-      "doubleclick",
-      "ad-placement",
-      "carbon-ads",
-    ];
-    const probe = document.createElement("div");
-    probe.className = CLASSES.join(" ");
-    probe.style.cssText =
-      "position:absolute;left:-9999px;top:0;width:1px;height:1px;overflow:hidden";
-    document.body.appendChild(probe);
-
-    requestAnimationFrame(() => {
-      const h = probe.getBoundingClientRect().height;
-      const style = getComputedStyle(probe);
-      const blocked =
-        h === 0 || style.display === "none" || style.visibility === "hidden";
-      probe.remove();
-      if (blocked) {
-        resolve(true);
-        return;
+    let settled = false;
+    const finish = (blocked: boolean) => {
+      if (!settled) {
+        settled = true;
+        resolve(blocked);
       }
+    };
 
-      // second signal: adsbygoogle loaded?
-      setTimeout(() => {
-        resolve(typeof (window as Record<string, unknown>).adsbygoogle === "undefined");
-      }, 800);
-    });
+    // Fast path: if the adsbygoogle script loaded at all, no block.
+    if (typeof (window as Record<string, unknown>).adsbygoogle !== "undefined") {
+      finish(false);
+      return;
+    }
+
+    // Network probe: force a fresh request to an ad-domain URL. Ad blockers
+    // cancel these requests, so onerror fires. Without a blocker the script
+    // loads and onload fires.
+    const probe = document.createElement("script");
+    probe.src =
+      "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?_bait=" +
+      Date.now();
+    probe.onload = () => finish(false);
+    probe.onerror = () => finish(true);
+    document.head.appendChild(probe);
+
+    // Safety timeout in case neither event fires (offline, etc.).
+    setTimeout(() => finish(true), 3000);
   });
 }
 
