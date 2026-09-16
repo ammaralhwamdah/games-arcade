@@ -24,27 +24,15 @@
 
 <!-- PlayKrux AdSense -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3801707354489723" crossorigin="anonymous"></script>
-<!-- /PlayKrux AdSense -->
-
-<!-- PlayKrux Anti-Adblock -->
+<!-- /PlayKrux AdSense -->
+<!-- PlayKrux Funding Choices (Ad Blocking Recovery) -->
+<script async src="https://fundingchoicesmessages.google.com/i/pub-3801707354489723?ers=1"></script>
 <script>
-(function(){
-  if(sessionStorage.getItem("pk-adblock-dismissed"))return;
-  function show(){
-    var ov=document.createElement("div");
-    ov.style.cssText="position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.75);backdrop-filter:blur(4px)";
-    ov.innerHTML='<div style="max-width:420px;width:calc(100% - 2rem);margin:0 auto;border-radius:16px;border:1px solid rgba(255,255,255,0.1);background:#0f172a;padding:2rem;text-align:center;color:#e2e8f0;font-family:system-ui,sans-serif">'+'<div style="font-size:2.5rem;margin-bottom:0.75rem">&#128737;&#65039;</div>'+'<h2 style="font-size:1.25rem;font-weight:700;color:#fff;margin:0 0 0.75rem">Ad blocker detected</h2>'+'<p style="font-size:0.875rem;line-height:1.6;color:#94a3b8;margin:0 0 1.5rem">PlayKrux is completely free and funded by ads. Please disable your ad blocker for this site so we can keep the games free for everyone.</p>'+'<div style="display:flex;flex-direction:column;gap:0.75rem">'+'<button onclick="sessionStorage.setItem(\'pk-adblock-dismissed\',\'1\');this.closest(\'div[style*=fixed]\').remove()" style="padding:0.625rem 1.25rem;border-radius:12px;background:linear-gradient(135deg,#8b5cf6,#d946ef);color:#fff;font-weight:700;font-size:0.875rem;border:none;cursor:pointer">I have disabled it</button>'+'<button onclick="sessionStorage.setItem(\'pk-adblock-dismissed\',\'1\');this.closest(\'div[style*=fixed]\').remove()" style="padding:0.625rem 1.25rem;border-radius:12px;background:rgba(255,255,255,0.05);color:#94a3b8;font-weight:600;font-size:0.875rem;border:1px solid rgba(255,255,255,0.1);cursor:pointer">Continue anyway</button>'+'</div>'+'</div>';
-    document.body.appendChild(ov);
-  }
-  var elapsed=0;
-  var iv=setInterval(function(){
-    elapsed+=500;
-    if(typeof window.adsbygoogle!=="undefined"){ clearInterval(iv); return; }
-    if(elapsed>=4000){ clearInterval(iv); show(); }
-  },500);
-})();
+(function() {function signalGooglefcPresent() {if (!window.frames['googlefcPresent']) {if (document.body) {const iframe = document.createElement('iframe'); iframe.style = 'width: 0; height: 0; border: none; z-index: -1000; left: -1000px; top: -1000px;'; iframe.style.display = 'none'; iframe.name = 'googlefcPresent'; document.body.appendChild(iframe);} else {setTimeout(signalGooglefcPresent, 0);}}}signalGooglefcPresent();})();
 </script>
-<!-- /PlayKrux Anti-Adblock -->
+<!-- /PlayKrux Funding Choices -->
+
+
 </head>
 <body>
 <div class="seo-text" aria-hidden="true" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap">

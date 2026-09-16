@@ -4,7 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BackToTop from "@/components/BackToTop";
-import AntiAdblock from "@/components/AntiAdblock";
+
 import CookieConsent from "@/components/CookieConsent";
 import { PointsProvider } from "@/components/PointsProvider";
 import { AuthProvider } from "@/components/AuthProvider";
@@ -93,6 +93,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           }}
         />
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3801707354489723" crossOrigin="anonymous" />
+        <script async src="https://fundingchoicesmessages.google.com/i/pub-3801707354489723?ers=1"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function() {function signalGooglefcPresent() {if (!window.frames['googlefcPresent']) {if (document.body) {const iframe = document.createElement('iframe'); iframe.style = 'width: 0; height: 0; border: none; z-index: -1000; left: -1000px; top: -1000px;'; iframe.style.display = 'none'; iframe.name = 'googlefcPresent'; document.body.appendChild(iframe);} else {setTimeout(signalGooglefcPresent, 0);}}}signalGooglefcPresent();})();",
+          }}
+        />
         <script dangerouslySetInnerHTML={{ __html: "window.maeExportApis_=window.maeExportApis_||function(){};" }} />
         <script
           dangerouslySetInnerHTML={{
@@ -121,7 +128,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             </AuthProvider>
           </PointsProvider>
           <BackToTop />
-          <AntiAdblock />
+
           <CookieConsent />
         </ThemeProvider>
       </body>
