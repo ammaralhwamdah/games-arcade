@@ -89,15 +89,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <link rel="preconnect" href="https://fundingchoicesmessages.google.com" crossorigin />
         <link rel="dns-prefetch" href="https://static.cloudflareinsights.com" />
         <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin />
-        <script async src="/gtag.js?id=G-GR5DG65ZK7"></script>
+        <script async fetchpriority="low" src="/gtag.js?id=G-GR5DG65ZK7"></script>
         <script
           dangerouslySetInnerHTML={{
             __html:
               "window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'G-GR5DG65ZK7');",
           }}
         />
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3801707354489723" crossOrigin="anonymous" />
-        <script async src="https://fundingchoicesmessages.google.com/i/pub-3801707354489723?ers=1"></script>
+        <script async fetchpriority="low" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3801707354489723" crossOrigin="anonymous" />
+        <script async fetchpriority="low" src="https://fundingchoicesmessages.google.com/i/pub-3801707354489723?ers=1"></script>
         <script
           dangerouslySetInnerHTML={{
             __html:
