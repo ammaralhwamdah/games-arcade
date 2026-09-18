@@ -96,8 +96,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               "window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'G-GR5DG65ZK7');",
           }}
         />
-        <script async fetchpriority="low" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3801707354489723" crossOrigin="anonymous" />
-        <script async fetchpriority="low" src="https://fundingchoicesmessages.google.com/i/pub-3801707354489723?ers=1"></script>
+        <script defer src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3801707354489723" crossOrigin="anonymous"></script>
+        <script defer src="https://fundingchoicesmessages.google.com/i/pub-3801707354489723?ers=1"></script>
         <script
           dangerouslySetInnerHTML={{
             __html:
