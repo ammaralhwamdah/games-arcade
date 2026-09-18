@@ -14,13 +14,13 @@ import { SITE_NAME, SITE_TAGLINE, SITE_DESCRIPTION, SITE_URL } from "@/lib/site"
 const geistSans = localFont({
   variable: "--font-geist-sans",
   src: "./fonts/GeistVariable.woff2",
-  display: "swap",
+  display: "optional",
 });
 
 const geistMono = localFont({
   variable: "--font-geist-mono",
   src: "./fonts/GeistMonoVariable.woff2",
-  display: "swap",
+  display: "optional",
 });
 
 export const metadata: Metadata = {
