@@ -12,6 +12,8 @@ export interface Game {
   plays: number;
   year: number;
   tags: string[];
+  /** The well-known genre/mechanic people actually search for (e.g. "Solitaire"). */
+  classic?: string;
   description: string;
 }
 

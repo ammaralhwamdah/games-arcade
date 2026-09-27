@@ -64,14 +64,26 @@ function pickSuffix(name: string): string {
 
 export function buildGameTitle(game: Game): string {
   const hint = titleHint(game.tags, game.category);
+  const classic = game.classic?.trim();
+  // The classic genre term sits right after the brand name so it matches the
+  // query people actually type ("solitaire"), without renaming the game.
+  const lead = classic && !game.name.toLowerCase().includes(classic.toLowerCase())
+    ? `${game.name} – ${classic} ${hint}`
+    : `${game.name} – ${hint}`;
   const suffix = pickSuffix(game.name);
-  const full = `${game.name} – ${hint} — ${suffix}`;
-  return full.length <= 75 ? full : `${game.name} – ${hint}`;
+  const full = `${lead} — ${suffix}`;
+  return full.length <= 75 ? full : lead;
 }
 
 export function buildGameDescription(game: Game): string {
   const base = (game.description ?? `Play ${game.name} online for free in your browser.`)
     .replace(/\s+/g, " ")
     .trim();
-  return base;
+  const classic = game.classic?.trim();
+  if (!classic) return base;
+  // Only prepend when the body does not already open with the term, so the
+  // paragraph never reads as two keywords stacked together.
+  if (base.toLowerCase().startsWith(classic.toLowerCase())) return base;
+  const hooked = `${classic} game: ${base.charAt(0).toLowerCase()}${base.slice(1)}`;
+  return hooked.length <= 175 ? hooked : base;
 }
