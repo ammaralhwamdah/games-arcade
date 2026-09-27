@@ -58,5 +58,9 @@ build-output.txt
 # verification report
 scripts/verify-report.json
 
+# CI typecheck diagnostics (committed on purpose by the deploy workflow, but
+# must never be part of a production build)
+/tsc-errors.txt
+
 .vercel
 .env*

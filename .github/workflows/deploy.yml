@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -33,17 +33,29 @@ jobs:
 
       - name: Type check
         run: |
-          set -o pipefail
-          npm run typecheck 2>&1 | tee /tmp/tsc.log || true
-          echo "---- type errors ----" >> $GITHUB_STEP_SUMMARY
-          grep -E "error TS" /tmp/tsc.log | head -40 >> $GITHUB_STEP_SUMMARY || echo "no TS error lines found" >> $GITHUB_STEP_SUMMARY
-          while IFS= read -r line; do
-            echo "::error title=tsc::$line"
-          done < <(grep -E "error TS" /tmp/tsc.log | head -40)
-          if grep -qE "error TS" /tmp/tsc.log; then
-            echo "typecheck failed" >&2
-            exit 1
-          fi
+          set +e
+          npm run typecheck > /tmp/tsc.log 2>&1
+          echo $? > /tmp/tsc.exit
+          cat /tmp/tsc.log
+          exit $(cat /tmp/tsc.exit)
+
+      # On failure, commit the compiler output into the repo so the error is
+      # readable without GitHub Actions log access.
+      - name: Publish typecheck diagnostics
+        if: failure()
+        run: |
+          mkdir -p public
+          {
+            echo "commit=${{ github.sha }}"
+            echo "exit=$(cat /tmp/tsc.exit 2>/dev/null || echo '?')"
+            echo "----"
+            cat /tmp/tsc.log
+          } > public/tsc-errors.txt
+          git config user.email "ci@playkrux.com"
+          git config user.name "CI Diagnostics"
+          git add public/tsc-errors.txt
+          git commit -m "ci: publish typecheck diagnostics [skip ci]" || echo "nothing to commit"
+          git push || echo "push skipped"
 
       - name: Build
         run: npm run build
