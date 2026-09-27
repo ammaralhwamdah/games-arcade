@@ -16,11 +16,15 @@ const root = join(__dirname, "..");
 const arg = process.argv[2];
 const BASE = (arg || "https://playkrux.com").replace(/\/$/, "");
 const TIMEOUT_MS = 20000;
-const RETRIES = 4;
 
 const catalog = JSON.parse(readFileSync(join(root, "public", "data", "games.json"), "utf8"));
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// GitHub Pages can take a while to propagate a new deployment, so allow the
+// first few probes to fail and retry before declaring the site unhealthy.
+const SETTLE_MS = 45000;
+const SETTLE_STEP = 5000;
 
 async function get(url) {
   const ac = new AbortController();
@@ -28,7 +32,7 @@ async function get(url) {
   try {
     const res = await fetch(url, {
       redirect: "follow",
-      headers: { "User-Agent": "PlayKrux-DeployCheck/1.0" },
+      headers: { "User-Agent": "PlayKrux-DeployCheck/1.0", "Cache-Control": "no-cache" },
       signal: ac.signal,
     });
     const body = res.ok ? await res.text() : "";
@@ -41,8 +45,9 @@ async function get(url) {
 }
 
 async function expectOk(url, mustContain) {
+  const deadline = Date.now() + SETTLE_MS;
   let last = null;
-  for (let attempt = 1; attempt <= RETRIES; attempt++) {
+  for (;;) {
     last = await get(url);
     if (last.status === 200) {
       if (mustContain && !last.body.includes(mustContain)) {
@@ -50,7 +55,8 @@ async function expectOk(url, mustContain) {
       }
       return { url, ok: true };
     }
-    await sleep(attempt * 4000);
+    if (Date.now() >= deadline) break;
+    await sleep(SETTLE_STEP);
   }
   return {
     url,
@@ -92,5 +98,4 @@ if (failed.length) {
   console.error(`\nSMOKE TEST FAILED: ${failed.length}/${results.length} URLs are not healthy.\n`);
   process.exit(1);
 }
-
 console.log(`Smoke test passed: ${results.length}/${results.length} URLs healthy.`);
