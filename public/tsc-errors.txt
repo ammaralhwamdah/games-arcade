@@ -1,8 +1,0 @@
-commit=1a2d6c12fabc6f2d8ee805d61dc17282693f6ba3
-exit=2
-----
-
-> games-arcade@0.1.0 typecheck
-> tsc --noEmit
-
-app/layout.tsx(70,50): error TS2304: Cannot find name 'LayoutProps'.
