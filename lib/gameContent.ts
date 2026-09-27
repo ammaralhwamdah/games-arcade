@@ -1375,6 +1375,50 @@ const content: Record<string, GameContent> = {
       },
     ],
   },
+  "sporelight": {
+    tips: [
+      "Watch the glow, not the position. Each spore brightens as its window opens and dims as it closes, so track the halo rather than trying to memorise where things appear.",
+      "Do not swipe at the first thing you see. Chasing a spore that is nearly faded usually costs you the streak, and the streak is worth more than one tap.",
+      "Tap empty ground as a last resort, never as a default. A miss breaks the combo, so if you are unsure whether a tap will land, wait half a beat and read the bloom again.",
+      "Chain your taps in rhythm. The combo only survives about a second and a half between catches, so steady spacing beats frantic frantic clicking every time.",
+      "Clear your gaze around the edges early in the round. The first spores drift slowly and stay open long, which makes them the easiest points to bank before the screen gets busy.",
+      "Multipliers stack fast once you are flowing. A single unbroken chain of six or more catches is usually worth more than several separate two-hit streaks.",
+    ],
+    features: [
+      "30-second reflex round built for fast, clean tapping",
+      "Combo multiplier that climbs to x12 for unbroken chains",
+      "Spores drift and bounce naturally instead of sitting still",
+      "Difficulty ramps gradually from a calm opening to a frantic finish",
+      "Particle bursts and ripple feedback on every catch",
+      "Best score and sound preference saved in your browser",
+    ],
+    faq: [
+      {
+        q: "Is Sporelight really free to play?",
+        a: "Yes. Sporelight is completely free, runs directly in your browser and needs no download, install or account. Press play and the round starts immediately.",
+      },
+      {
+        q: "How do I catch a spore?",
+        a: "Tap or click a spore while its glow is still bright. On desktop you can use the mouse; on mobile tap directly with your finger. Catching a spore that has already faded does not count.",
+      },
+      {
+        q: "How does the combo multiplier work?",
+        a: "Every catch made within roughly a second and a half of the previous one increases your multiplier, up to x12. The multiplier multiplies the points of each catch, so a long clean chain is worth far more than the same number of scattered taps.",
+      },
+      {
+        q: "What breaks my combo?",
+        a: "Two things: letting a spore fade away without catching it, and tapping bare ground. Either one resets the multiplier back to x1, so the safest play is to wait for a spore you are sure about.",
+      },
+      {
+        q: "Does the game get faster?",
+        a: "Yes, but gradually. The opening seconds are deliberately calm with a single spore at a time, then more spores appear and their glow window shrinks as the round goes on, so the last few seconds are the busiest.",
+      },
+      {
+        q: "Can I play on a phone?",
+        a: "Yes. The game is built for touch and adapts to any screen size, so it plays the same on a phone, tablet or desktop without any controls to set up.",
+      },
+    ],
+  },
 };
 
 export function getGameContent(slug: string): GameContent | undefined {

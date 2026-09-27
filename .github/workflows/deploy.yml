@@ -32,7 +32,18 @@ jobs:
         run: npm ci
 
       - name: Type check
-        run: npm run typecheck
+        run: |
+          set -o pipefail
+          npm run typecheck 2>&1 | tee /tmp/tsc.log || true
+          echo "---- type errors ----" >> $GITHUB_STEP_SUMMARY
+          grep -E "error TS" /tmp/tsc.log | head -40 >> $GITHUB_STEP_SUMMARY || echo "no TS error lines found" >> $GITHUB_STEP_SUMMARY
+          while IFS= read -r line; do
+            echo "::error title=tsc::$line"
+          done < <(grep -E "error TS" /tmp/tsc.log | head -40)
+          if grep -qE "error TS" /tmp/tsc.log; then
+            echo "typecheck failed" >&2
+            exit 1
+          fi
 
       - name: Build
         run: npm run build

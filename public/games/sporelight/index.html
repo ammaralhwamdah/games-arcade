@@ -167,20 +167,24 @@ function overSound() { tone(420, 0.5, "sine", 0.1, 110); }
 
 /* ==================== SPORES ==================== */
 var HUES = [44, 16, 190, 320, 96];
+// The score chips and the timer bar occupy the top strip, so spores must never
+// appear behind them.
+var SAFE_TOP = 96, SAFE_SIDE = 46, SAFE_BOTTOM = 40;
+
 function newSpore(difficulty) {
-  var pad = 46;
   var r = 15 + Math.random() * 9;
-  var bloom = 0.55 + Math.random() * 0.45;          // how long it stays catchable
+  // Early spores stay open far longer; the window tightens as the round heats up.
+  var life = (1.45 - 0.85 * difficulty) + Math.random() * 0.35;
   var s = {
-    x: pad + Math.random() * Math.max(1, W - pad * 2),
-    y: pad + Math.random() * Math.max(1, H - pad * 2),
+    x: SAFE_SIDE + Math.random() * Math.max(1, W - SAFE_SIDE * 2),
+    y: SAFE_TOP + Math.random() * Math.max(1, H - SAFE_TOP - SAFE_BOTTOM),
     r: r,
     hue: HUES[(Math.random() * HUES.length) | 0],
     age: 0,
-    life: bloom,
-    grow: 0.14,
-    drift: (Math.random() * 2 - 1) * (18 + difficulty * 12),
-    driftY: (Math.random() * 2 - 1) * (12 + difficulty * 8),
+    life: life,
+    grow: 0.16,
+    drift: (Math.random() * 2 - 1) * (10 + difficulty * 22),
+    driftY: (Math.random() * 2 - 1) * (7 + difficulty * 14),
     phase: Math.random() * Math.PI * 2,
     dead: false
   };
@@ -236,11 +240,12 @@ function update(dt) {
     s.phase += dt * 2.2;
     s.x += (s.drift + Math.sin(s.phase) * 14) * dt;
     s.y += (s.driftY + Math.cos(s.phase * 0.8) * 10) * dt;
-    var pad = 24;
-    if (s.x < pad) { s.x = pad; s.drift = Math.abs(s.drift); }
-    if (s.x > W - pad) { s.x = W - pad; s.drift = -Math.abs(s.drift); }
-    if (s.y < pad) { s.y = pad; s.driftY = Math.abs(s.driftY); }
-    if (s.y > H - pad) { s.y = H - pad; s.driftY = -Math.abs(s.driftY); }
+    var minX = SAFE_SIDE, maxX = Math.max(minX, W - SAFE_SIDE);
+    var minY = SAFE_TOP, maxY = Math.max(minY, H - SAFE_BOTTOM);
+    if (s.x < minX) { s.x = minX; s.drift = Math.abs(s.drift); }
+    if (s.x > maxX) { s.x = maxX; s.drift = -Math.abs(s.drift); }
+    if (s.y < minY) { s.y = minY; s.driftY = Math.abs(s.driftY); }
+    if (s.y > maxY) { s.y = maxY; s.driftY = -Math.abs(s.driftY); }
     if (s.age > s.life + 0.35) { spores.splice(i, 1); breakCombo(); }
   }
 
@@ -321,11 +326,16 @@ function frame(now) {
       timeLeft = 0;
       endRound();
     } else {
-      var diff = 1 - timeLeft / ROUND_TIME;                 // 0 -> 1
-      var interval = 0.62 - diff * 0.34;                     // faster over time
+      // Difficulty ramp: deliberately gentle for the first third of the round,
+      // then accelerates so the finish feels frantic.
+      var p = 1 - timeLeft / ROUND_TIME;                 // 0 -> 1 over the round
+      var ease = p * p * (3 - 2 * p);                   // smoothstep, 0 -> 1
+      var ramp = p * p;                                  // quadratic, stays low early
+      var interval = 1.15 - 0.85 * ease;                 // 1.15s -> 0.30s
+      var maxUp = 1 + Math.floor(ramp * 7);              // 1 -> 8 at once
       spawnClock -= dt;
-      if (spawnClock <= 0 && spores.length < 3 + Math.floor(diff * 5)) {
-        newSpore(diff);
+      if (spawnClock <= 0 && spores.length < maxUp) {
+        newSpore(ramp);
         spawnClock = interval;
       }
       elTimeFill.style.width = (timeLeft / ROUND_TIME * 100) + "%";
