@@ -85,11 +85,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <head>
         <meta name="msvalidate.01" content="0260A71124945E310E69BC523F086B61" />
-        <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin />
-        <link rel="preconnect" href="https://fundingchoicesmessages.google.com" crossorigin />
+        <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://fundingchoicesmessages.google.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://static.cloudflareinsights.com" />
-        <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin />
-        <script async fetchpriority="low" src="/gtag.js?id=G-GR5DG65ZK7"></script>
+        <link rel="preconnect" href="https://static.cloudflareinsights.com" crossOrigin="anonymous" />
+        <script async fetchPriority="low" src="/gtag.js?id=G-GR5DG65ZK7"></script>
         <script
           dangerouslySetInnerHTML={{
             __html:
