@@ -1203,9 +1203,9 @@
                       "classic":  "Penalty Shootout"
                   },
                   {
-                      "id":  "sporelight",
-                      "slug":  "sporelight",
-                      "name":  "Sporelight",
+                      "id":  "glowtug",
+                      "slug":  "glowtug",
+                      "name":  "Glowtug",
                       "category":  "arcade",
                       "categories":  [
                                          "arcade",
@@ -1213,9 +1213,9 @@
                                          "hypercasual",
                                          "action"
                                      ],
-                      "file":  "games/sporelight/index.html",
-                      "src":  "/games/sporelight/index.html",
-                      "image":  "/images/games/sporelight.svg",
+                      "file":  "games/glowtug/index.html",
+                      "src":  "/games/glowtug/index.html",
+                      "image":  "/images/games/glowtug.svg",
                       "sizeKb":  18,
                       "rating":  4.7,
                       "plays":  0,
@@ -1229,7 +1229,7 @@
                                    "fast-paced",
                                    "single-player"
                                ],
-                      "description":  "Sporelight is a fast reflex game where glowing spores bloom across a dark forest floor and fade just as fast. Tap each one the moment it opens to catch it in time, because every clean catch in quick succession builds a combo that multiplies your score. Miss the window and the spore drifts away, tap bare ground and the streak breaks - so the difference between a good run and a great one comes down to your eyes and your timing.",
+                      "description":  "Glowtug is a fast reflex game where glowing spores bloom across a dark forest floor and fade just as fast. Tap each one the moment it opens to catch it in time, because every clean catch in quick succession builds a combo that multiplies your score. Miss the window and the spore drifts away, tap bare ground and the streak breaks - so the difference between a good run and a great one comes down to your eyes and your timing.",
                       "classic":  "Reflex Game"
                   }
               ]

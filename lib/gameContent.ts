@@ -1375,12 +1375,12 @@ const content: Record<string, GameContent> = {
       },
     ],
   },
-  "sporelight": {
+  "glowtug": {
     tips: [
       "Watch the glow, not the position. Each spore brightens as its window opens and dims as it closes, so track the halo rather than trying to memorise where things appear.",
       "Do not swipe at the first thing you see. Chasing a spore that is nearly faded usually costs you the streak, and the streak is worth more than one tap.",
       "Tap empty ground as a last resort, never as a default. A miss breaks the combo, so if you are unsure whether a tap will land, wait half a beat and read the bloom again.",
-      "Chain your taps in rhythm. The combo only survives about a second and a half between catches, so steady spacing beats frantic frantic clicking every time.",
+      "Chain your taps in rhythm. The combo only survives about a second and a half between catches, so steady spacing beats frantic clicking every time.",
       "Clear your gaze around the edges early in the round. The first spores drift slowly and stay open long, which makes them the easiest points to bank before the screen gets busy.",
       "Multipliers stack fast once you are flowing. A single unbroken chain of six or more catches is usually worth more than several separate two-hit streaks.",
     ],
@@ -1394,8 +1394,8 @@ const content: Record<string, GameContent> = {
     ],
     faq: [
       {
-        q: "Is Sporelight really free to play?",
-        a: "Yes. Sporelight is completely free, runs directly in your browser and needs no download, install or account. Press play and the round starts immediately.",
+        q: "Is Glowtug really free to play?",
+        a: "Yes. Glowtug is completely free, runs directly in your browser and needs no download, install or account. Press play and the round starts immediately.",
       },
       {
         q: "How do I catch a spore?",

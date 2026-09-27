@@ -105,9 +105,38 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
+      # The deploy job runs on a clean runner, so it needs its own checkout:
+      # scripts/smoke-test.mjs and public/data/games.json are not carried over
+      # from the build job.
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
 
       - name: Smoke test live site
-        run: node scripts/smoke-test.mjs "${{ vars.PRODUCTION_URL || 'https://playkrux.com' }}"
+        run: |
+          set +e
+          node scripts/smoke-test.mjs "${{ vars.PRODUCTION_URL || 'https://playkrux.com' }}" > /tmp/smoke.log 2>&1
+          echo $? > /tmp/smoke.exit
+          cat /tmp/smoke.log
+          exit $(cat /tmp/smoke.exit)
+
+      # The smoke test runs after the site is already live, so a failure here
+      # must not block a valid deployment. Commit the report to the repo ROOT
+      # (never public/) so the cause is readable without Actions log access.
+      - name: Publish smoke test diagnostics
+        if: failure()
+        run: |
+          {
+            echo "commit=${{ github.sha }}"
+            echo "smoke_exit=$(cat /tmp/smoke.exit 2>/dev/null || echo 'n/a')"
+            echo "==== SMOKE LOG ===="
+            cat /tmp/smoke.log 2>/dev/null || echo "(no smoke log)"
+          } > ci-errors.txt
+          git config user.email "ci@playkrux.com"
+          git config user.name "CI Diagnostics"
+          git add -f ci-errors.txt
+          git commit -m "ci: publish smoke test diagnostics [skip ci]" || echo "nothing to commit"
+          git push || echo "push skipped"
