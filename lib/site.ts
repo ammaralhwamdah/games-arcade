@@ -1,7 +1,7 @@
 export const SITE_NAME = "PlayKrux";
 export const SITE_TAGLINE = "Free Online Games — Play Instantly";
 export const SITE_DESCRIPTION =
-  "Play free online games instantly in your browser. No downloads, no sign-ups. Action, puzzle, racing, sports, arcade and more — updated daily.";
+  "Play free online games instantly in your browser — solitaire, chess, 2048, tic-tac-toe, snake, endless runners, racing and arcade action. No downloads, no sign-ups. All original.";
 
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://playkrux.com";

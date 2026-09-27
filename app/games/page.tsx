@@ -3,17 +3,19 @@ import GameGrid from "@/components/GameGrid";
 import { getAllGames, getCategories } from "@/lib/games";
 import { GAMES_PAGE_SIZE, SITE_URL } from "@/lib/site";
 
+const TITLE = "Free Browser Games — Solitaire, Chess, 2048, Racing";
+const DESCRIPTION =
+  "Play free browser games with no download: solitaire and Klondike, chess, 2048 puzzle, tic-tac-toe, snake, endless runners, racing, clicker and arcade action games. Sort by popularity or play the newest titles instantly.";
+
 export function generateMetadata(): Metadata {
-  const description =
-    "Browse PlayKrux free online games. Search, filter by category and sort by popularity, rating or newest to find your next favorite game — no download, no sign-up.";
   return {
-    title: "All Free Online Games — Play Instantly",
-    description,
+    title: TITLE,
+    description: DESCRIPTION,
     alternates: { canonical: "/games" },
     robots: { index: true, follow: true },
     openGraph: {
-      title: "All Free Online Games — Play Instantly",
-      description,
+      title: TITLE,
+      description: DESCRIPTION,
       type: "website",
       url: `${SITE_URL}/games`,
       siteName: "PlayKrux",
@@ -33,7 +35,8 @@ export default function GamesPage() {
         <h1 className="text-3xl font-black text-white sm:text-4xl">All Games</h1>
         <p className="mt-2 text-sm text-slate-400 sm:text-base">
           Explore our complete library of free online games — search, filter and play
-          instantly.
+          instantly. Play solitaire, chess, 2048, tic-tac-toe, snake, endless runners,
+          racing, clicker and arcade action games straight in your browser.
         </p>
       </div>
 

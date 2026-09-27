@@ -36,8 +36,9 @@ const faq = [
 
 export function generateMetadata(): Metadata {
   return {
-    title: "Free Online Games — Play Instantly",
-    description: "Play free online games instantly in your browser. No downloads, no sign-ups. Action, puzzle, sports, arcade and more — all original.",
+    title: "Free Online Games — Solitaire, Chess, 2048 & Racing",
+    description:
+      "Play free online games in your browser — solitaire, chess, 2048 puzzle, tic-tac-toe, snake, endless runners, racing and arcade action. No downloads, no sign-ups, all original.",
   };
 }
 
@@ -75,9 +76,9 @@ export default function Home() {
             </span>
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-7 text-slate-400 sm:text-lg">
-            No downloads. No sign-ups. No waiting. Jump straight into action,
-            puzzle, sports and strategy games — playable instantly
-            in your browser on any device.
+            No downloads. No sign-ups. No waiting. Play solitaire, chess, 2048, snake,
+            endless runners, racing and arcade action games — instantly in your browser
+            on any device.
           </p>
           <div className="mt-8 flex w-full max-w-xl justify-center">
             <SearchBar large />
