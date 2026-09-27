@@ -23,6 +23,10 @@ const geistMono = localFont({
   display: "optional",
 });
 
+// GA4 measurement id comes from the build env; the literal is only a fallback
+// so a local build without env still reports.
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID || "G-GR5DG65ZK7";
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
@@ -89,11 +93,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <link rel="preconnect" href="https://fundingchoicesmessages.google.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://static.cloudflareinsights.com" />
         <link rel="preconnect" href="https://static.cloudflareinsights.com" crossOrigin="anonymous" />
-        <script async fetchPriority="low" src="/gtag.js?id=G-GR5DG65ZK7"></script>
+        <script async fetchPriority="low" src={`/gtag.js?id=${GA_ID}`}></script>
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'G-GR5DG65ZK7');",
+              "window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());" +
+              `gtag('config', '${GA_ID}');`,
           }}
         />
         <script defer src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3801707354489723" crossOrigin="anonymous"></script>
