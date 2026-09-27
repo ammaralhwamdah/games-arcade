@@ -1,6 +1,6 @@
 {
     "generated":  "2026-09-02T12:00:00.000Z",
-    "total":  36,
+    "total":  37,
     "categories":  20,
     "categoriesMeta":  [
                            {
@@ -1201,6 +1201,36 @@
                                ],
                       "description":  "Netbender is a penalty duel in stick figures where the ball bends whichever way you pull. Drag across the screen, hold your angle, and let go — the kick arcs toward the corner you aimed at. Going high is flashy but tight; going low past the keeper\u0027s legs is safe but predictable. The keeper watches your drag line and dives the side it leans toward, so faking him out by switching direction at the last instant is the real game. You get five shots in Solo against a keeper that sharpens as the rounds tick by, or grab a friend for a proper head-to-head: one shoots while the other takes the gloves and dives with the arrow keys. The goal rings when a clean strike finds the net, the post stings when you miss by a whisker, and your best score stays saved in the browser. Runs offline, no ads, no sign-up — just the spot, the ball, and the keeper\u0027s patience running out.",
                       "classic":  "Penalty Shootout"
+                  },
+                  {
+                      "id":  "sporelight",
+                      "slug":  "sporelight",
+                      "name":  "Sporelight",
+                      "category":  "arcade",
+                      "categories":  [
+                                         "arcade",
+                                         "casual",
+                                         "hypercasual",
+                                         "action"
+                                     ],
+                      "file":  "games/sporelight/index.html",
+                      "src":  "/games/sporelight/index.html",
+                      "image":  "/images/games/sporelight.svg",
+                      "sizeKb":  18,
+                      "rating":  4.7,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "exclusive",
+                                   "html5",
+                                   "reflex",
+                                   "tap",
+                                   "combo",
+                                   "fast-paced",
+                                   "single-player"
+                               ],
+                      "description":  "Sporelight is a fast reflex game where glowing spores bloom across a dark forest floor and fade just as fast. Tap each one the moment it opens to catch it in time, because every clean catch in quick succession builds a combo that multiplies your score. Miss the window and the spore drifts away, tap bare ground and the streak breaks - so the difference between a good run and a great one comes down to your eyes and your timing.",
+                      "classic":  "Reflex Game"
                   }
               ]
 }

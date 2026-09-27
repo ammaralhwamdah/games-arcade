@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- PlayKrux Analytics -->
+<script async src="/gtag.js?id=G-GR5DG65ZK7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-GR5DG65ZK7');
+</script>
+<!-- /PlayKrux Analytics -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Sporelight</title>
+<style>
+  html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #120d08; font-family: system-ui, sans-serif; color: #f6ead9; }
+  canvas { display: block; position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; }
+
+  .overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(18,13,8,0.88); backdrop-filter: blur(8px); z-index: 6; transition: opacity 0.35s; }
+  .overlay.hidden { opacity: 0; pointer-events: none; }
+  .panel { background: rgba(28,20,13,0.95); border: 1px solid rgba(255,196,120,0.24); border-radius: 18px; padding: 28px 32px; max-width: 92vw; box-shadow: 0 24px 70px rgba(0,0,0,0.6); text-align: center; }
+  h1 { margin: 0 0 6px; font-size: clamp(30px, 7vw, 46px); font-weight: 900; letter-spacing: 2px; background: linear-gradient(90deg, #ffd9a0, #ffab6b, #ff8f7a); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .tag { font-size: 11px; letter-spacing: 3px; color: #a3855f; text-transform: uppercase; margin-bottom: 8px; }
+  .sub { font-size: 14px; line-height: 1.65; color: #c6ab89; max-width: 430px; margin: 8px auto 20px; }
+  .hint { font-size: 12.5px; color: #8d765a; line-height: 1.7; margin-top: 16px; }
+  .btn { background: linear-gradient(180deg, #ffb15e, #e8823a); color: #2a1608; border: none; border-radius: 12px; font-weight: 800; font-size: 16px; padding: 13px 30px; cursor: pointer; box-shadow: 0 8px 24px rgba(255,150,70,0.35); }
+  .btn:hover { filter: brightness(1.08); }
+  .btn.small { font-size: 13px; padding: 9px 18px; background: rgba(255,255,255,0.08); color: #e8dcc8; box-shadow: none; }
+  .row { display: flex; gap: 12px; justify-content: center; margin-top: 12px; }
+
+  #hud { position: absolute; top: 10px; left: 12px; z-index: 4; display: flex; gap: 10px; align-items: center; font-variant-numeric: tabular-nums; }
+  .chip { background: rgba(24,16,10,0.74); border: 1px solid rgba(255,196,120,0.2); border-radius: 10px; padding: 6px 11px; font-size: 13px; line-height: 1.35; min-width: 74px; }
+  .chip b { display: block; font-size: 15px; color: #fff; }
+  .chip span { color: #a3855f; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
+
+  #timerWrap { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 4; width: min(220px, 46vw); background: rgba(24,16,10,0.74); border: 1px solid rgba(255,196,120,0.2); border-radius: 10px; padding: 6px 12px; font-size: 12px; color: #c6ab89; text-align: center; }
+  #timerWrap .fillwrap { height: 5px; background: rgba(255,255,255,0.08); border-radius: 3px; margin-top: 5px; overflow: hidden; }
+  #timerWrap .fill { height: 100%; width: 100%; background: linear-gradient(90deg, #ffb15e, #ff7a5c); border-radius: 3px; }
+
+  #muteBtn { position: absolute; top: 12px; right: 12px; z-index: 4; background: rgba(24,16,10,0.74); border: 1px solid rgba(255,196,120,0.2); color: #fff; border-radius: 50%; width: 40px; height: 40px; font-size: 17px; cursor: pointer; }
+
+  #combo { position: absolute; z-index: 5; font-weight: 900; font-size: 20px; color: #ffd9a0; text-shadow: 0 2px 12px rgba(0,0,0,0.85); pointer-events: none; opacity: 0; }
+
+  @media (max-height: 560px) { .panel { padding: 20px 24px; } }
+</style>
+<meta name="robots" content="noindex, nofollow" />
+
+<!-- PlayKrux AdSense -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3801707354489723" crossorigin="anonymous"></script>
+<!-- /PlayKrux AdSense -->
+
+<!-- PlayKrux Funding Choices (Ad Blocking Recovery) -->
+<script async src="https://fundingchoicesmessages.google.com/i/pub-3801707354489723?ers=1"></script>
+<script>
+  (function() {function signalGooglefcPresent() {if (!window.frames['googlefcPresent']) {if (document.body) {const iframe = document.createElement('iframe'); iframe.style = 'width: 0; height: 0; border: none; z-index: -1000; left: -1000px; top: -1000px;'; iframe.style.display = 'none'; iframe.name = 'googlefcPresent'; document.body.appendChild(iframe);} else {setTimeout(signalGooglefcPresent, 0);}}}signalGooglefcPresent();})();
+</script>
+<!-- /PlayKrux Funding Choices -->
+
+</head>
+<body>
+<div class="seo-text" aria-hidden="true" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap">
+<h1>Sporelight - Free Online Game</h1>
+<p>Sporelight is a fast reflex garden game where glowing spores drift across a dark forest floor. Tap a spore the moment it blooms to catch it before it fades, and every catch in quick succession builds a combo that multiplies your score. The longer you survive the more spores appear at once, and the wrong tap on bare ground breaks the streak. There is no clock you cannot beat, just your own eyes, your own timing, and the quiet satisfaction of a clean catch.</p>
+<p>Play Sporelight for free in your browser at PlayKrux. No downloads and no registration needed - the game runs instantly on any device. PlayKrux hosts only original, hand-built games, reviewed by our editors and safe for all ages.</p>
+</div>
+  <canvas id="cv"></canvas>
+
+  <div id="hud">
+    <div class="chip"><span>Score</span><b id="score">0</b></div>
+    <div class="chip"><span>Best</span><b id="best">0</b></div>
+    <div class="chip"><span>Combo</span><b id="combo">x1</b></div>
+  </div>
+
+  <div id="timerWrap"><span id="timeLabel">Catch as many as you can</span><div class="fillwrap"><div class="fill" id="timeFill"></div></div></div>
+
+  <button id="muteBtn" title="Sound on/off">&#128266;</button>
+
+  <div id="combo"></div>
+
+  <div class="overlay" id="menu">
+    <div class="panel">
+      <div class="tag">Original Exclusive</div>
+      <h1>SPORELIGHT</h1>
+      <div class="sub">The forest floor glows, then goes quiet. Spores bloom one by one across the dark - tap each one the moment it opens to catch it before the light fades. Clean catches in quick succession build a combo that multiplies everything. Tap bare ground and the streak breaks.</div>
+      <button class="btn" id="startBtn">ENTER THE GLOW</button>
+      <div class="hint">Tap or click a spore as it blooms &middot; catch within the glow window &middot; chain catches for a combo multiplier &middot; misses end the chain</div>
+    </div>
+  </div>
+
+  <div class="overlay hidden" id="over">
+    <div class="panel">
+      <div class="tag">Time Up</div>
+      <h1 id="ovTitle">0</h1>
+      <div class="sub" id="ovSub">Spores caught 0 &middot; best combo x1</div>
+      <div class="row"><button class="btn" id="againBtn">PLAY AGAIN</button></div>
+      <div class="row"><button class="btn small" id="menuBtn">Main Menu</button></div>
+    </div>
+  </div>
+
+<script>
+"use strict";
+/* ==================== CANVAS ==================== */
+var cv = document.getElementById("cv");
+var ctx = cv.getContext("2d");
+var DPR = 1, W = 0, H = 0;
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 2.5);
+  W = window.innerWidth; H = window.innerHeight;
+  cv.width = Math.floor(W * DPR); cv.height = Math.floor(H * DPR);
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+}
+resize();
+window.addEventListener("resize", resize);
+
+/* ==================== STATE ==================== */
+var ROUND_TIME = 30;
+var best = 0, muted = false;
+try { best = parseInt(localStorage.getItem("sporelight-best") || "0", 10) || 0; } catch (e) {}
+try { muted = localStorage.getItem("sporelight_mute") === "1"; } catch (e) {}
+
+var state = "menu"; // menu | play | over
+var score = 0, combo = 1, comboTimer = 0, caught = 0, timeLeft = ROUND_TIME;
+var spores = [], parts = [], ripples = [];
+var spawnClock = 0, bestCombo = 1;
+
+var elScore = document.getElementById("score");
+var elBest = document.getElementById("best");
+var elCombo = document.getElementById("combo");
+var elTimeFill = document.getElementById("timeFill");
+var elComboFx = document.getElementById("combo");
+elBest.textContent = best;
+document.getElementById("muteBtn").textContent = muted ? "\u{1F507}" : "\u{1F50A}";
+document.getElementById("muteBtn").addEventListener("click", function () {
+  muted = !muted;
+  try { localStorage.setItem("sporelight_mute", muted ? "1" : "0"); } catch (e) {}
+  this.textContent = muted ? "\u{1F507}" : "\u{1F50A}";
+});
+
+/* ==================== AUDIO ==================== */
+var actx = null;
+function audio() {
+  if (!actx) { var AC = window.AudioContext || window.webkitAudioContext; if (AC) actx = new AC(); }
+  if (actx && actx.state === "suspended") actx.resume();
+  return actx;
+}
+function tone(freq, dur, type, vol, glideTo) {
+  if (muted) return;
+  var a = audio(); if (!a) return;
+  var o = a.createOscillator(), g = a.createGain();
+  o.type = type || "sine";
+  o.frequency.setValueAtTime(freq, a.currentTime);
+  if (glideTo) o.frequency.exponentialRampToValueAtTime(glideTo, a.currentTime + dur);
+  g.gain.setValueAtTime(0.0001, a.currentTime);
+  g.gain.exponentialRampToValueAtTime(vol || 0.12, a.currentTime + 0.012);
+  g.gain.exponentialRampToValueAtTime(0.0001, a.currentTime + dur);
+  o.connect(g); g.connect(a.destination);
+  o.start(); o.stop(a.currentTime + dur + 0.02);
+}
+function catchSound(step) {
+  var base = 520 * Math.pow(1.06, Math.min(step, 14));
+  tone(base, 0.12, "triangle", 0.14, base * 1.9);
+}
+function missSound() { tone(190, 0.16, "sawtooth", 0.07, 120); }
+function startSound() { tone(320, 0.14, "sine", 0.1, 640); }
+function overSound() { tone(420, 0.5, "sine", 0.1, 110); }
+
+/* ==================== SPORES ==================== */
+var HUES = [44, 16, 190, 320, 96];
+function newSpore(difficulty) {
+  var pad = 46;
+  var r = 15 + Math.random() * 9;
+  var bloom = 0.55 + Math.random() * 0.45;          // how long it stays catchable
+  var s = {
+    x: pad + Math.random() * Math.max(1, W - pad * 2),
+    y: pad + Math.random() * Math.max(1, H - pad * 2),
+    r: r,
+    hue: HUES[(Math.random() * HUES.length) | 0],
+    age: 0,
+    life: bloom,
+    grow: 0.14,
+    drift: (Math.random() * 2 - 1) * (18 + difficulty * 12),
+    driftY: (Math.random() * 2 - 1) * (12 + difficulty * 8),
+    phase: Math.random() * Math.PI * 2,
+    dead: false
+  };
+  spores.push(s);
+  return s;
+}
+
+/* ==================== PARTICLES ==================== */
+function burst(x, y, hue) {
+  for (var i = 0; i < 14; i++) {
+    var a = Math.random() * Math.PI * 2;
+    var sp = 40 + Math.random() * 150;
+    parts.push({
+      x: x, y: y,
+      vx: Math.cos(a) * sp, vy: Math.sin(a) * sp,
+      life: 0.5 + Math.random() * 0.3, age: 0,
+      hue: hue, size: 2 + Math.random() * 3
+    });
+  }
+}
+function ripple(x, y, hue) {
+  ripples.push({ x: x, y: y, hue: hue, age: 0, life: 0.45 });
+}
+
+/* ==================== COMBO ==================== */
+function bumpCombo() {
+  combo = Math.min(combo + 1, 12);
+  bestCombo = Math.max(bestCombo, combo);
+  comboTimer = 1.7;
+  elCombo.textContent = "x" + combo;
+  elComboFx.style.opacity = "1";
+  elComboFx.textContent = "x" + combo;
+  if (combo >= 3) tone(300 + combo * 40, 0.1, "square", 0.06, 420 + combo * 40);
+}
+function breakCombo() {
+  if (combo > 1) missSound();
+  combo = 1; comboTimer = 0;
+  elCombo.textContent = "x1";
+  elComboFx.style.opacity = "0";
+}
+
+/* ==================== UPDATE ==================== */
+function update(dt) {
+  if (comboTimer > 0) {
+    comboTimer -= dt;
+    if (comboTimer <= 0) breakCombo();
+    elComboFx.style.opacity = String(Math.max(0, Math.min(1, comboTimer / 0.5)));
+  }
+
+  for (var i = spores.length - 1; i >= 0; i--) {
+    var s = spores[i];
+    s.age += dt;
+    s.phase += dt * 2.2;
+    s.x += (s.drift + Math.sin(s.phase) * 14) * dt;
+    s.y += (s.driftY + Math.cos(s.phase * 0.8) * 10) * dt;
+    var pad = 24;
+    if (s.x < pad) { s.x = pad; s.drift = Math.abs(s.drift); }
+    if (s.x > W - pad) { s.x = W - pad; s.drift = -Math.abs(s.drift); }
+    if (s.y < pad) { s.y = pad; s.driftY = Math.abs(s.driftY); }
+    if (s.y > H - pad) { s.y = H - pad; s.driftY = -Math.abs(s.driftY); }
+    if (s.age > s.life + 0.35) { spores.splice(i, 1); breakCombo(); }
+  }
+
+  for (var j = parts.length - 1; j >= 0; j--) {
+    var p = parts[j];
+    p.age += dt;
+    p.x += p.vx * dt; p.y += p.vy * dt;
+    p.vx *= 0.94; p.vy *= 0.94;
+    if (p.age > p.life) parts.splice(j, 1);
+  }
+  for (var k = ripples.length - 1; k >= 0; k--) {
+    var rp = ripples[k];
+    rp.age += dt;
+    if (rp.age > rp.life) ripples.splice(k, 1);
+  }
+}
+
+/* ==================== DRAW ==================== */
+function draw() {
+  var g = ctx.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, "#150f09"); g.addColorStop(1, "#0b0805");
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+  // faint drifting motes for depth
+  ctx.fillStyle = "rgba(255,210,150,0.05)";
+  for (var d = 0; d < 26; d++) {
+    var mx = (Math.sin(d * 12.9898) * 43758.5453 % 1 + 1) % 1;
+    var my = (Math.sin(d * 78.233) * 43758.5453 % 1 + 1) % 1;
+    var px = ((mx * W + performance.now() * 0.004 * (0.3 + mx)) % W + W) % W;
+    var py = (my * H + performance.now() * 0.002 * (0.2 + my)) % H;
+    ctx.beginPath(); ctx.arc(px, py, 1.4, 0, Math.PI * 2); ctx.fill();
+  }
+
+  for (var i = 0; i < ripples.length; i++) {
+    var rp = ripples[i];
+    var t = rp.age / rp.life;
+    ctx.strokeStyle = "hsla(" + rp.hue + ", 90%, 70%, " + (0.5 * (1 - t)) + ")";
+    ctx.lineWidth = 2.5 * (1 - t);
+    ctx.beginPath(); ctx.arc(rp.x, rp.y, rp.age * 130, 0, Math.PI * 2); ctx.stroke();
+  }
+
+  for (var k = 0; k < spores.length; k++) {
+    var s = spores[k];
+    var growT = Math.min(1, s.age / s.grow);
+    var fadeT = s.age > s.life ? Math.max(0, 1 - (s.age - s.life) / 0.35) : 1;
+    var rr = s.r * (0.5 + 0.5 * growT);
+    var alpha = fadeT * (s.age > s.life ? 1 : 1);
+
+    var halo = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, rr * 3.2);
+    halo.addColorStop(0, "hsla(" + s.hue + ", 95%, 72%, " + (0.5 * alpha) + ")");
+    halo.addColorStop(1, "hsla(" + s.hue + ", 95%, 60%, 0)");
+    ctx.fillStyle = halo;
+    ctx.beginPath(); ctx.arc(s.x, s.y, rr * 3.2, 0, Math.PI * 2); ctx.fill();
+
+    ctx.fillStyle = "hsla(" + s.hue + ", 95%, " + (68 + 12 * Math.sin(s.phase * 2)) + "%, " + alpha + ")";
+    ctx.beginPath(); ctx.arc(s.x, s.y, rr, 0, Math.PI * 2); ctx.fill();
+
+    ctx.fillStyle = "rgba(255,255,255," + (0.75 * alpha) + ")";
+    ctx.beginPath(); ctx.arc(s.x - rr * 0.3, s.y - rr * 0.3, rr * 0.32, 0, Math.PI * 2); ctx.fill();
+  }
+
+  for (var p = 0; p < parts.length; p++) {
+    var pt = parts[p];
+    var a = 1 - pt.age / pt.life;
+    ctx.fillStyle = "hsla(" + pt.hue + ", 95%, 70%, " + a + ")";
+    ctx.beginPath(); ctx.arc(pt.x, pt.y, pt.size * a, 0, Math.PI * 2); ctx.fill();
+  }
+}
+
+/* ==================== LOOP ==================== */
+var last = performance.now();
+function frame(now) {
+  var dt = Math.min(0.05, (now - last) / 1000);
+  last = now;
+  if (state === "play") {
+    timeLeft -= dt;
+    if (timeLeft <= 0) {
+      timeLeft = 0;
+      endRound();
+    } else {
+      var diff = 1 - timeLeft / ROUND_TIME;                 // 0 -> 1
+      var interval = 0.62 - diff * 0.34;                     // faster over time
+      spawnClock -= dt;
+      if (spawnClock <= 0 && spores.length < 3 + Math.floor(diff * 5)) {
+        newSpore(diff);
+        spawnClock = interval;
+      }
+      elTimeFill.style.width = (timeLeft / ROUND_TIME * 100) + "%";
+    }
+  }
+  update(dt);
+  draw();
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+/* ==================== INPUT ==================== */
+function pointFrom(e) {
+  var t = e.changedTouches && e.changedTouches[0] ? e.changedTouches[0] : e;
+  return { x: t.clientX, y: t.clientY };
+}
+function tap(e) {
+  if (state !== "play") return;
+  e.preventDefault();
+  var pt = pointFrom(e);
+  for (var i = spores.length - 1; i >= 0; i--) {
+    var s = spores[i];
+    var growT = Math.min(1, s.age / s.grow);
+    var rr = s.r * (0.5 + 0.5 * growT) * 1.25;
+    var dx = pt.x - s.x, dy = pt.y - s.y;
+    if (dx * dx + dy * dy <= rr * rr) {
+      var pts = 10 * combo;
+      score += pts;
+      caught++;
+      bumpCombo();
+      burst(s.x, s.y, s.hue);
+      ripple(s.x, s.y, s.hue);
+      catchSound(combo);
+      spores.splice(i, 1);
+      updateHud();
+      return;
+    }
+  }
+  // bare ground
+  breakCombo();
+}
+function updateHud() {
+  elScore.textContent = score;
+  if (score > best) { best = score; elBest.textContent = best; }
+}
+cv.addEventListener("pointerdown", tap);
+
+/* ==================== FLOW ==================== */
+function startRound() {
+  audio();
+  state = "play";
+  score = 0; combo = 1; comboTimer = 0; caught = 0; timeLeft = ROUND_TIME; bestCombo = 1;
+  spores = []; parts = []; ripples = []; spawnClock = 0;
+  elCombo.textContent = "x1";
+  elComboFx.style.opacity = "0";
+  elTimeFill.style.width = "100%";
+  updateHud();
+  document.getElementById("menu").classList.add("hidden");
+  document.getElementById("over").classList.add("hidden");
+  startSound();
+}
+function endRound() {
+  state = "over";
+  overSound();
+  if (score > best) { best = score; try { localStorage.setItem("sporelight-best", String(best)); } catch (e) {} }
+  updateHud();
+  document.getElementById("ovTitle").textContent = String(score);
+  document.getElementById("ovSub").textContent =
+    "Spores caught " + caught + " \u00b7 best combo x" + bestCombo;
+  document.getElementById("over").classList.remove("hidden");
+}
+function showMenu() {
+  state = "menu";
+  spores = []; parts = []; ripples = [];
+  document.getElementById("over").classList.add("hidden");
+  document.getElementById("menu").classList.remove("hidden");
+}
+document.getElementById("startBtn").addEventListener("click", startRound);
+document.getElementById("againBtn").addEventListener("click", startRound);
+document.getElementById("menuBtn").addEventListener("click", showMenu);
+document.addEventListener("keydown", function (e) {
+  if (e.key === " " || e.key === "Enter") {
+    if (state === "menu" || state === "over") { e.preventDefault(); startRound(); }
+  }
+});
+window.addEventListener("blur", function () { if (state === "play") { /* keep running, no auto-pause */ } });
+</script>
+</body>
+</html>
