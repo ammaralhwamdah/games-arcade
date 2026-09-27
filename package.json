@@ -12,6 +12,7 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "gen:min": "node scripts/gen-min.mjs",
+    "fix:size": "node scripts/fix-sizekb.mjs",
     "verify:build": "node scripts/verify-build.mjs",
     "verify:games": "node scripts/verify-games.mjs"
   },

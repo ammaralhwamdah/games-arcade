@@ -51,6 +51,15 @@ for (const g of catalog.games) {
   } else {
     const size = statSync(gameFile).size;
     if (size < 4000) fail(`game file suspiciously small for "${g.slug}": ${size} bytes`);
+
+    // sizeKb is printed on the /play page ("💾 N KB"), so a stale value is a
+    // visible factual error. Allow 1 KB of slack for rounding.
+    if (typeof g.sizeKb !== "number" || Math.abs(g.sizeKb - Math.round(size / 1024)) > 1) {
+      fail(
+        `stale sizeKb for "${g.slug}": catalog says ${g.sizeKb} KB, file is ${size} bytes ` +
+          `(${Math.round(size / 1024)} KB). Update public/data/games.json`
+      );
+    }
   }
 
   if (g.image && !existsSync(join(out, g.image.replace(/^\//, "")))) {
