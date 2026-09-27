@@ -31,34 +31,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Type check
+      # Build first: Next generates the typed-route globals (LayoutProps /
+      # PageProps) into .next/types during the build, so tsc cannot see them
+      # before this step runs.
+      - name: Build
         run: |
           set +e
-          npm run typecheck > /tmp/tsc.log 2>&1
-          echo $? > /tmp/tsc.exit
-          cat /tmp/tsc.log
-          exit $(cat /tmp/tsc.exit)
-
-      # On failure, commit the compiler output into the repo so the error is
-      # readable without GitHub Actions log access.
-      - name: Publish typecheck diagnostics
-        if: failure()
-        run: |
-          mkdir -p public
-          {
-            echo "commit=${{ github.sha }}"
-            echo "exit=$(cat /tmp/tsc.exit 2>/dev/null || echo '?')"
-            echo "----"
-            cat /tmp/tsc.log
-          } > public/tsc-errors.txt
-          git config user.email "ci@playkrux.com"
-          git config user.name "CI Diagnostics"
-          git add public/tsc-errors.txt
-          git commit -m "ci: publish typecheck diagnostics [skip ci]" || echo "nothing to commit"
-          git push || echo "push skipped"
-
-      - name: Build
-        run: npm run build
+          npm run build > /tmp/build.log 2>&1
+          echo $? > /tmp/build.exit
+          cat /tmp/build.log
+          exit $(cat /tmp/build.exit)
         env:
           NEXT_PUBLIC_SITE_URL: https://playkrux.com
           NEXT_PUBLIC_CONTACT_EMAIL: playkrux@gmail.com
@@ -71,6 +53,14 @@ jobs:
           NEXT_PUBLIC_GA_ID: G-GR5DG65ZK7
           NEXT_PUBLIC_GTM_ID: GTM-PC37BFTH
 
+      - name: Type check
+        run: |
+          set +e
+          npm run typecheck > /tmp/tsc.log 2>&1
+          echo $? > /tmp/tsc.exit
+          cat /tmp/tsc.log
+          exit $(cat /tmp/tsc.exit)
+
       - name: Verify build output
         run: npm run verify:build
 
@@ -78,6 +68,27 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: out
+
+      # On failure, commit the compiler output to the repo ROOT (never public/,
+      # so it can never be published) so the error is readable without GitHub
+      # Actions log access.
+      - name: Publish CI diagnostics
+        if: failure()
+        run: |
+          {
+            echo "commit=${{ github.sha }}"
+            echo "build_exit=$(cat /tmp/build.exit 2>/dev/null || echo 'n/a')"
+            echo "tsc_exit=$(cat /tmp/tsc.exit 2>/dev/null || echo 'n/a')"
+            echo "==== BUILD LOG ===="
+            cat /tmp/build.log 2>/dev/null || echo "(no build log)"
+            echo "==== TSC LOG ===="
+            cat /tmp/tsc.log 2>/dev/null || echo "(no tsc log)"
+          } > ci-errors.txt
+          git config user.email "ci@playkrux.com"
+          git config user.name "CI Diagnostics"
+          git add -f ci-errors.txt
+          git commit -m "ci: publish build/typecheck diagnostics [skip ci]" || echo "nothing to commit"
+          git push || echo "push skipped"
 
   deploy:
     environment:
