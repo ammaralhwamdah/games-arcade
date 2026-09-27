@@ -66,6 +66,8 @@ const targets = [
 ];
 
 for (const g of catalog.games) {
+  // The clean /play/<slug> URL is what users and Google hit. Next's flat
+  // export also exposes /play/<slug>.html; require the clean URL to work.
   targets.push({ url: `${BASE}/play/${g.slug}`, must: g.name });
   targets.push({ url: `${BASE}/${g.file}`, must: "<html" });
 }

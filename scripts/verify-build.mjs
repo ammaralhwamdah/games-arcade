@@ -33,11 +33,17 @@ for (const p of corePages) {
 // 2. Every catalog game must have BOTH its /play wrapper page and its
 //    playable HTML copied into the export. A missing one means the live
 //    site would 404 for that game.
+//
+//    `next build` with output:"export" writes dynamic routes in FLAT form
+//    (/play/<slug>.html), not as folders, so accept either layout.
 const catalog = JSON.parse(readFileSync(join(root, "public", "data", "games.json"), "utf8"));
 
 for (const g of catalog.games) {
-  const playPage = join(out, "play", g.slug, "index.html");
-  if (!existsSync(playPage)) fail(`missing play page for "${g.slug}": out/play/${g.slug}/index.html`);
+  const flat = join(out, "play", `${g.slug}.html`);
+  const nested = join(out, "play", g.slug, "index.html");
+  if (!existsSync(flat) && !existsSync(nested)) {
+    fail(`missing play page for "${g.slug}": out/play/${g.slug}.html`);
+  }
 
   const gameFile = join(out, g.file);
   if (!existsSync(gameFile)) {
