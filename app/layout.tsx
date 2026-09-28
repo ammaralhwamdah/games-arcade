@@ -93,6 +93,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <link rel="preconnect" href="https://fundingchoicesmessages.google.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://static.cloudflareinsights.com" />
         <link rel="preconnect" href="https://static.cloudflareinsights.com" crossOrigin="anonymous" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){var s;try{s=localStorage.getItem('playkrux-cookie-consent')}catch(e){}" +
+              "var g=s==='accepted'?'granted':'denied';" +
+              "window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}" +
+              "gtag('consent','default',{ad_storage:g,ad_user_data:g," +
+              "ad_personalization:g,analytics_storage:g})})();",
+          }}
+        />
         <script async fetchPriority="low" src={`/gtag.js?id=${GA_ID}`}></script>
         <script
           dangerouslySetInnerHTML={{
