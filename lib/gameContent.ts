@@ -1434,6 +1434,8 @@ const content: Record<string, GameContent> = {
       "Brush mode for freehand stripes, spots and doodles of your own",
       "Progress counter that tracks every fillable part of the current picture",
       "Undo steps back one fill or one brush stroke, and Reset wipes the picture",
+      "Generated sound effects, with each fill a note higher than the last",
+      "Sound on or off toggle, remembered the next time you come back",
       "Plays with a finger on a phone or a mouse on a desktop, and runs offline",
     ],
     faq: [
@@ -1456,6 +1458,10 @@ const content: Record<string, GameContent> = {
       {
         q: "How many pictures are there?",
         a: "Four, and they are ordered from the fewest parts to the most, so Next picture walks you from Ducky with nine parts up to Pip with fourteen. That way you can start with an easy one if you want, or sit with the most detailed one if you would rather.",
+      },
+      {
+        q: "Does Mallowmoss have sound?",
+        a: "Yes, and you can turn it off. Each fill plays a short note that is slightly higher than the one before it, so filling a picture sounds like climbing, and finishing plays a small four-note run. The tones are generated in the browser rather than loaded from audio files, which keeps the page quick and means they work without a connection. Use the Sound button in the top bar to mute it, and the game remembers your choice for next time.",
       },
       {
         q: "Does it work on a phone and a tablet?",

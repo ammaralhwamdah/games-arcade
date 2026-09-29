@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Mallowmoss - Free Online Colouring Game for Kids</title>
-<meta name="description" content="Four cute friends to colour in, and you fill them by tapping. No timer, no score, works on a phone." />
+<meta name="description" content="Four cute friends to colour in by tapping, with sound. No timer, no score, works on a phone." />
 <meta name="theme-color" content="#2b1a4a" />
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -76,6 +76,7 @@
     <button id="undo" title="Undo the last fill or brush stroke">Undo</button>
     <button id="reset" title="Start over">Reset</button>
     <button id="next" title="Next picture">Next</button>
+    <button id="mSound" title="Turn the sound effects on or off">Sound: On</button>
   </div>
 </header>
 
@@ -244,6 +245,7 @@
 
   function load() {
     state.history = []; state.done = false;
+    fillCount = 0;
     toast.classList.remove("show");
     stage.querySelectorAll("svg").forEach(function (s) { s.remove(); });
     stage.insertAdjacentHTML("afterbegin", buildSVG(PICTURES[state.pic]));
@@ -261,11 +263,95 @@
     if (cur === state.color.toLowerCase()) return;
     state.history.push({ el: el, prev: el.getAttribute("fill") });
     el.setAttribute("fill", state.color);
+    sfxFill();
     updateHUD();
     checkDone();
   }
 
   function onUp() { if (state.mode === "brush") endBrush(); }
+
+  // ---------- Sound. Tones are generated with Web Audio, so there are no
+  // audio files to download and the page still works with no network.
+  var SND_KEY = "mallowmoss-sound";
+  var soundOn = true;
+  try {
+    var stored = localStorage.getItem(SND_KEY);
+    if (stored !== null) soundOn = stored !== "off";
+  } catch (e) {}
+
+  var actx = null, fillCount = 0, lastBrushSnd = 0;
+
+  // Created lazily inside a user gesture, which is what autoplay policy wants.
+  function audio() {
+    if (!soundOn) return null;
+    if (!actx) {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      try { actx = new AC(); } catch (e) { return null; }
+    }
+    if (actx.state === "suspended" && actx.resume) actx.resume();
+    return actx;
+  }
+
+  function blip(freq, dur, type, vol, delay, slideTo) {
+    var a = audio();
+    if (!a) return;
+    var t0 = a.currentTime + (delay || 0);
+    var osc = a.createOscillator();
+    var g = a.createGain();
+    osc.type = type || "sine";
+    osc.frequency.setValueAtTime(freq, t0);
+    if (slideTo) osc.frequency.exponentialRampToValueAtTime(slideTo, t0 + dur);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(vol, t0 + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    osc.connect(g);
+    g.connect(a.destination);
+    osc.start(t0);
+    osc.stop(t0 + dur + 0.03);
+  }
+
+  // Each fill is a little higher than the last, so a finished page sounds like
+  // it climbed. The cap keeps the last few notes from turning shrill.
+  function sfxFill() {
+    fillCount++;
+    blip(430 + Math.min(fillCount, 12) * 22, 0.14, "triangle", 0.15, 0);
+  }
+
+  // Brush is deliberately quiet and rate-limited, or a long stroke buzzes.
+  function sfxBrush() {
+    var now = Date.now();
+    if (now - lastBrushSnd < 75) return;
+    lastBrushSnd = now;
+    blip(300, 0.05, "sine", 0.045, 0);
+  }
+
+  function sfxPick() { blip(880, 0.05, "sine", 0.08, 0); }
+  function sfxUndo() { blip(520, 0.09, "sine", 0.12, 0, 380); }
+  function sfxReset() { blip(500, 0.18, "sine", 0.12, 0, 240); }
+
+  function sfxNext() {
+    blip(520, 0.09, "triangle", 0.12, 0);
+    blip(700, 0.12, "triangle", 0.12, 0.07);
+  }
+
+  function sfxDone() {
+    var notes = [523.25, 659.25, 783.99, 1046.5];
+    for (var i = 0; i < notes.length; i++) blip(notes[i], 0.34, "triangle", 0.15, i * 0.085);
+  }
+
+  var soundBtn = document.getElementById("mSound");
+  function paintSoundBtn() {
+    soundBtn.textContent = soundOn ? "Sound: On" : "Sound: Off";
+    if (soundOn) soundBtn.classList.add("on");
+    else soundBtn.classList.remove("on");
+  }
+  soundBtn.onclick = function () {
+    soundOn = !soundOn;
+    try { localStorage.setItem(SND_KEY, soundOn ? "on" : "off"); } catch (e) {}
+    paintSoundBtn();
+    if (soundOn) sfxPick();
+  };
 
   // ---------- Brush
   var painting = false, last = null, ink = null;
@@ -313,7 +399,7 @@
     if (!pt) return;
     e.preventDefault();
     var ln = inkLine(last, pt);
-    if (ln) state.history.push({ brush: true, el: ln });
+    if (ln) { state.history.push({ brush: true, el: ln }); sfxBrush(); }
     last = pt;
     return false;
   }
@@ -324,6 +410,7 @@
     if (state.done) return;
     if (pct() >= 100) {
       state.done = true;
+      sfxDone();
       document.getElementById("tMsg").textContent = "You finished " + PICTURES[state.pic].name + "!";
       toast.classList.add("show");
     }
@@ -344,6 +431,7 @@
         state.color = c;
         wrap.querySelectorAll(".sw").forEach(function (x) { x.classList.remove("sel"); });
         b.classList.add("sel");
+        sfxPick();
       };
       wrap.appendChild(b);
     });
@@ -369,16 +457,19 @@
       state.done = false;
       toast.classList.remove("show");
     }
+    sfxUndo();
     updateHUD();
   };
-  document.getElementById("reset").onclick = load;
+  document.getElementById("reset").onclick = function () { load(); sfxReset(); };
   document.getElementById("next").onclick = function () {
     state.pic = (state.pic + 1) % PICTURES.length;
     load();
+    sfxNext();
   };
   document.getElementById("tBtn").onclick = function () {
     state.pic = (state.pic + 1) % PICTURES.length;
     load();
+    sfxNext();
   };
 
   stage.addEventListener("pointerdown", onDown);
@@ -387,6 +478,7 @@
   stage.addEventListener("contextmenu", function (e) { if (state.mode === "brush") e.preventDefault(); });
 
   buildSwatches();
+  paintSoundBtn();
   load();
 })();
 </script>

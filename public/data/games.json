@@ -1243,7 +1243,7 @@
       "file": "games/mallowmoss/index.html",
       "src": "/games/mallowmoss/index.html",
       "image": "/images/games/mallowmoss.svg",
-      "sizeKb": 19,
+      "sizeKb": 22,
       "rating": 4.8,
       "plays": 0,
       "year": 2026,
@@ -1256,7 +1256,7 @@
         "cute",
         "single-player"
       ],
-      "description": "Mallowmoss is a colouring page you fill in by tapping, not a puzzle you can lose. Four original characters are waiting: Pip the Bunny, Miso the Kitten, Ducky the Duck and Bobo the Frog. Pick a colour, tap a part, and it fills in - the counter at the top keeps track of how much you have done, so nothing gets missed by accident. Every character is built from separate pieces, and a few of them sit away from the body, which is where most people get stuck. Pip's tail is tucked behind one hip, Ducky has a tuft on top of his head, and Bobo has spots across his back. Switch to the brush when you want to add your own stripes or doodles; brush strokes are decoration only and never count towards the percentage, so you cannot accidentally block yourself from finishing. Undo steps back one tap at a time and Reset wipes the page, so there is no wrong way to play. It works with a finger on a phone or a mouse on a desktop, it runs offline, and there is no score to beat and no timer running down.",
+      "description": "Mallowmoss is a colouring page you fill in by tapping, not a puzzle you can lose. Four original characters are waiting: Pip the Bunny, Miso the Kitten, Ducky the Duck and Bobo the Frog. Pick a colour, tap a part, and it fills in - the counter at the top keeps track of how much you have done, so nothing gets missed by accident. Every character is built from separate pieces, and a few of them sit away from the body, which is where most people get stuck. Pip's tail is tucked behind one hip, Ducky has a tuft on top of his head, and Bobo has spots across his back. Switch to the brush when you want to add your own stripes or doodles; brush strokes are decoration only and never count towards the percentage, so you cannot accidentally block yourself from finishing. The sound is generated live rather than loaded from files, and each fill plays a little higher than the last, so a finished page sounds like it climbed. Undo steps back one action at a time and Reset wipes the page, so there is no wrong way to play. It works with a finger on a phone or a mouse on a desktop, and there is no score to beat and no timer running down.",
       "classic": "Colouring"
     }
   ]
