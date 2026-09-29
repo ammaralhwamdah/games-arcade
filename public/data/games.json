@@ -1,6 +1,6 @@
 {
   "generated": "2026-09-02T12:00:00.000Z",
-  "total": 37,
+  "total": 38,
   "categories": 20,
   "categoriesMeta": [
     {
@@ -176,7 +176,8 @@
     "blorb-bonanza",
     "voxel-voyage",
     "gemfall-depths",
-    "racket-rumble"
+    "racket-rumble",
+    "mallowmoss"
   ],
   "games": [
     {
@@ -1230,6 +1231,33 @@
       ],
       "description": "Glowtug is a fast reflex game where glowing spores bloom across a dark forest floor and fade just as fast. Tap each one the moment it opens to catch it in time, because every clean catch in quick succession builds a combo that multiplies your score. Miss the window and the spore drifts away, tap bare ground and the streak breaks - so the difference between a good run and a great one comes down to your eyes and your timing.",
       "classic": "Reflex Game"
+    },
+    {
+      "id": "mallowmoss",
+      "slug": "mallowmoss",
+      "name": "Mallowmoss",
+      "category": "girls",
+      "categories": [
+        "girls"
+      ],
+      "file": "games/mallowmoss/index.html",
+      "src": "/games/mallowmoss/index.html",
+      "image": "/images/games/mallowmoss.svg",
+      "sizeKb": 19,
+      "rating": 4.8,
+      "plays": 0,
+      "year": 2026,
+      "tags": [
+        "exclusive",
+        "html5",
+        "coloring",
+        "kids",
+        "drawing",
+        "cute",
+        "single-player"
+      ],
+      "description": "Mallowmoss is a colouring page you fill in by tapping, not a puzzle you can lose. Four original characters are waiting: Pip the Bunny, Miso the Kitten, Ducky the Duck and Bobo the Frog. Pick a colour, tap a part, and it fills in - the counter at the top keeps track of how much you have done, so nothing gets missed by accident. Every character is built from separate pieces, and a few of them sit away from the body, which is where most people get stuck. Pip's tail is tucked behind one hip, Ducky has a tuft on top of his head, and Bobo has spots across his back. Switch to the brush when you want to add your own stripes or doodles; brush strokes are decoration only and never count towards the percentage, so you cannot accidentally block yourself from finishing. Undo steps back one tap at a time and Reset wipes the page, so there is no wrong way to play. It works with a finger on a phone or a mouse on a desktop, it runs offline, and there is no score to beat and no timer running down.",
+      "classic": "Colouring"
     }
   ]
 }

@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Mallowmoss - Free Online Colouring Game for Kids</title>
+<meta name="description" content="Four cute friends to colour in, and you fill them by tapping. No timer, no score, works on a phone." />
+<meta name="theme-color" content="#2b1a4a" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: radial-gradient(circle at 20% 15%, #3d2470 0%, #2b1a4a 45%, #1b1030 100%);
+    color: #f4f0ff;
+    display: flex; flex-direction: column;
+    min-height: 100dvh; overflow: hidden;
+    user-select: none; -webkit-user-select: none;
+  }
+  header {
+    padding: 10px 14px; display: flex; align-items: center; gap: 10px;
+    flex-wrap: wrap; flex-shrink: 0;
+    background: rgba(0,0,0,.18); backdrop-filter: blur(6px);
+    border-bottom: 1px solid rgba(255,255,255,.07);
+  }
+  .brand { font-size: 17px; font-weight: 800; letter-spacing: .2px; display: flex; align-items: center; gap: 7px; }
+  .brand span.dot { width: 11px; height: 11px; border-radius: 50%; background: #ff8fb1; box-shadow: 0 0 9px #ff8fb1; }
+  .tools { display: flex; gap: 6px; margin-left: auto; flex-wrap: wrap; }
+  button {
+    font: inherit; font-size: 13px; font-weight: 650; cursor: pointer;
+    border: 1px solid rgba(255,255,255,.14); border-radius: 11px;
+    background: rgba(255,255,255,.08); color: #f4f0ff;
+    padding: 7px 12px; transition: transform .12s, background .15s, border-color .15s;
+  }
+  button:hover { background: rgba(255,255,255,.14); }
+  button:active { transform: scale(.95); }
+  button.on { background: #ff8fb1; border-color: #ff8fb1; color: #2b1a4a; }
+  .stage { flex: 1; position: relative; display: grid; place-items: center; padding: 12px; min-height: 0; }
+  svg.page { width: 100%; height: 100%; max-width: 720px; touch-action: none; display: block; }
+  .region { cursor: pointer; transition: opacity .12s; }
+  .region:hover { opacity: .82; }
+  .swatches {
+    display: flex; gap: 7px; flex-wrap: wrap; justify-content: center;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+    flex-shrink: 0; background: rgba(0,0,0,.2);
+    border-top: 1px solid rgba(255,255,255,.07);
+  }
+  .sw { width: 34px; height: 34px; border-radius: 50%; cursor: pointer; border: 2px solid rgba(255,255,255,.28); transition: transform .12s; }
+  .sw:hover { transform: scale(1.14); }
+  .sw.sel { border-color: #fff; transform: scale(1.2); box-shadow: 0 0 0 3px rgba(255,255,255,.2); }
+  .hud {
+    position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+    background: rgba(0,0,0,.42); padding: 6px 15px; border-radius: 999px;
+    font-size: 13px; font-weight: 700; backdrop-filter: blur(4px);
+    pointer-events: none; white-space: nowrap; z-index: 5;
+  }
+  .toast {
+    position: absolute; inset: 0; display: grid; place-items: center;
+    background: rgba(20,10,40,.86); backdrop-filter: blur(7px);
+    z-index: 20; padding: 22px; text-align: center; opacity: 0; pointer-events: none; transition: opacity .3s;
+  }
+  .toast.show { opacity: 1; pointer-events: auto; }
+  .toast .card { max-width: 330px; }
+  .toast h2 { font-size: 26px; margin-bottom: 9px; }
+  .toast p { font-size: 14px; opacity: .85; margin-bottom: 17px; }
+  .toast button { background: #ff8fb1; color: #2b1a4a; border: none; font-size: 15px; padding: 11px 24px; }
+  @media (max-width: 480px) { .brand { font-size: 15px; } button { font-size: 12px; padding: 6px 9px; } .sw { width: 29px; height: 29px; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><span class="dot"></span> Mallowmoss</div>
+  <div class="tools">
+    <button id="mBucket" class="on" title="Fill an area">Fill</button>
+    <button id="mBrush" title="Brush freely">Brush</button>
+    <button id="undo" title="Undo the last fill or brush stroke">Undo</button>
+    <button id="reset" title="Start over">Reset</button>
+    <button id="next" title="Next picture">Next</button>
+  </div>
+</header>
+
+<div class="stage" id="stage">
+  <div class="hud" id="hud">0%</div>
+  <div class="toast" id="toast"><div class="card">
+    <h2 id="tTitle">Beautiful!</h2>
+    <p id="tMsg">You finished the picture.</p>
+    <button id="tBtn">Next picture</button>
+  </div></div>
+</div>
+
+<div class="swatches" id="swatches"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---------- Original artwork. Closed shapes carry data-fill so the engine
+  // can fill them. Open line art (mouth, whiskers, tuft) stays decorative and
+  // is left out of the progress count. Coordinates are in a 0 0 600 600 box.
+  // Ordered by part count, so "Next picture" walks from the fewest pieces
+  // to the most detailed: duck 9, frog 12, kitten 13, bunny 14.
+  var PICTURES = [
+    { id: "duck", name: "Ducky the Duck" },
+    { id: "frog", name: "Bobo the Frog" },
+    { id: "kitten", name: "Miso the Kitten" },
+    { id: "bunny", name: "Pip the Bunny" }
+  ];
+
+  function buildSVG(p) {
+    var s = '<svg class="page" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Coloring page">';
+    s += '<rect x="0" y="0" width="600" height="600" fill="#fff" data-fill="1" data-bg="1" class="region" />';
+    s += SHAPES[p.id] || "";
+    s += '<g class="ink"></g>';
+    s += "</svg>";
+    return s;
+  }
+
+  // Each shape: <path class="region" data-fill="1" d="..." fill="#fff" stroke="#2b1a4a" stroke-width="4" stroke-linejoin="round"/>
+  var SHAPES = {};
+
+  SHAPES.bunny =
+    // ears
+    '<path class="region" data-fill="1" d="M232 250 C215 170 225 105 258 108 C288 111 293 185 283 252 Z" fill="#fff" stroke="#2b1a4a" stroke-width="4" stroke-linejoin="round"/>' +
+    '<path class="region" data-fill="1" d="M368 250 C385 170 375 105 342 108 C312 111 307 185 317 252 Z" fill="#fff" stroke="#2b1a4a" stroke-width="4" stroke-linejoin="round"/>' +
+    // head
+    '<circle class="region" data-fill="1" cx="300" cy="300" r="128" fill="#fff" stroke="#2b1a4a" stroke-width="4"/>' +
+    // eyes
+    '<circle class="region" data-fill="1" cx="259" cy="283" r="15" fill="#fff" stroke="#2b1a4a" stroke-width="4"/>' +
+    '<circle class="region" data-fill="1" cx="341" cy="283" r="15" fill="#fff" stroke="#2b1a4a" stroke-width="4"/>' +
+    // cheeks
+    '<circle class="region" data-fill="1" cx="228" cy="322" r="19" fill="#fff" stroke="#2b1a4a" stroke-width="3"/>' +
+    '<circle class="region" data-fill="1" cx="372" cy="322" r="19" fill="#fff" stroke="#2b1a4a" stroke-width="3"/>' +
+    // nose + mouth
+    '<path class="region" data-fill="1" d="M300 312 l-14 -11 h28 Z" fill="#fff" stroke="#2b1a4a" stroke-width="3" stroke-linejoin="round"/>' +
+    '<path d="M300 312 v12 M300 324 c-11 12 -24 8 -24 -2 M300 324 c11 12 24 8 24 -2" fill="none" stroke="#2b1a4a" stroke-width="4" stroke-linecap="round"/>' +
+    // body
+    '<path class="region" data-fill="1" d="M300 400 c-62 0 -104 40 -104 92 c0 40 44 66 104 66 s104 -26 104 -66 c0 -52 -42 -92 -104 -92 Z" fill="#fff" stroke="#2b1a4a" stroke-width="4"/>' +
+    // arms
+    '<path class="region" data-fill="1" d="M200 452 c-26 6 -40 24 -36 40 c4 14 26 16 40 4 Z" fill="#fff" stroke="#2b1a4a" stroke-width="4" stroke-linejoin="round"/>' +
+    '<path class="region" data-fill="1" d="M400 452 c26 6 40 24 36 40 c-4 14 -26 16 -40 4 Z" fill="#fff" stroke="#2b1a4a" stroke-width="4" stroke-linejoin="round"/>' +
+    // feet
+    '<ellipse class="region" data-fill="1" cx="252" cy="556" rx="34" ry="22" fill="#fff" stroke="#2b1a4a" stroke-width="4"/>' +
+    '<ellipse class="region" data-fill="1" cx="348" cy="556" rx="34" ry="22" fill="#fff" stroke="#2b1a4a" stroke-width="4"/>' +
+    // tail
+    '<circle class="region" data-fill="1" cx="412" cy="520" r="22" fill="#fff" stroke="#2b1a4a" stroke-width="4"/>';
+
+  SHAPES.kitten =
+    // ears
+    '<path class="region" data-fill="1" d="M216 246 l-10 -104 l96 46 Z" fill="#fff" stroke="#2b1a4a" stroke-width="4" stroke-linejoin="round"/>' +
+    '<path class="region" data-fill="1" d="M384 246 l10 -104 l-96 46 Z" fill="#fff" stroke="#2b1a4a" stroke-width="4" stroke-linejoin="round"/>' +
+    // head
+    '<circle class="region" data-fill="1" cx="300" cy="300" r="122" fill="#fff" stroke="#2b1a4a" stroke-width="4"/>' +
+    // eyes
+    '<ellipse class="region" data-fill="1" cx="260" cy="292" rx="15" ry="17" fill="#fff" stroke="#2b1a4a" stroke-width="4"/>' +
+    '<ellipse class="region" data-fill="1" cx="340" cy="292" rx="15" ry="17" fill="#fff" stroke="#2b1a4a" stroke-width="4"/>' +
+    // cheeks
+    '<circle class="region" data-fill="1" cx="230" cy="330" r="18" fill="#fff" stroke="#2b1a4a" stroke-width="3"/>' +
+    '<circle class="region" data-fill="1" cx="370" cy="330" r="18" fill="#fff" stroke="#2b1a4a" stroke-width="3"/>' +
+    // nose
+    '<path class="region" data-fill="1" d="M300 320 l-13 -10 h26 Z" fill="#fff" stroke="#2b1a4a" stroke-width="3" stroke-linejoin="round"/>' +
+    // whiskers
+    '<path d="M232 320 h-34 M232 334 h-32 M368 320 h34 M368 334 h32" fill="none" stroke="#2b1a4a" stroke-width="4" stroke-linecap="round"/>' +
+    // body
+    '<path class="region" data-fill="1" d="M300 402 c-64 0 -100 42 -100 92 c0 38 42 62 100 62 s100 -24 100 -62 c0 -50 -36 -92 -100 -92 Z" fill="#fff" stroke="#2b1a4a" stroke-width="4"/>' +
+    // belly
+    '<ellipse class="region" data-fill="1" cx="300" cy="492" rx="52" ry="46" fill="#fff" stroke="#2b1a4a" stroke-width="3"/>' +
+    // paws
+    '<ellipse class="region" data-fill="1" cx="212" cy="546" rx="30" ry="19" fill="#fff" stroke="#2b1a4a" stroke-width="4"/>' +
+    '<ellipse class="region" data-fill="1" cx="388" cy="546" rx="30" ry="19" fill="#fff" stroke="#2b1a4a" stroke-width="4"/>' +
+    // tail
+    '<path class="region" data-fill="1" d="M396 500 c34 0 52 -22 46 -44 c-6 -20 -30 -24 -38 -6 c-6 14 6 24 18 20" fill="#fff" stroke="#2b1a4a" stroke-width="4" stroke-linejoin="round"/>';
+
+  SHAPES.duck =
+    // body
+    '<path class="region" data-fill="1" d="M300 320 c-84 0 -150 60 -150 132 c0 66 68 100 150 100 s150 -34 150 -100 c0 -72 -66 -132 -150 -132 Z" fill="#fff" stroke="#2b1a4a" stroke-width="4"/>' +
+    // head
+    '<circle class="region" data-fill="1" cx="300" cy="212" r="96" fill="#fff" stroke="#2b1a4a" stroke-width="4"/>' +
+    // eyes
+    '<circle class="region" data-fill="1" cx="268" cy="200" r="14" fill="#fff" stroke="#2b1a4a" stroke-width="4"/>' +
+    '<circle class="region" data-fill="1" cx="332" cy="200" r="14" fill="#fff" stroke="#2b1a4a" stroke-width="4"/>' +
+    // beak
+    '<path class="region" data-fill="1" d="M262 240 h76 c8 0 12 8 8 14 l-14 22 c-4 6 -12 8 -18 4 l-14 -10 l-14 10 c-6 4 -14 2 -18 -4 l-14 -22 c-4 -6 0 -14 8 -14 Z" fill="#fff" stroke="#2b1a4a" stroke-width="4" stroke-linejoin="round"/>' +
+    // wing
+    '<path class="region" data-fill="1" d="M232 404 c-32 18 -44 56 -28 82 c14 24 52 24 72 2 c20 -22 16 -58 -10 -76 Z" fill="#fff" stroke="#2b1a4a" stroke-width="4" stroke-linejoin="round"/>' +
+    // feet
+    '<path class="region" data-fill="1" d="M266 546 c-20 0 -34 -8 -34 -18 c0 -8 12 -14 26 -14 h16 c14 0 26 6 26 14 c0 10 -14 18 -34 18 Z" fill="#fff" stroke="#2b1a4a" stroke-width="4" stroke-linejoin="round"/>' +
+    '<path class="region" data-fill="1" d="M334 546 c20 0 34 -8 34 -18 c0 -8 -12 -14 -26 -14 h-16 c-14 0 -26 6 -26 14 c0 10 14 18 34 18 Z" fill="#fff" stroke="#2b1a4a" stroke-width="4" stroke-linejoin="round"/>' +
+    // tail feathers
+    '<path class="region" data-fill="1" d="M440 400 l52 -26 c10 -4 20 4 18 14 l-8 38 c-2 10 -14 16 -22 10 l-34 -22 Z" fill="#fff" stroke="#2b1a4a" stroke-width="4" stroke-linejoin="round"/>' +
+    // tuft
+    '<path d="M292 116 c4 -18 14 -26 22 -20 c8 6 6 18 -2 26 M300 96 c-2 -16 6 -26 16 -22 c10 4 10 18 2 26" fill="none" stroke="#2b1a4a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>';
+
+  SHAPES.frog =
+    // legs
+    '<path class="region" data-fill="1" d="M188 470 c-34 6 -56 30 -52 54 c4 22 34 30 58 18 c20 -10 28 -34 18 -50 Z" fill="#fff" stroke="#2b1a4a" stroke-width="4" stroke-linejoin="round"/>' +
+    '<path class="region" data-fill="1" d="M412 470 c34 6 56 30 52 54 c-4 22 -34 30 -58 18 c-20 -10 -28 -34 -18 -50 Z" fill="#fff" stroke="#2b1a4a" stroke-width="4" stroke-linejoin="round"/>' +
+    // body
+    '<ellipse class="region" data-fill="1" cx="300" cy="392" rx="142" ry="118" fill="#fff" stroke="#2b1a4a" stroke-width="4"/>' +
+    // eyes bumps
+    '<circle class="region" data-fill="1" cx="238" cy="256" r="50" fill="#fff" stroke="#2b1a4a" stroke-width="4"/>' +
+    '<circle class="region" data-fill="1" cx="362" cy="256" r="50" fill="#fff" stroke="#2b1a4a" stroke-width="4"/>' +
+    // pupils
+    '<circle class="region" data-fill="1" cx="238" cy="256" r="19" fill="#fff" stroke="#2b1a4a" stroke-width="4"/>' +
+    '<circle class="region" data-fill="1" cx="362" cy="256" r="19" fill="#fff" stroke="#2b1a4a" stroke-width="4"/>' +
+    // cheeks
+    '<circle class="region" data-fill="1" cx="180" cy="368" r="20" fill="#fff" stroke="#2b1a4a" stroke-width="3"/>' +
+    '<circle class="region" data-fill="1" cx="420" cy="368" r="20" fill="#fff" stroke="#2b1a4a" stroke-width="3"/>' +
+    // mouth
+    '<path d="M226 344 c30 34 118 34 148 0" fill="none" stroke="#2b1a4a" stroke-width="5" stroke-linecap="round"/>' +
+    // belly
+    '<ellipse class="region" data-fill="1" cx="300" cy="424" rx="82" ry="62" fill="#fff" stroke="#2b1a4a" stroke-width="3"/>' +
+    // spots
+    '<circle class="region" data-fill="1" cx="240" cy="330" r="15" fill="#fff" stroke="#2b1a4a" stroke-width="3"/>' +
+    '<circle class="region" data-fill="1" cx="366" cy="336" r="12" fill="#fff" stroke="#2b1a4a" stroke-width="3"/>';
+
+  // ---------- Palette
+  var COLORS = [
+    "#ff8fb1", "#ffb36b", "#ffd93d", "#a3e635",
+    "#4ade80", "#22d3ee", "#60a5fa", "#a78bfa",
+    "#f472b6", "#fb923c", "#facc15", "#34d399",
+    "#e879f9", "#f87171", "#94a3b8", "#1f2937"
+  ];
+
+  var state = { pic: 0, color: COLORS[0], mode: "fill", history: [], done: false };
+  var stage = document.getElementById("stage");
+  var hud = document.getElementById("hud");
+  var toast = document.getElementById("toast");
+
+  function regions() { return stage.querySelectorAll(".region:not([data-bg])"); }
+
+  function pct() {
+    var all = regions();
+    if (!all.length) return 0;
+    var n = 0;
+    for (var i = 0; i < all.length; i++) {
+      if ((all[i].getAttribute("fill") || "").toLowerCase() !== "#fff") n++;
+    }
+    return Math.round((n / all.length) * 100);
+  }
+
+  function updateHUD() {
+    hud.textContent = PICTURES[state.pic].name + " - " + pct() + "%";
+  }
+
+  function load() {
+    state.history = []; state.done = false;
+    toast.classList.remove("show");
+    stage.querySelectorAll("svg").forEach(function (s) { s.remove(); });
+    stage.insertAdjacentHTML("afterbegin", buildSVG(PICTURES[state.pic]));
+    ink = stage.querySelector("svg .ink");
+    updateHUD();
+  }
+
+  // ---------- Fill
+  function onDown(e) {
+    if (state.mode === "brush") return onBrush(e);
+    var el = e.target;
+    if (!el || !el.classList || !el.classList.contains("region")) return;
+    if (el.hasAttribute("data-bg")) return;
+    var cur = (el.getAttribute("fill") || "").toLowerCase();
+    if (cur === state.color.toLowerCase()) return;
+    state.history.push({ el: el, prev: el.getAttribute("fill") });
+    el.setAttribute("fill", state.color);
+    updateHUD();
+    checkDone();
+  }
+
+  function onUp() { if (state.mode === "brush") endBrush(); }
+
+  // ---------- Brush
+  var painting = false, last = null, ink = null;
+
+  function svgPoint(e) {
+    var svg = stage.querySelector("svg");
+    if (!svg) return null;
+    var m = svg.getScreenCTM();
+    if (!m) return null;
+    var p = svg.createSVGPoint();
+    p.x = e.clientX;
+    p.y = e.clientY;
+    return p.matrixTransform(m.inverse());
+  }
+
+  function inkLine(a, b) {
+    if (!ink) return null;
+    var ln = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    ln.setAttribute("x1", a.x);
+    ln.setAttribute("y1", a.y);
+    ln.setAttribute("x2", b.x);
+    ln.setAttribute("y2", b.y);
+    ln.setAttribute("stroke", state.color);
+    ln.setAttribute("stroke-width", "9");
+    ln.setAttribute("stroke-linecap", "round");
+    ln.setAttribute("fill", "none");
+    ln.setAttribute("pointer-events", "none");
+    ink.appendChild(ln);
+    return ln;
+  }
+
+  function onBrush(e) {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    var p = svgPoint(e);
+    if (!p) return;
+    e.preventDefault();
+    painting = true;
+    last = p;
+    return false;
+  }
+
+  function onMove(e) {
+    if (!painting) return;
+    var pt = svgPoint(e);
+    if (!pt) return;
+    e.preventDefault();
+    var ln = inkLine(last, pt);
+    if (ln) state.history.push({ brush: true, el: ln });
+    last = pt;
+    return false;
+  }
+
+  function endBrush() { painting = false; last = null; }
+
+  function checkDone() {
+    if (state.done) return;
+    if (pct() >= 100) {
+      state.done = true;
+      document.getElementById("tMsg").textContent = "You finished " + PICTURES[state.pic].name + "!";
+      toast.classList.add("show");
+    }
+  }
+
+  // ---------- Controls
+  function buildSwatches() {
+    var wrap = document.getElementById("swatches");
+    wrap.innerHTML = "";
+    COLORS.forEach(function (c, i) {
+      var b = document.createElement("div");
+      b.className = "sw" + (i === 0 ? " sel" : "");
+      b.style.background = c;
+      b.setAttribute("role", "button");
+      b.setAttribute("tabindex", "0");
+      b.setAttribute("aria-label", "Color " + c);
+      b.onclick = function () {
+        state.color = c;
+        wrap.querySelectorAll(".sw").forEach(function (x) { x.classList.remove("sel"); });
+        b.classList.add("sel");
+      };
+      wrap.appendChild(b);
+    });
+  }
+
+  document.getElementById("mBucket").onclick = function () {
+    state.mode = "fill"; this.classList.add("on");
+    document.getElementById("mBrush").classList.remove("on");
+  };
+  document.getElementById("mBrush").onclick = function () {
+    state.mode = "brush"; this.classList.add("on");
+    document.getElementById("mBucket").classList.remove("on");
+  };
+  document.getElementById("undo").onclick = function () {
+    var h = state.history.pop();
+    if (!h) return;
+    if (h.brush) {
+      if (h.el && h.el.parentNode) h.el.parentNode.removeChild(h.el);
+    } else if (h.el) {
+      h.el.setAttribute("fill", h.prev);
+    }
+    if (state.done && pct() < 100) {
+      state.done = false;
+      toast.classList.remove("show");
+    }
+    updateHUD();
+  };
+  document.getElementById("reset").onclick = load;
+  document.getElementById("next").onclick = function () {
+    state.pic = (state.pic + 1) % PICTURES.length;
+    load();
+  };
+  document.getElementById("tBtn").onclick = function () {
+    state.pic = (state.pic + 1) % PICTURES.length;
+    load();
+  };
+
+  stage.addEventListener("pointerdown", onDown);
+  window.addEventListener("pointerup", onUp);
+  stage.addEventListener("pointermove", onMove);
+  stage.addEventListener("contextmenu", function (e) { if (state.mode === "brush") e.preventDefault(); });
+
+  buildSwatches();
+  load();
+})();
+</script>
+</body>
+</html>

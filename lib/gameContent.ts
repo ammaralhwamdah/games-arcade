@@ -1419,6 +1419,50 @@ const content: Record<string, GameContent> = {
       },
     ],
   },
+  "mallowmoss": {
+    tips: [
+      "Fill the big shapes first. The head and body go down fast, and once the large areas are done the small details are much easier to see against a colour.",
+      "Look for the parts that hide. Ducky has a tuft on top of his head, Bobo has spots across his back, and Pip's tail is tucked behind one hip. Those three are the usual reason the percentage stalls.",
+      "Stick to one colour family per character. Two or three shades of the same colour tend to look better than six unrelated ones, and they make the outlines easier to read.",
+      "Use the brush for texture rather than coverage. Thin stripes, freckles and spots look best, so keep the strokes light and away from edges you still want crisp.",
+      "Pick a new colour from the swatch row at the bottom rather than starting over. Your work stays on the page until you press Reset, so changing your mind costs you nothing.",
+      "Watch the percentage instead of the picture. When it reads 100% every fillable part has been coloured, including the ones you had forgotten were there.",
+    ],
+    features: [
+      "Four original characters: Ducky the Duck, Bobo the Frog, Miso the Kitten and Pip the Bunny",
+      "Tap-to-fill colouring with 16 colours and no fiddly lines to stay inside",
+      "Brush mode for freehand stripes, spots and doodles of your own",
+      "Progress counter that tracks every fillable part of the current picture",
+      "Undo steps back one fill or one brush stroke, and Reset wipes the picture",
+      "Plays with a finger on a phone or a mouse on a desktop, and runs offline",
+    ],
+    faq: [
+      {
+        q: "Is Mallowmoss free to play?",
+        a: "Yes. Mallowmoss is free, runs straight in your browser, and there is nothing to download, install or sign up for. Open the page and start colouring.",
+      },
+      {
+        q: "How do I fill in the pictures?",
+        a: "Tap a colour in the swatch row at the bottom, then tap any part of the character. That part fills in with the colour you picked. Tapping a part that already has your chosen colour does nothing, so you can keep tapping without making a mess.",
+      },
+      {
+        q: "What is the brush for, and does it count towards the percentage?",
+        a: "The brush is for decoration. It draws freehand lines so you can add stripes, spots or your own doodles, but brush strokes are never counted. That means you cannot accidentally colour over a part and lock yourself out of finishing the picture.",
+      },
+      {
+        q: "Can I undo a mistake?",
+        a: "Yes. Undo steps back one action at a time, whether that action was a fill or a brush stroke, so you can take a colour back off a single part. Reset is the bigger hammer: it clears the whole current picture and starts it fresh.",
+      },
+      {
+        q: "How many pictures are there?",
+        a: "Four, and they are ordered from the fewest parts to the most, so Next picture walks you from Ducky with nine parts up to Pip with fourteen. That way you can start with an easy one if you want, or sit with the most detailed one if you would rather.",
+      },
+      {
+        q: "Does it work on a phone and a tablet?",
+        a: "Yes. The page adapts to the screen and responds to both touch and mouse, so tapping with a finger on a phone and clicking on a desktop behave the same way. The palette and the buttons stay reachable at the bottom of the screen.",
+      },
+    ],
+  },
 };
 
 export function getGameContent(slug: string): GameContent | undefined {

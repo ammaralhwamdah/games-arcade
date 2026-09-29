@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400" role="img" aria-label="Mallowmoss colouring game">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3d2470"/>
+      <stop offset="1" stop-color="#1b1030"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#bg)"/>
+  <circle cx="200" cy="150" r="150" fill="#ff8fb1" opacity="0.09"/>
+  <circle cx="90" cy="330" r="110" fill="#60a5fa" opacity="0.08"/>
+  <circle cx="320" cy="60" r="80" fill="#ffd93d" opacity="0.08"/>
+
+  <g stroke="#f4f0ff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <!-- Pip the bunny -->
+    <g transform="translate(104 118)">
+      <path d="M-13 -22 C-19 -52 -16 -76 -4 -74 C7 -72 8 -45 3 -20 Z"/>
+      <path d="M15 -22 C21 -52 18 -76 6 -74 C-5 -72 -6 -45 -1 -20 Z"/>
+      <circle cx="1" cy="0" r="30"/>
+      <circle cx="-10" cy="-4" r="3.6" fill="#f4f0ff"/>
+      <circle cx="12" cy="-4" r="3.6" fill="#f4f0ff"/>
+      <circle cx="-20" cy="9" r="5" fill="#ff8fb1" stroke="none" opacity="0.75"/>
+      <circle cx="22" cy="9" r="5" fill="#ff8fb1" stroke="none" opacity="0.75"/>
+      <path d="M1 8 v5"/>
+    </g>
+    <!-- Miso the kitten -->
+    <g transform="translate(232 108)">
+      <path d="M-22 -18 L-26 -46 L-4 -30 Z"/>
+      <path d="M22 -18 L26 -46 L4 -30 Z"/>
+      <circle cx="0" cy="0" r="29"/>
+      <ellipse cx="-10" cy="-2" rx="3.4" ry="4"/>
+      <ellipse cx="10" cy="-2" rx="3.4" ry="4"/>
+      <circle cx="-19" cy="9" r="5" fill="#ffb36b" stroke="none" opacity="0.7"/>
+      <circle cx="19" cy="9" r="5" fill="#ffb36b" stroke="none" opacity="0.7"/>
+      <path d="M0 7 l-5 -4 h10 Z"/>
+      <path d="M-19 8 h-9 M19 8 h9"/>
+    </g>
+    <!-- Ducky the duck -->
+    <g transform="translate(122 250)">
+      <path d="M-34 6 C-34 -18 -14 -32 4 -32 C26 -32 38 -14 38 4 C38 20 20 28 0 28 C-20 28 -34 20 -34 6 Z"/>
+      <circle cx="0" cy="-30" r="23"/>
+      <circle cx="-8" cy="-34" r="3.4" fill="#f4f0ff"/>
+      <circle cx="8" cy="-34" r="3.4" fill="#f4f0ff"/>
+      <path d="M-11 -21 h22 c3 0 4 3 2 5 l-4 6 c-1 2 -4 2 -5 1 l-4 -3 l-4 3 c-2 1 -4 1 -5 -1 l-4 -6 c-2 -2 -1 -5 2 -5 Z" fill="#ffd93d" stroke-width="5"/>
+    </g>
+    <!-- Bobo the frog -->
+    <g transform="translate(258 252)">
+      <circle cx="-16" cy="-24" r="13"/>
+      <circle cx="16" cy="-24" r="13"/>
+      <circle cx="-16" cy="-24" r="5" fill="#f4f0ff"/>
+      <circle cx="16" cy="-24" r="5" fill="#f4f0ff"/>
+      <ellipse cx="0" cy="4" rx="34" ry="27"/>
+      <circle cx="-24" cy="2" r="5" fill="#4ade80" stroke="none" opacity="0.7"/>
+      <circle cx="24" cy="2" r="5" fill="#4ade80" stroke="none" opacity="0.7"/>
+      <path d="M-14 10 C-6 19 6 19 14 10"/>
+    </g>
+  </g>
+
+  <!-- crayon -->
+  <g transform="translate(310 330) rotate(38)">
+    <rect x="-9" y="-42" width="18" height="70" rx="4" fill="#a78bfa"/>
+    <path d="M-9 -42 L0 -60 L9 -42 Z" fill="#f4f0ff"/>
+    <rect x="-9" y="14" width="18" height="14" rx="3" fill="#8b5cf6"/>
+  </g>
+</svg>
