@@ -1469,6 +1469,59 @@ const content: Record<string, GameContent> = {
       },
     ],
   },
+  "brackenquiver": {
+    tips: [
+      "Hold to draw, and keep watching the dotted arc while you hold. The enemy archer walks up and down their wall the whole time, so an arc that was lined up a second ago is no longer lined up now.",
+      "A miss still costs you an arrow. With only a few in the quiver, it is worth waiting for a moment when the archer is near a stop in their walk rather than firing at the top of the movement.",
+      "Rushers do not stop at your wall, they cost you a hit the moment they reach the gate. If one is already past the halfway line, it is usually cheaper to take it down in the field than to let it arrive.",
+      "There is no penalty for waiting. Enemies only shoot on their own timer, so standing still and letting the archer come to you costs you nothing except the runners you have to watch for.",
+      "Do not hoard arrows for the last runner. Clearing the field is part of finishing the wave, and a wave with an archer still alive can go badly if you spend the quiver on infantry instead.",
+      "Watch which way the archer is travelling, not just where they are. An arrow aimed slightly ahead of a moving archer lands where they are going instead of where they were.",
+    ],
+    features: [
+      "Hold anywhere to draw the bow and release to loose, with a dotted arc that previews the flight",
+      "Real projectile physics, so height, angle and power all change where the arrow lands",
+      "One enemy archer who moves along the tower and shoots back at your gate on their own",
+      "Melee runners that cross the field and cost you a hit if they reach the gate",
+      "Five waves that add arrows but bring faster shots, tighter aim and earlier runners",
+      "Five-hit gate, score for every archer and runner, and generated sound with a mute button",
+      "Plays with a finger on a phone or a mouse on a desktop, and pauses when you switch away from the tab",
+    ],
+    faq: [
+      {
+        q: "How do I shoot?",
+        a: "Press and hold anywhere on the screen. The bow draws back and a dotted arc appears showing the path your arrow will take. Keep holding to build more power, adjust the angle by moving your finger, and let go to loose. Release early for a flatter, faster shot or hold longer for a heavier one that drops more steeply.",
+      },
+      {
+        q: "What do I have to do to win a wave?",
+        a: "Two things. You have to shoot the archer off the enemy tower, and you have to stop every runner before it reaches your gate. The wave only ends when the archer is down and the field is clear, so a runner still walking when you finish the archer will keep the round going.",
+      },
+      {
+        q: "What happens if I run out of arrows?",
+        a: "You cannot fire, but the wave is not over. The archer keeps shooting and the runners keep coming, so a wave where you spent the whole quiver on misses will usually end with your gate falling. That is deliberate: it makes a wasted arrow feel like it mattered.",
+      },
+      {
+        q: "How do the runners work?",
+        a: "They spawn at the enemy tower and walk left across the field. Any arrow that passes through one takes it down, and there is no need to aim for a head or a weak point. If a runner reaches your gate it costs you one of your five hits, which is why shooting one down early is nearly always better than letting it arrive.",
+      },
+      {
+        q: "Why does the archer move up and down?",
+        a: "To stop you aiming once and firing on a saved angle. The archer travels up and down the tower continuously, so the height you need changes as they move, and the dotted arc is there to help you read it. A shot that lined up while they were low will miss when they are high.",
+      },
+      {
+        q: "Can I pause the game?",
+        a: "Yes. The Pause button in the top bar stops everything, including the archer and the runners, and shows a resume screen. The game also pauses on its own if you switch away from the tab, so you will not come back to a gate that fell while you were looking at something else.",
+      },
+      {
+        q: "Does Brackenquiver have sound?",
+        a: "Yes, and you can turn it off. Drawing the bow, loosing, hitting a runner and dropping the archer each have their own sound, with a short run of notes when you clear a wave. The sound is generated in the browser rather than loaded from audio files, which keeps the page quick to load. Use the Sound button in the top bar to mute it, and the game remembers your choice for next time.",
+      },
+      {
+        q: "Does it work on a phone and a tablet?",
+        a: "Yes. The page scales to the screen and the field of battle is kept in proportion, so the archer stays visible on a small display. The game responds to touch and mouse in the same way, and the buttons are large enough to hit with a thumb.",
+      },
+    ],
+  },
 };
 
 export function getGameContent(slug: string): GameContent | undefined {

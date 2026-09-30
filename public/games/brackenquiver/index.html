@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Brackenquiver - Physics Archery Puzzle</title>
+<meta name="description" content="Hold to draw the bow, release to loose. Arc arrows over the walls, pick off the enemy archer, and stop the rush before they reach your gate." />
+<meta name="theme-color" content="#1d2a18" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: #10160f; color: #f2f5ee; user-select: none; -webkit-user-select: none;
+    display: flex; flex-direction: column; min-height: 100dvh;
+  }
+  header {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    padding: 8px 12px; flex-shrink: 0;
+    background: rgba(0,0,0,.32); border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+  .brand { font-size: 15px; font-weight: 800; letter-spacing: .3px; display: flex; align-items: center; gap: 6px; }
+  .brand .dot { width: 10px; height: 10px; border-radius: 50%; background: #8fd14f; box-shadow: 0 0 8px #8fd14f; }
+  .hudset { display: flex; gap: 6px; margin-left: auto; align-items: center; flex-wrap: wrap; }
+  .chip {
+    font-size: 12px; font-weight: 700; padding: 5px 9px; border-radius: 999px;
+    background: rgba(255,255,255,.09); border: 1px solid rgba(255,255,255,.12); white-space: nowrap;
+  }
+  .chip b { color: #8fd14f; }
+  .chip.hurt { animation: hurt .3s; }
+  @keyframes hurt { 0%,100% { background: rgba(255,255,255,.09); } 40% { background: rgba(220,60,50,.55); } }
+  button {
+    font: inherit; font-size: 12px; font-weight: 650; cursor: pointer; color: #f2f5ee;
+    border: 1px solid rgba(255,255,255,.16); border-radius: 10px;
+    background: rgba(255,255,255,.08); padding: 6px 10px; transition: transform .12s, background .15s;
+  }
+  button:hover { background: rgba(255,255,255,.15); }
+  button:active { transform: scale(.95); }
+  button.on { background: #8fd14f; border-color: #8fd14f; color: #16210f; }
+  .stage { position: relative; flex: 1; min-height: 0; }
+  canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+  .veil {
+    position: absolute; inset: 0; display: grid; place-items: center; text-align: center;
+    background: rgba(12,18,10,.9); backdrop-filter: blur(6px); z-index: 10; padding: 20px;
+  }
+  .veil[hidden] { display: none; }
+  .card { max-width: 340px; }
+  .card h2 { font-size: 25px; margin-bottom: 8px; }
+  .card p { font-size: 14px; opacity: .84; margin-bottom: 16px; line-height: 1.5; }
+  .card button { background: #8fd14f; color: #16210f; border: none; font-size: 15px; padding: 10px 22px; }
+  .hint { position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%); font-size: 11px; opacity: .5; pointer-events: none; white-space: nowrap; }
+  @media (max-width: 460px) { .brand { font-size: 13px; } .chip { font-size: 11px; padding: 4px 7px; } button { font-size: 11px; padding: 5px 8px; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><span class="dot"></span> Brackenquiver</div>
+  <div class="hudset">
+    <span class="chip" id="cWave">Wave <b>1</b></span>
+    <span class="chip" id="cArrow">Arrows <b>3</b></span>
+    <span class="chip" id="cScore">Score <b>0</b></span>
+    <button id="bPause" title="Pause the run">Pause</button>
+    <button id="bSound" title="Sound on or off">Sound: On</button>
+  </div>
+</header>
+<div class="stage" id="stage">
+  <canvas id="cv"></canvas>
+  <div class="veil" id="veil"><div class="card">
+    <h2 id="vTitle">Brackenquiver</h2>
+    <p id="vBody">Hold anywhere to draw the bow. The arc shows where the arrow will go. Release to loose.</p>
+    <button id="vBtn">Start</button>
+  </div></div>
+  <div class="hint" id="hint">Hold to draw &middot; release to shoot</div>
+</div>
+<script>
+(function () {
+  "use strict";
+
+  // ---------- Tunables
+  // The world is 1000 units wide. The player looses from x=167 and the enemy
+  // archer is hit at x=821 but perched on the far tower, so the shot has to
+  // cross ~654 units horizontally and climb ~95 more. That makes 625 u/s the
+  // absolute floor for a reachable shot, hence MIN_PWR at 640: every point on
+  // the power meter can actually reach the target. A full draw at 45 degrees
+  // flies ~1117 units, which is what makes the arc readable.
+  var G = 520;              // gravity, world units/s^2
+  var WORLD_W = 1000;       // fixed world width; height follows the aspect ratio
+  var AIM_TIME = 1.0;       // seconds to reach full draw
+  var MIN_PWR = 640;        // slowest draw that still clears the far tower
+  var MAX_PWR = 762;        // flat and fast, but harder to place
+  var TAU = Math.PI * 2;
+
+  var LEVELS = [
+    { quiver: 4, rushEvery: 10.0, firstRush: 9.0, foePwr: 590, foeSpread: 0.16, foeGap: 3.4, foeMiss: 0.50 },
+    { quiver: 5, rushEvery: 9.0, firstRush: 7.5, foePwr: 620, foeSpread: 0.13, foeGap: 3.0, foeMiss: 0.42 },
+    { quiver: 6, rushEvery: 8.0, firstRush: 6.5, foePwr: 650, foeSpread: 0.11, foeGap: 2.6, foeMiss: 0.34 },
+    { quiver: 6, rushEvery: 7.0, firstRush: 5.5, foePwr: 680, foeSpread: 0.09, foeGap: 2.2, foeMiss: 0.26 },
+    { quiver: 7, rushEvery: 6.0, firstRush: 5.0, foePwr: 710, foeSpread: 0.07, foeGap: 1.9, foeMiss: 0.18 }
+  ];
+
+  // ---------- Sound, generated so the page stays self-contained
+  var SND_KEY = "brackenquiver-sound";
+  var soundOn = true;
+  try { var sv = localStorage.getItem(SND_KEY); if (sv !== null) soundOn = sv !== "off"; } catch (e) {}
+  var actx = null;
+
+  function audio() {
+    if (!soundOn) return null;
+    if (!actx) {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      try { actx = new AC(); } catch (e) { return null; }
+    }
+    if (actx.state === "suspended" && actx.resume) actx.resume();
+    return actx;
+  }
+
+  function blip(freq, dur, type, vol, delay, slideTo) {
+    var a = audio();
+    if (!a) return;
+    var t0 = a.currentTime + (delay || 0);
+    var osc = a.createOscillator();
+    var g = a.createGain();
+    osc.type = type || "sine";
+    osc.frequency.setValueAtTime(freq, t0);
+    if (slideTo) osc.frequency.exponentialRampToValueAtTime(slideTo, t0 + dur);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(vol, t0 + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    osc.connect(g);
+    g.connect(a.destination);
+    osc.start(t0);
+    osc.stop(t0 + dur + 0.03);
+  }
+
+  // A short filtered burst, used for the string twang and for arrow hits.
+  function noise(dur, vol, freq, q) {
+    var a = audio();
+    if (!a) return;
+    var n = Math.floor(a.sampleRate * dur);
+    var buf = a.createBuffer(1, n, a.sampleRate);
+    var d = buf.getChannelData(0);
+    for (var i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n);
+    var src = a.createBufferSource();
+    src.buffer = buf;
+    var f = a.createBiquadFilter();
+    f.type = "bandpass";
+    f.frequency.value = freq || 1400;
+    f.Q.value = q || 1.1;
+    var g = a.createGain();
+    g.gain.value = vol;
+    src.connect(f); f.connect(g); g.connect(a.destination);
+    src.start();
+  }
+
+  function sfxDraw() { blip(150, 0.1, "sine", 0.05, 0, 230); }
+  function sfxShoot() { noise(0.09, 0.16, 1900, 1.4); blip(660, 0.08, "triangle", 0.1, 0, 320); }
+  function sfxHit() { noise(0.07, 0.15, 900, 1.0); }
+  function sfxKill() { blip(300, 0.22, "sawtooth", 0.11, 0, 90); noise(0.16, 0.13, 500, 0.8); }
+  function sfxHurt() { blip(200, 0.2, "square", 0.11, 0, 70); }
+  function sfxEmpty() { blip(180, 0.08, "square", 0.07, 0); }
+  function sfxWin() {
+    var n = [523.25, 659.25, 783.99, 1046.5, 1318.5];
+    for (var i = 0; i < n.length; i++) blip(n[i], 0.3, "triangle", 0.15, i * 0.09);
+  }
+  function sfxLose() {
+    var n = [440, 370, 294, 220];
+    for (var i = 0; i < n.length; i++) blip(n[i], 0.34, "sawtooth", 0.12, i * 0.13);
+  }
+
+  // ---------- Canvas
+  var cv = document.getElementById("cv");
+  var ctx = cv.getContext("2d");
+  var W = 0, H = 0, SCALE = 1, DPR = 1;
+
+  function resize() {
+    var r = cv.parentNode.getBoundingClientRect();
+    W = Math.max(1, Math.round(r.width));
+    H = Math.max(1, Math.round(r.height));
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    cv.width = Math.round(W * DPR);
+    cv.height = Math.round(H * DPR);
+    SCALE = W / WORLD_W;
+    artInit();
+  }
+  window.addEventListener("resize", resize);
+
+  // World-space helpers. The world keeps a fixed width; its height follows the
+  // viewport, so a tall phone simply gets more sky to arc across.
+  function wx(x) { return x * SCALE; }
+  function wy(y) { return H - y * SCALE; }
+  function toWorld(px, py) { return { x: px / SCALE, y: (H - py) / SCALE }; }
+
+  // ---------- Layout
+  var groundY = 0, wallTop = 0, playerTowerX = 0, enemyTowerX = 0, y0 = 0, enemyHitR = 0, towerH = 0, gateX = 0;
+
+  function layout() {
+    groundY = H / SCALE * 0.10;
+    y0 = Math.max(52, (H / SCALE - groundY) * 0.42);
+    wallTop = y0;
+    towerH = y0 * 0.34;
+    playerTowerX = WORLD_W * 0.115;
+    enemyTowerX = WORLD_W * 0.855;
+    enemyHitR = 21;
+    gateX = playerTowerX + 44;
+    // Sconces depend on the finished layout, so they are placed here rather
+    // than in artInit, which resize() calls before the first layout().
+    ART.torches = [];
+    for (var tx = 54; tx < WORLD_W - 26; tx += 118) ART.torches.push({ x: tx, y: wallTop - 10, tower: false });
+    ART.torches.push({ x: playerTowerX - 38, y: wallTop - 10, tower: false });
+    ART.torches.push({ x: playerTowerX, y: wallTop - towerH - 11, tower: true });
+    ART.torches.push({ x: enemyTowerX, y: wallTop - towerH - 11, tower: true });
+  }
+
+  // ---------- State
+  var st = null;
+
+  function newGame() {
+    st = {
+      wave: 0, score: 0, over: false, paused: false, started: false,
+      arrowsLeft: 0, drawing: false, drawT: 0,
+      arrowsIn: [], rushers: [], parts: [], pops: [],
+      player: { x: 0, y: 0, hp: 5, maxhp: 5, hurtT: 0, drawFlash: 0 },
+      enemy: { x: 0, y: 0, y0: 0, y1: 0, t: 0, gap: 2, cool: 0, hurtT: 0, alive: true },
+      rushT: 0, shake: 0, banner: null, bannerT: 0, hitMark: 0
+    };
+    layout();
+    st.player.x = playerTowerX + 52;
+    st.player.y = y0;
+    st.enemy.x = enemyTowerX - 34;
+    st.enemy.y0 = wallTop + towerH + 17;
+    st.enemy.y1 = wallTop + towerH + 29;
+    st.enemy.y = st.enemy.y0;
+    st.enemy.cool = 1.6;
+    showVeil("Brackenquiver", "Hold anywhere to draw the bow. The dotted arc shows where the arrow will land. Release to loose.", "Start", function () {
+      st.started = true;
+      st.paused = false;
+      startWave(0);
+    });
+  }
+
+  function startWave(i) {
+    st.wave = i;
+    var L = LEVELS[Math.min(i, LEVELS.length - 1)];
+    st.arrowsLeft = L.quiver;
+    st.enemy.gap = L.foeGap;
+    st.enemy.foePwr = L.foePwr;
+    st.enemy.foeSpread = L.foeSpread;
+    st.enemy.foeMiss = L.foeMiss;
+    st.enemy.alive = true;
+    st.enemy.hurtT = 0;
+    st.rushGap = L.rushEvery;
+    st.rushT = L.firstRush;
+    st.rushers.length = 0;
+    banner("Wave " + (i + 1) + " of " + LEVELS.length, 1.5);
+  }
+
+  function banner(text, secs) { st.banner = text; st.bannerT = secs; }
+
+  // ---------- Aiming
+  function aimAngle() {
+    // The bow points at the finger, the opposite of pulling back a real bow.
+    var p = st.aimPt;
+    return Math.atan2(p.y - st.player.y, p.x - st.player.x);
+  }
+  function power() { return MIN_PWR + (MAX_PWR - MIN_PWR) * Math.min(1, st.drawT / AIM_TIME); }
+
+  // Low-angle ballistic solution. Returns a world-space angle, so it works for
+  // the enemy shooting leftwards as well, or null when the target is out of
+  // range at that speed.
+  function shotAngle(x0, y0, x1, y1, v, g) {
+    var dx = x1 - x0, dy = y1 - y0;
+    var d = Math.abs(dx);
+    if (d < 1) return null;
+    var v2 = v * v;
+    var disc = v2 * v2 - g * (g * d * d + 2 * dy * v2);
+    if (disc < 0) return null;
+    return Math.atan2((v2 - Math.sqrt(disc)) / (g * d), dx);
+  }
+
+  function beginDraw(p) {
+    if (st.over || st.paused || !st.started) return;
+    st.drawing = true;
+    st.drawT = 0;
+    st.aimPt = p;
+    sfxDraw();
+  }
+  function release() {
+    if (!st.drawing) return;
+    st.drawing = false;
+    if (st.arrowsLeft <= 0) { sfxEmpty(); st.drawT = 0; return; }
+    var a = aimAngle();
+    var v = power();
+    st.arrowsIn.push({ x: st.player.x, y: st.player.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, dead: false });
+    st.arrowsLeft--;
+    st.player.drawFlash = 0.14;
+    sfxShoot();
+    st.drawT = 0;
+  }
+
+  // Predicts the flight with the same gravity the arrow will feel, so the
+  // preview and the shot agree.
+  function predict(x0, y0_, vx, vy, maxT) {
+    var pts = [];
+    var x = x0, y = y0_, pvx = vx, pvy = vy;
+    for (var t = 0; t < maxT; t += 0.05) {
+      pvy -= G * 0.05;
+      x += pvx * 0.05;
+      y += pvy * 0.05;
+      if (y <= groundY || x < -40 || x > WORLD_W + 40) break;
+      pts.push(x, y);
+    }
+    return pts;
+  }
+
+  // ---------- Enemies
+  function foeHit(f) {
+    if (!st.enemy.alive) return false;
+    return (f.x - st.enemy.x) * (f.x - st.enemy.x) + (f.y - st.enemy.y) * (f.y - st.enemy.y) <= enemyHitR * enemyHitR;
+  }
+
+  function killFoe(f) {
+    if (!st.enemy.alive) return;
+    st.enemy.alive = false;
+    st.enemy.hurtT = 0.4;
+    st.score += 100;
+    burst(f.x, f.y, "#e2584a", 18);
+    pop(f.x, f.y + 30, "+100", "#ffd9a0");
+    sfxKill();
+  }
+
+  function spawnRusher() {
+    st.rushers.push({ x: enemyTowerX - 46, y: groundY, hp: 1, dead: false, wob: Math.random() * TAU });
+  }
+
+  function hurtPlayer() {
+    st.player.hp--;
+    st.player.hurtT = 0.6;
+    st.shake = 7;
+    chipHurt();
+    sfxHurt();
+    burst(gateX, groundY * 0.6, "#ff6a5a", 12);
+    if (st.player.hp <= 0) finish(false);
+  }
+
+  function chipHurt() {
+    var c = document.getElementById("cArrow");
+    c.classList.remove("hurt");
+    void c.offsetWidth;
+    c.classList.add("hurt");
+  }
+
+  function finish(won) {
+    if (st.over) return;
+    st.over = true;
+    st.drawing = false;
+    if (won) {
+      sfxWin();
+      if (st.wave + 1 >= LEVELS.length) {
+        showVeil("The field is yours", "Every bastion on the ridge has fallen. Final score " + st.score + ".", "Play again", newGame);
+      } else {
+        showVeil("Wave " + (st.wave + 1) + " cleared", "Score so far " + st.score + ". The next wave brings a tougher archer and a faster rush.", "Next wave", function () {
+          hideVeil();
+          st.over = false;
+          startWave(st.wave + 1);
+        });
+      }
+    } else {
+      sfxLose();
+      showVeil("Your gate has fallen", "You reached wave " + (st.wave + 1) + " with a score of " + st.score + ".", "Try again", newGame);
+    }
+  }
+
+  // ---------- Particles
+  function burst(x, y, col, n) {
+    for (var i = 0; i < n; i++) {
+      var a = Math.random() * TAU;
+      var s = 40 + Math.random() * 170;
+      st.parts.push({ x: x, y: y, vx: Math.cos(a) * s, vy: Math.sin(a) * s + 40, life: 0.4 + Math.random() * 0.4, max: 0.8, col: col, r: 2 + Math.random() * 3 });
+    }
+  }
+  function pop(x, y, text, col) {
+    st.pops.push({ x: x, y: y, text: text, col: col || "#cdeba0", life: 1.0 });
+  }
+
+  // ---------- Update
+  function update(dt) {
+    if (!st.started || st.over || st.paused) return;
+    st.shake = Math.max(0, st.shake - dt * 22);
+    if (st.player.hurtT > 0) st.player.hurtT -= dt;
+    if (st.player.drawFlash > 0) st.player.drawFlash -= dt;
+    if (st.enemy.hurtT > 0) st.enemy.hurtT -= dt;
+    if (st.bannerT > 0) st.bannerT -= dt;
+    if (st.hitMark > 0) st.hitMark -= dt;
+
+    if (st.drawing) st.drawT = Math.min(AIM_TIME, st.drawT + dt);
+
+    // Enemy archers bob and loose on their own.
+    st.enemy.t += dt;
+    st.enemy.y = st.enemy.y0 + (st.enemy.y1 - st.enemy.y0) * (0.5 - 0.5 * Math.cos(st.enemy.t * 1.5));
+    st.enemy.cool -= dt;
+    if (st.enemy.cool <= 0 && st.enemy.alive) {
+      st.enemy.cool = st.enemy.gap * (0.8 + Math.random() * 0.4);
+      var p = st.enemy.foePwr * (0.9 + Math.random() * 0.2);
+      var ta = shotAngle(st.enemy.x, st.enemy.y, gateX, st.player.y, p, G);
+      if (ta === null) ta = Math.PI / 2;
+      // Most shots are aimed, so they land. A share of them are deliberate wides,
+      // which keeps the threat readable instead of leaving it to raw chance.
+      var jit;
+      if (Math.random() < st.enemy.foeMiss) jit = (Math.random() < 0.5 ? -1 : 1) * (0.6 + Math.random() * 0.45);
+      else jit = (Math.random() - 0.5) * st.enemy.foeSpread * 2;
+      st.arrowsIn.push({ x: st.enemy.x, y: st.enemy.y, vx: Math.cos(ta + jit) * p, vy: Math.sin(ta + jit) * p, foe: true, dead: false });
+    }
+
+    // Melee rush.
+    st.rushT -= dt;
+    if (st.rushT <= 0) {
+      st.rushT = st.rushGap;
+      if (st.enemy.alive) spawnRusher();
+    }
+    for (var i = 0; i < st.rushers.length; i++) {
+      var r = st.rushers[i];
+      if (r.dead) continue;
+      r.wob += dt * 9;
+      r.x -= 40 * dt;
+      if (r.x <= gateX + 6) { r.dead = true; hurtPlayer(); }
+    }
+
+    // Projectiles, stepped in small slices so a fast arrow cannot tunnel
+    // straight through a target.
+    for (var k = st.arrowsIn.length - 1; k >= 0; k--) {
+      var a = st.arrowsIn[k];
+      var steps = 3;
+      var sdt = dt / steps;
+      var removed = false;
+      for (var s = 0; s < steps && !removed; s++) {
+        a.vy -= G * sdt;
+        a.x += a.vx * sdt;
+        a.y += a.vy * sdt;
+
+        if (a.y <= groundY) {
+          burst(a.x, groundY, "#8a7a55", 7);
+          st.arrowsIn.splice(k, 1); removed = true; break;
+        }
+        if (a.x < -60 || a.x > WORLD_W + 60 || a.y > H / SCALE + 200) {
+          st.arrowsIn.splice(k, 1); removed = true; break;
+        }
+        // Own archers on the enemy tower.
+        if (!a.foe && foeHit(a)) {
+          killFoe(a); st.hitMark = 0.25;
+          st.arrowsIn.splice(k, 1); removed = true; break;
+        }
+        // Rushing troops.
+        if (!a.foe) {
+          for (var j = st.rushers.length - 1; j >= 0; j--) {
+            var rr = st.rushers[j];
+            if (rr.dead) continue;
+            if (Math.abs(a.x - rr.x) < 16 && a.y < groundY + 78 && a.y > groundY - 30) {
+              rr.dead = true;
+              st.score += 25;
+              burst(rr.x, groundY + 34, "#d0763c", 10);
+              sfxHit();
+              st.arrowsIn.splice(k, 1); removed = true; break;
+            }
+          }
+        }
+        // Enemy arrows can only hurt the gate area, never the tower archers.
+        if (a.foe && a.x <= gateX + 12 && a.x > gateX - 40) {
+          st.arrowsIn.splice(k, 1); removed = true;
+          hurtPlayer();
+          break;
+        }
+      }
+    }
+
+    // Clean up spent arrows.
+    for (var d = st.arrowsIn.length - 1; d >= 0; d--) if (st.arrowsIn[d].dead) st.arrowsIn.splice(d, 1);
+
+    // Wave cleared: the archer is down and no runner is left on the field.
+    var live = 0;
+    for (var r2 = 0; r2 < st.rushers.length; r2++) if (!st.rushers[r2].dead) live++;
+    if (!st.enemy.alive && live === 0) finish(true);
+
+    // Particles and floating labels.
+    for (var p = st.parts.length - 1; p >= 0; p--) {
+      var q = st.parts[p];
+      q.life -= dt;
+      q.vy -= 420 * dt;
+      q.x += q.vx * dt;
+      q.y += q.vy * dt;
+      if (q.life <= 0) st.parts.splice(p, 1);
+    }
+    for (var o = st.pops.length - 1; o >= 0; o--) {
+      var pp = st.pops[o];
+      pp.life -= dt;
+      pp.y += 40 * dt;
+      if (pp.life <= 0) st.pops.splice(o, 1);
+    }
+
+    drawHud();
+  }
+
+  // ---------- Drawing
+  function drawHud() {
+    document.getElementById("cWave").innerHTML = "Wave <b>" + (st.wave + 1) + "</b>";
+    document.getElementById("cArrow").innerHTML = "Arrows <b>" + st.arrowsLeft + "</b>";
+    document.getElementById("cScore").innerHTML = "Score <b>" + st.score + "</b>";
+  }
+
+  function draw() {
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    var sx = st.shake ? (Math.random() - 0.5) * st.shake : 0;
+    var sy = st.shake ? (Math.random() - 0.5) * st.shake : 0;
+    ctx.translate(sx, sy);
+
+    drawSky();
+    drawGround();
+    drawTower(playerTowerX, towerH, false);
+    drawTower(enemyTowerX, towerH, true);
+    drawWall();
+    drawTorches();
+
+    // Troops first so arrows read on top of the field.
+    for (var i = 0; i < st.rushers.length; i++) if (!st.rushers[i].dead) drawRusher(st.rushers[i]);
+    if (st.enemy.alive) drawFoe(st.enemy);
+
+    drawArrows();
+
+    // Aim preview and bow.
+    if (st.drawing && st.arrowsLeft > 0 && !st.over) {
+      var ang = aimAngle();
+      var pw = power();
+      var pts = predict(st.player.x, st.player.y, Math.cos(ang) * pw, Math.sin(ang) * pw, 3.2);
+      ctx.setLineDash([6, 9]);
+      ctx.lineWidth = 2.2;
+      ctx.strokeStyle = "rgba(230,245,210,0.75)";
+      ctx.beginPath();
+      for (var i2 = 0; i2 < pts.length; i2 += 2) {
+        var X = wx(pts[i2]), Y = wy(pts[i2 + 1]);
+        if (i2 === 0) ctx.moveTo(X, Y); else ctx.lineTo(X, Y);
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+      if (pts.length) {
+        ctx.fillStyle = "#e6f5d2";
+        ctx.beginPath();
+        ctx.arc(wx(pts[pts.length - 2]), wy(pts[pts.length - 1]), 4, 0, TAU);
+        ctx.fill();
+      }
+    }
+    drawPlayer();
+    drawParticles();
+    drawForeground();
+    grade();
+
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+
+    // Hit vignette when the gate is struck.
+    if (st.player.hurtT > 0) {
+      ctx.fillStyle = "rgba(200,40,30," + (st.player.hurtT / 0.6) * 0.28 + ")";
+      ctx.fillRect(0, 0, W, H);
+    }
+    if (st.bannerT > 0 && st.banner) {
+      ctx.globalAlpha = Math.min(1, st.bannerT);
+      ctx.fillStyle = "rgba(10,16,8,0.55)";
+      ctx.fillRect(0, H / 2 - 30 * SCALE - 30, W, 60 * SCALE);
+      ctx.fillStyle = "#eaf7d8";
+      ctx.font = "800 " + Math.round(26 * SCALE) + "px system-ui";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(st.banner, W / 2, H / 2 - 30 * SCALE);
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  // ---------- Procedural art
+  // Anything expensive is baked once into an offscreen canvas and then reused
+  // as a tiled pattern or a straight blit, so the per-frame cost stays flat
+  // even on a phone. The noise is seeded, so a resize rebuilds the same wall
+  // instead of a different one.
+  var ART = {};
+  var clock = 0;
+
+  function offscreen(w, h) {
+    var c = document.createElement("canvas");
+    c.width = Math.max(1, Math.round(w));
+    c.height = Math.max(1, Math.round(h));
+    return c;
+  }
+  function rng(seed) {
+    var s = (seed >>> 0) || 1;
+    return function () {
+      s = (s * 1664525 + 1013904223) >>> 0;
+      return s / 4294967296;
+    };
+  }
+  function clamp255(v) { return v < 0 ? 0 : v > 255 ? 255 : v | 0; }
+  function shade(hex, k, j) {
+    var n = parseInt(hex.slice(1), 16);
+    j = j || 0;
+    return "rgb(" + clamp255(((n >> 16) & 255) * k + j * 10) + "," +
+      clamp255(((n >> 8) & 255) * k + j * 8) + "," +
+      clamp255((n & 255) * k + j * 11) + ")";
+  }
+
+  // Tileable masonry: staggered courses, every stone jittered in tone, chipped
+  // corners, a lit top bevel and a dark underside so the wall reads as volume.
+  function stoneTex(face, mortar, seed) {
+    var w = 240, h = 240, c = offscreen(w, h), g = c.getContext("2d");
+    var rnd = rng(seed);
+    g.fillStyle = mortar;
+    g.fillRect(0, 0, w, h);
+    var rows = 6, rh = h / rows;
+    for (var r = 0; r < rows; r++) {
+      var y = r * rh;
+      var x = -rh * (r % 2 ? 0.9 : 0.35);
+      while (x < w) {
+        var bw = rh * (1.5 + rnd() * 1.8);
+        var j = (rnd() - 0.5) * 2;
+        g.fillStyle = shade(face, 0.86 + rnd() * 0.3, j);
+        g.fillRect(x + 1.2, y + 1.2, bw - 2.4, rh - 2.4);
+        g.fillStyle = "rgba(255,244,214," + (0.05 + rnd() * 0.08).toFixed(3) + ")";
+        g.fillRect(x + 1.2, y + 1.2, bw - 2.4, 1.7);
+        g.fillRect(x + 1.2, y + 1.2, 1.7, rh - 2.4);
+        g.fillStyle = "rgba(0,0,0,0.24)";
+        g.fillRect(x + 1.2, y + rh - 3.2, bw - 2.4, 1.9);
+        g.fillRect(x + bw - 3.1, y + 1.2, 1.9, rh - 2.4);
+        if (rnd() < 0.24) {
+          g.fillStyle = "rgba(0,0,0,0.15)";
+          g.beginPath();
+          g.moveTo(x + 1.2, y + 1.2);
+          g.lineTo(x + 9 + rnd() * 10, y + 1.2);
+          g.lineTo(x + 1.2, y + 6 + rnd() * 8);
+          g.closePath();
+          g.fill();
+        }
+        x += bw;
+      }
+    }
+    for (var i = 0; i < 2800; i++) {
+      g.fillStyle = rnd() < 0.5 ? "rgba(0,0,0,0.05)" : "rgba(255,255,255,0.045)";
+      g.fillRect(rnd() * w, rnd() * h, 1, 1);
+    }
+    var vg = g.createLinearGradient(0, 0, 0, h);
+    vg.addColorStop(0, "rgba(0,0,0,0)");
+    vg.addColorStop(1, "rgba(0,0,0,0.15)");
+    g.fillStyle = vg;
+    g.fillRect(0, 0, w, h);
+    return c;
+  }
+  function dirtTex(seed) {
+    var w = 240, h = 96, c = offscreen(w, h), g = c.getContext("2d");
+    var rnd = rng(seed);
+    g.fillStyle = "#3a3125";
+    g.fillRect(0, 0, w, h);
+    for (var i = 0; i < 2600; i++) {
+      var v = rnd();
+      g.fillStyle = v < 0.4 ? "rgba(18,14,9,0.16)" : v < 0.8 ? "rgba(124,110,76,0.14)" : "rgba(148,156,94,0.12)";
+      g.fillRect(rnd() * w, rnd() * h, rnd() < 0.25 ? 2 : 1, 1);
+    }
+    for (var p = 0; p < 30; p++) {
+      var px = rnd() * w, py = rnd() * h, pr = 1 + rnd() * 2.4;
+      g.fillStyle = "rgba(0,0,0,0.24)";
+      g.beginPath(); g.ellipse(px, py + pr * 0.5, pr * 0.95, pr * 0.42, 0, 0, TAU); g.fill();
+      g.fillStyle = "rgba(152,148,134,0.42)";
+      g.beginPath(); g.ellipse(px, py, pr, pr * 0.76, rnd() * 3, 0, TAU); g.fill();
+    }
+    return c;
+  }
+
+  function grainTex(seed) {
+    var S = 128, c = offscreen(S, S), g = c.getContext("2d");
+    var img = g.createImageData(S, S), d = img.data, rnd = rng(seed);
+    for (var i = 0; i < d.length; i += 4) {
+      var v = 116 + ((rnd() * 78) | 0);
+      d[i] = v; d[i + 1] = v; d[i + 2] = v; d[i + 3] = 255;
+    }
+    g.putImageData(img, 0, 0);
+    return c;
+  }
+
+  // One soft additive blob, reused for every torch and for moon spill.
+  function glowSprite(rgb) {
+    var S = 128, c = offscreen(S, S), g = c.getContext("2d");
+    var gr = g.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
+    gr.addColorStop(0, "rgba(" + rgb + ",0.9)");
+    gr.addColorStop(0.26, "rgba(" + rgb + ",0.32)");
+    gr.addColorStop(0.6, "rgba(" + rgb + ",0.08)");
+    gr.addColorStop(1, "rgba(" + rgb + ",0)");
+    g.fillStyle = gr;
+    g.fillRect(0, 0, S, S);
+    return c;
+  }
+  // Ridge lines painted straight into the sky plate. Nothing is ever drawn
+  // between the two, so baking them turns four layers into a single blit.
+  function hillsInto(g, w, h, col, base, amp, seed, trees) {
+    var rnd = rng(seed);
+    var step = w / 26, px = [], i;
+    for (i = -1; i <= 27; i++) {
+      var x = i * step;
+      var t = x / w;
+      px.push(x, h * base - Math.sin(t * 6.1 + base * 9) * amp * h - Math.cos(t * 3.1 + seed) * amp * 0.45 * h);
+    }
+    g.beginPath();
+    g.moveTo(-30, h);
+    for (i = 0; i < px.length; i += 2) g.lineTo(px[i], px[i + 1]);
+    g.lineTo(w + 30, h);
+    g.closePath();
+    g.fillStyle = col;
+    g.fill();
+    if (!trees) return;
+    g.beginPath();
+    for (i = 0; i < px.length - 2; i += 2) {
+      var cnt = 1 + ((rnd() * 3) | 0);
+      for (var c2 = 0; c2 < cnt; c2++) {
+        var tx = px[i] + (rnd() - 0.5) * step * 1.7;
+        var th = (0.016 + rnd() * 0.03) * h;
+        var ty = px[i + 1] + 2;
+        g.moveTo(tx, ty - th);
+        g.lineTo(tx + th * 0.28, ty);
+        g.lineTo(tx - th * 0.28, ty);
+        g.closePath();
+      }
+    }
+    g.fill();
+  }
+  // The wall top always lands at 62.2% of the viewport height (the layout
+  // maths cancels the aspect ratio out), so the plates compose in fractions.
+  function skyTex() {
+    var w = Math.max(2, Math.round(W * DPR)), h = Math.max(2, Math.round(H * DPR));
+    var c = offscreen(w, h), g = c.getContext("2d");
+    var gr = g.createLinearGradient(0, 0, 0, h);
+    gr.addColorStop(0, "#080d20");
+    gr.addColorStop(0.26, "#141d3d");
+    gr.addColorStop(0.54, "#332f59");
+    gr.addColorStop(0.72, "#7c4a54");
+    gr.addColorStop(0.86, "#c07a4e");
+    gr.addColorStop(1, "#eda964");
+    g.fillStyle = gr;
+    g.fillRect(0, 0, w, h);
+    var rnd = rng(20260930);
+    for (var s2 = 0; s2 < 460; s2++) {
+      var sy = rnd() * h * 0.6;
+      var a = (1 - sy / (h * 0.6)) * (0.22 + rnd() * 0.78);
+      g.fillStyle = "rgba(226,236,255," + a.toFixed(3) + ")";
+      g.beginPath(); g.arc(rnd() * w, sy, (rnd() < 0.07 ? 1.7 : 0.9) * DPR, 0, TAU); g.fill();
+    }
+    for (var b = 0; b < 15; b++) {
+      var by = h * (0.14 + rnd() * 0.42), bx = rnd() * w;
+      var bw = w * (0.14 + rnd() * 0.3), bh = h * (0.01 + rnd() * 0.026);
+      var cg = g.createRadialGradient(bx, by, 0, bx, by, bw);
+      cg.addColorStop(0, "rgba(158,146,178," + (0.09 + rnd() * 0.15).toFixed(3) + ")");
+      cg.addColorStop(1, "rgba(158,146,178,0)");
+      g.save();
+      g.translate(bx, by); g.scale(1, bh / bw); g.translate(-bx, -by);
+      g.fillStyle = cg; g.fillRect(bx - bw, by - bw, bw * 2, bw * 2);
+      g.restore();
+    }
+    var mx = w * 0.755, my = h * 0.2, mr = 30 * DPR;
+    var mg = g.createRadialGradient(mx, my, 0, mx, my, mr * 6);
+    mg.addColorStop(0, "rgba(214,228,255,0.46)");
+    mg.addColorStop(0.2, "rgba(180,200,255,0.15)");
+    mg.addColorStop(1, "rgba(160,190,255,0)");
+    g.fillStyle = mg;
+    g.beginPath(); g.arc(mx, my, mr * 6, 0, TAU); g.fill();
+    g.fillStyle = "#f4f2e6";
+    g.beginPath(); g.arc(mx, my, mr, 0, TAU); g.fill();
+    g.fillStyle = "rgba(196,196,184,0.45)";
+    g.beginPath(); g.arc(mx - mr * 0.3, my + mr * 0.24, mr * 0.24, 0, TAU); g.fill();
+    g.beginPath(); g.arc(mx + mr * 0.32, my - mr * 0.3, mr * 0.16, 0, TAU); g.fill();
+    hillsInto(g, w, h, "#3d4c68", 0.645, 0.048, 7717, false);
+    hillsInto(g, w, h, "#212d42", 0.662, 0.078, 3313, true);
+    var hz = g.createLinearGradient(0, h * 0.44, 0, h * 0.64);
+    hz.addColorStop(0, "rgba(237,169,100,0)");
+    hz.addColorStop(1, "rgba(237,169,100,0.34)");
+    g.fillStyle = hz;
+    g.fillRect(0, h * 0.44, w, h * 0.2);
+    return c;
+  }
+  function scaledPattern(img, k) {
+    var p = ctx.createPattern(img, "repeat");
+    if (p && p.setTransform && typeof DOMMatrix !== "undefined") {
+      p.setTransform(new DOMMatrix([k, 0, 0, k, 0, 0]));
+    }
+    return p;
+  }
+
+  function artInit() {
+    if (!W || !H) return;
+    if (!ART.stoneWall) {
+      ART.stoneWall = stoneTex("#8d8676", "#484439", 1337);
+      ART.stoneMine = stoneTex("#95a3ae", "#435059", 24601);
+      ART.stoneFoe = stoneTex("#a37b6d", "#4b342e", 90210);
+      ART.dirt = dirtTex(5150);
+      ART.grain = grainTex(4242);
+      ART.torch = glowSprite("255,168,74");
+      ART.moon = glowSprite("156,192,255");
+    }
+    ART.sky = skyTex();
+    var k = SCALE * 0.55;
+    ART.pWall = scaledPattern(ART.stoneWall, k);
+    ART.pMine = scaledPattern(ART.stoneMine, k);
+    ART.pFoe = scaledPattern(ART.stoneFoe, k);
+    ART.pDirt = scaledPattern(ART.dirt, Math.max(0.5, SCALE * 0.8));
+    ART.pGrain = scaledPattern(ART.grain, 1);
+    var vg = ctx.createRadialGradient(W * 0.5, H * 0.44, Math.min(W, H) * 0.24,
+      W * 0.5, H * 0.5, Math.max(W, H) * 0.76);
+    vg.addColorStop(0, "rgba(5,7,13,0)");
+    vg.addColorStop(0.6, "rgba(5,7,13,0.16)");
+    vg.addColorStop(1, "rgba(5,7,13,0.6)");
+    ART.vignette = vg;
+    var br = rng(881);
+    ART.blades = [];
+    for (var bx = -24; bx < W + 40; bx += 8 + br() * 17) {
+      ART.blades.push({ x: bx, w: 7 + br() * 10, h: (14 + br() * 32) * SCALE });
+    }
+  }
+
+  function drawSky() {
+    ctx.drawImage(ART.sky, -24, -24, W + 48, H + 48);
+    var mx = wx(WORLD_W * 0.78), my = wy(340);
+    var mr = 34 * SCALE;
+    if (ART.moon) {
+      var mr2 = mr * 5.5;
+      ctx.drawImage(ART.moon, mx - mr2, my - mr2 * 0.8, mr2 * 2, mr2 * 1.6);
+    }
+    var disc = ctx.createRadialGradient(mx - mr * 0.3, my - mr * 0.3, mr * 0.1, mx, my, mr);
+    disc.addColorStop(0, "#fffaf0");
+    disc.addColorStop(0.62, "#f2e6cd");
+    disc.addColorStop(1, "#cdbda6");
+    ctx.fillStyle = disc;
+    ctx.beginPath();
+    ctx.arc(mx, my, mr, 0, TAU);
+    ctx.fill();
+    // Two shallow craters keep it from reading as a flat circle.
+    ctx.fillStyle = "rgba(150,138,120,0.34)";
+    ctx.beginPath();
+    ctx.arc(mx + mr * 0.24, my - mr * 0.3, mr * 0.2, 0, TAU);
+    ctx.arc(mx - mr * 0.3, my + mr * 0.34, mr * 0.13, 0, TAU);
+    ctx.fill();
+  }
+
+  function drawGround() {
+    var top = wy(groundY);
+    ctx.fillStyle = ART.pDirt;
+    ctx.fillRect(-24, top, W + 48, H - top + 48);
+    var sh = ctx.createLinearGradient(0, top, 0, top + 34 * SCALE);
+    sh.addColorStop(0, "rgba(14,12,8,0.55)");
+    sh.addColorStop(1, "rgba(14,12,8,0)");
+    ctx.fillStyle = sh;
+    ctx.fillRect(0, top, W, 34 * SCALE);
+    var gl = ctx.createLinearGradient(0, top - 16 * SCALE, 0, top + 6 * SCALE);
+    gl.addColorStop(0, "rgba(122,146,78,0.5)");
+    gl.addColorStop(1, "rgba(122,146,78,0)");
+    ctx.fillStyle = gl;
+    ctx.fillRect(0, top - 16 * SCALE, W, 22 * SCALE);
+  }
+  // Blades of grass in the very near foreground, leaning on a slow wind.
+  function drawForeground() {
+    if (!ART.blades) return;
+    ctx.fillStyle = "#0c1209";
+    ctx.beginPath();
+    ctx.moveTo(-24, H + 24);
+    for (var i = 0; i < ART.blades.length; i++) {
+      var b = ART.blades[i];
+      ctx.lineTo(b.x + b.w / 2, H - b.h);
+      ctx.lineTo(b.x + b.w, H + 8);
+    }
+    ctx.lineTo(W + 24, H + 24);
+    ctx.closePath();
+    ctx.fill();
+    ctx.lineWidth = Math.max(1, 1.6 * SCALE);
+    for (var j = 0; j < ART.blades.length; j++) {
+      var q = ART.blades[j];
+      var l2 = Math.sin(clock * 0.9 + q.x * 0.013) * q.h * 0.28;
+      ctx.strokeStyle = "#0c1209";
+      ctx.beginPath();
+      ctx.moveTo(q.x + q.w / 2, H + 4);
+      ctx.quadraticCurveTo(q.x + q.w / 2 + l2 * 0.5, H - q.h * 0.6, q.x + q.w / 2 + l2, H - q.h * 1.6);
+      ctx.stroke();
+    }
+  }
+
+  // Sconces along the parapet plus one on each tower. Two detuned sines make
+  // the flicker read as fire rather than as a pulse.
+  function drawTorches() {
+    if (!ART.torches) return;
+    for (var i = 0; i < ART.torches.length; i++) {
+      var T = ART.torches[i];
+      var X = wx(T.x), Y = wy(T.y);
+      var fl = 0.76 + 0.2 * Math.sin(clock * 8.6 + i * 2.1) + 0.1 * Math.sin(clock * 19 + i * 1.7);
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      var r = (T.tower ? 104 : 78) * SCALE * fl;
+      ctx.globalAlpha = T.tower ? 0.44 : 0.3;
+      ctx.drawImage(ART.torch, X - r, Y - r * 0.8, r * 2, r * 1.6);
+      ctx.restore();
+      ctx.strokeStyle = "#1b1712";
+      ctx.lineWidth = Math.max(1, 2.4 * SCALE);
+      ctx.beginPath();
+      ctx.moveTo(X, Y + 8 * SCALE);
+      ctx.lineTo(X, Y - 1 * SCALE);
+      ctx.moveTo(X - 5 * SCALE, Y + 8 * SCALE);
+      ctx.lineTo(X + 4 * SCALE, Y + 8 * SCALE);
+      ctx.stroke();
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      var fh = (13 + 5 * Math.sin(clock * 11 + i)) * SCALE;
+      var wob = Math.sin(clock * 7 + i * 1.3) * 2 * SCALE;
+      ctx.fillStyle = "rgba(255,158,52,0.5)";
+      ctx.beginPath();
+      ctx.moveTo(X - 4.4 * SCALE, Y);
+      ctx.quadraticCurveTo(X - 5 * SCALE, Y - fh * 0.66, X + wob, Y - fh);
+      ctx.quadraticCurveTo(X + 5 * SCALE, Y - fh * 0.66, X + 4.4 * SCALE, Y);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = "rgba(255,236,178,0.85)";
+      ctx.beginPath();
+      ctx.ellipse(X, Y - fh * 0.28, 2.4 * SCALE, fh * 0.4, 0, 0, TAU);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  // Merlons: individually beveled blocks with a lit cap and a dark underside.
+  function drawMerlons(x0, yTop, width, face, unit, gap, hgt) {
+    var pitch = unit + gap;
+    for (var x = x0; x < x0 + width; x += pitch) {
+      var w = Math.min(unit, x0 + width - x);
+      if (w < 2) break;
+      var gr = ctx.createLinearGradient(x, yTop - hgt, x, yTop);
+      gr.addColorStop(0, shade(face, 1.18));
+      gr.addColorStop(0.55, shade(face, 1.0));
+      gr.addColorStop(1, shade(face, 0.82));
+      ctx.fillStyle = gr;
+      ctx.fillRect(x, yTop - hgt, w, hgt);
+      ctx.fillStyle = "rgba(255,240,206,0.22)";
+      ctx.fillRect(x, yTop - hgt, w, Math.max(1, 1.8 * SCALE));
+      ctx.fillStyle = "rgba(0,0,0,0.3)";
+      ctx.fillRect(x, yTop - Math.max(1, 2 * SCALE), w, Math.max(1, 2 * SCALE));
+      ctx.fillStyle = "rgba(0,0,0,0.2)";
+      ctx.fillRect(x + w - Math.max(1, 2 * SCALE), yTop - hgt, Math.max(1, 2 * SCALE), hgt);
+    }
+  }
+  // ---------- Figures
+  // One rig, authored in a canonical space where the feet sit at the origin and
+  // forward is -x. Callers mirror it with a scale, so every character shares it.
+  function bone(x0, y0, x1, y1, w, col) {
+    ctx.strokeStyle = col;
+    ctx.lineWidth = w;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(x0, y0);
+    ctx.lineTo(x1, y1);
+    ctx.stroke();
+  }
+  function limb(x0, y0, x1, y1, x2, y2, w, col, lit) {
+    bone(x0, y0, x1, y1, w, col);
+    bone(x1, y1, x2, y2, w * 0.86, col);
+    if (lit) {
+      ctx.save();
+      ctx.globalAlpha = 0.45;
+      bone(x0 - w * 0.2, y0, x1 - w * 0.2, y1, w * 0.28, lit);
+      bone(x1 - w * 0.18, y1, x2 - w * 0.18, y2, w * 0.24, lit);
+      ctx.restore();
+    }
+  }
+
+  // Recurve bow: two bezier limbs with the belly toward -x, plus a string
+  // whose nock point tracks the draw so it agrees with the power meter.
+  function bowRecurve(cx, cy, hh, pull, col, str, k) {
+    var ty = cy - hh, by = cy + hh;
+    var belly = -(hh * 0.44 + 2);
+    ctx.lineCap = "round";
+    ctx.strokeStyle = col;
+    ctx.lineWidth = 3 * k;
+    ctx.beginPath();
+    ctx.moveTo(cx + 1.5 * k, ty + 1 * k);
+    ctx.quadraticCurveTo(cx + belly * 0.45, ty + hh * 0.3, cx + belly, cy);
+    ctx.quadraticCurveTo(cx + belly * 0.45, cy + hh * 0.7, cx + 1.5 * k, by - 1 * k);
+    ctx.stroke();
+    ctx.lineWidth = 2.1 * k;
+    ctx.beginPath();
+    ctx.moveTo(cx + 1.5 * k, ty + 1 * k);
+    ctx.lineTo(cx + 4.6 * k, ty - 2.6 * k);
+    ctx.moveTo(cx + 1.5 * k, by - 1 * k);
+    ctx.lineTo(cx + 4.6 * k, by + 2.6 * k);
+    ctx.stroke();
+    ctx.strokeStyle = "rgba(0,0,0,0.3)";
+    ctx.lineWidth = 1.1 * k;
+    ctx.beginPath();
+    ctx.moveTo(cx + belly, cy - 3 * k);
+    ctx.lineTo(cx + belly, cy + 3 * k);
+    ctx.stroke();
+    ctx.strokeStyle = str;
+    ctx.lineWidth = Math.max(0.6, 1 * k);
+    ctx.beginPath();
+    ctx.moveTo(cx + 4.6 * k, ty - 2.6 * k);
+    ctx.lineTo(cx + pull, cy);
+    ctx.lineTo(cx + 4.6 * k, by + 2.6 * k);
+    ctx.stroke();
+  }
+
+  // Soft contact shadow squashed onto whatever plane the figure stands on.
+  function castShadow(X, Y, w, h, a) {
+    ctx.save();
+    ctx.globalAlpha = a;
+    ctx.fillStyle = "#0b0d08";
+    ctx.beginPath();
+    ctx.ellipse(X, Y, w * SCALE, h * SCALE, 0, 0, TAU);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // Split-tone and grain, laid over the finished frame.
+  function grade() {
+    ctx.save();
+    ctx.globalCompositeOperation = "soft-light";
+    ctx.fillStyle = "rgba(255,168,96,0.16)";
+    ctx.fillRect(-24, -24, W + 48, H + 48);
+    ctx.globalCompositeOperation = "overlay";
+    ctx.globalAlpha = 0.055;
+    ctx.fillStyle = ART.pGrain;
+    ctx.fillRect(-24, -24, W + 48, H + 48);
+    ctx.restore();
+    ctx.fillStyle = ART.vignette;
+    ctx.fillRect(-24, -24, W + 48, H + 48);
+  }
+  // An archer on a parapet: the anchor is the chest, which is what the hit test
+  // uses, so the silhouette is centred on it rather than floating above it.
+  function figureArcher(o) {
+    var k = o.h / 54;
+    var pull = (o.pull || 0) * 9.5 * k;
+    var sway = Math.sin(clock * 1.5 + o.ph) * 0.9 * k;
+    var skin = o.skin, cloth = o.cloth, cloth2 = o.cloth2, trim = o.trim;
+    var rim = "rgba(255,226,168,0.34)";
+    var LIMB = "rgba(255,232,180,0.5)";
+
+    limb(-1.4 * k, -24 * k, -2.2 * k + sway * 0.4, -12 * k, -3.4 * k + sway, -0.8 * k, 5.4 * k, "#2b2620");
+    limb(2.2 * k, -24 * k, 3.4 * k - sway * 0.4, -12.5 * k, 4.6 * k - sway, -0.8 * k, 5.2 * k, "#38312a");
+    ctx.fillStyle = "#1f1a14";
+    ctx.beginPath(); ctx.ellipse(-3.9 * k + sway, -0.9 * k, 4.3 * k, 1.6 * k, 0, 0, TAU); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(4.3 * k - sway, -0.9 * k, 4.1 * k, 1.6 * k, 0, 0, TAU); ctx.fill();
+
+    ctx.fillStyle = cloth2;
+    ctx.beginPath();
+    ctx.moveTo(-5 * k, -42.5 * k);
+    ctx.quadraticCurveTo(-9.5 * k - sway * 2, -28 * k, -7.5 * k + sway * 2.4, -7 * k);
+    ctx.quadraticCurveTo(1.5 * k, -3 * k, 7 * k + sway * 2, -12 * k);
+    ctx.quadraticCurveTo(9 * k - sway, -30 * k, 5 * k, -42.5 * k);
+    ctx.closePath();
+    ctx.fill();
+
+    var tg = ctx.createLinearGradient(0, -42 * k, 0, -22 * k);
+    tg.addColorStop(0, shade(cloth, 1.14));
+    tg.addColorStop(1, shade(cloth, 0.78));
+    ctx.fillStyle = tg;
+    ctx.beginPath();
+    ctx.moveTo(-6.4 * k, -40.5 * k);
+    ctx.quadraticCurveTo(-8 * k, -31 * k, -6 * k, -22.5 * k);
+    ctx.lineTo(6 * k, -22.5 * k);
+    ctx.quadraticCurveTo(8 * k, -31 * k, 6.4 * k, -40.5 * k);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = trim;
+    ctx.fillRect(-6.5 * k, -26.2 * k, 13 * k, 2.6 * k);
+    ctx.fillStyle = "rgba(255,240,206,0.15)";
+    ctx.fillRect(-6.4 * k, -40.5 * k, 2.8 * k, 18 * k);
+
+    if (o.quiver) {
+      ctx.save();
+      ctx.rotate(o.qlean === undefined ? -0.5 : o.qlean);
+      ctx.fillStyle = "#4a3524";
+      ctx.beginPath();
+      ctx.ellipse(6.4 * k, -33 * k, 3.4 * k, 9 * k, 0, 0, TAU);
+      ctx.fill();
+      ctx.strokeStyle = "#c9b184";
+      ctx.lineWidth = 1.1 * k;
+      for (var q = -1; q <= 1; q++) {
+        ctx.beginPath();
+        ctx.moveTo(6.4 * k + q * 1.4 * k, -41 * k);
+        ctx.lineTo(6.4 * k + q * 2.4 * k, -47 * k);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    var gx = -13 * k, gy = -32.5 * k;
+    limb(-3 * k, -39 * k, -10 * k, -37 * k, gx, gy, 4.2 * k, cloth, LIMB);
+    ctx.fillStyle = skin;
+    ctx.beginPath(); ctx.arc(gx, gy, 2.1 * k, 0, TAU); ctx.fill();
+    bowRecurve(gx - 3.6 * k, gy, 17 * k, pull, "#6b4a2c", "rgba(244,238,220,0.92)", k);
+
+    if (o.nock) {
+      ctx.save();
+      ctx.translate(gx - 3.6 * k, gy);
+      ctx.rotate(o.aim);
+      ctx.strokeStyle = "#e8dcb4";
+      ctx.lineWidth = 1.5 * k;
+      ctx.beginPath();
+      ctx.moveTo(-pull * 0.25, 0);
+      ctx.lineTo(19 * k, 0);
+      ctx.stroke();
+      ctx.fillStyle = "#d3dae0";
+      ctx.beginPath();
+      ctx.moveTo(22 * k, 0);
+      ctx.lineTo(17 * k, -2.4 * k);
+      ctx.lineTo(17 * k, 2.4 * k);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = "#cbd3a4";
+      ctx.lineWidth = 1.2 * k;
+      ctx.beginPath();
+      ctx.moveTo(-pull * 0.25, 0);
+      ctx.lineTo(-5 * k, -2.6 * k);
+      ctx.moveTo(-pull * 0.25, 0);
+      ctx.lineTo(-5 * k, 2.6 * k);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    var nx = gx + 1.8 * k + pull, ny = gy - 1.6 * k;
+    limb(1 * k, -39 * k, 5.6 * k, -36.5 * k, nx, ny, 4 * k, cloth, LIMB);
+    ctx.fillStyle = skin;
+    ctx.beginPath(); ctx.arc(nx, ny, 2.1 * k, 0, TAU); ctx.fill();
+
+    ctx.fillStyle = skin;
+    ctx.fillRect(-1.6 * k, -44 * k, 3.2 * k, 3.6 * k);
+    ctx.beginPath();
+    ctx.ellipse(-0.7 * k, -47.4 * k, 4.3 * k, 5.1 * k, 0, 0, TAU);
+    ctx.fill();
+    ctx.fillStyle = "rgba(58,34,22,0.3)";
+    ctx.beginPath();
+    ctx.ellipse(-0.7 * k, -45.4 * k, 3.6 * k, 1.7 * k, 0, 0, TAU);
+    ctx.fill();
+
+    ctx.fillStyle = cloth2;
+    ctx.beginPath();
+    ctx.moveTo(-6.2 * k, -45.5 * k);
+    ctx.quadraticCurveTo(-7.8 * k, -54.5 * k, 0.8 * k, -53.5 * k);
+    ctx.quadraticCurveTo(7.2 * k, -52.5 * k, 6.6 * k, -43.5 * k);
+    ctx.quadraticCurveTo(4 * k, -39.5 * k, -1.4 * k, -41.5 * k);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,236,190,0.22)";
+    ctx.lineWidth = 1.1 * k;
+    ctx.beginPath();
+    ctx.moveTo(-5.6 * k, -46.5 * k);
+    ctx.quadraticCurveTo(-1 * k, -51.5 * k, 4.2 * k, -49.5 * k);
+    ctx.stroke();
+
+    ctx.strokeStyle = rim;
+    ctx.lineWidth = 1.3 * k;
+    ctx.beginPath();
+    ctx.moveTo(-6.4 * k, -39.5 * k);
+    ctx.quadraticCurveTo(-8 * k, -30.5 * k, -6 * k, -22.5 * k);
+    ctx.stroke();
+
+    if (o.hurt) {
+      ctx.fillStyle = "rgba(255,236,220,0.42)";
+      ctx.beginPath();
+      ctx.arc(0, -27 * k, 24 * k, 0, TAU);
+      ctx.fill();
+    }
+  }
+  // A footman on the ground: the feet sit at the anchor, which matches the
+  // standing box the arrow test uses.
+  function figureRunner(r) {
+    var k = r.h / 54;
+    var p = r.wob;
+    var lean = -0.13;
+    var skin = "#c08a5e";
+    var cloth = "#7d4a30";
+    var cloth2 = "#5e3524";
+    var steel = "#9aa3ab";
+    var rim = "rgba(255,222,166,0.32)";
+
+    ctx.save();
+    ctx.rotate(lean);
+    var bob = Math.sin(p * 2) * 1.5 * k;
+    ctx.translate(0, bob);
+
+    var l1 = Math.sin(p), l2 = Math.sin(p + Math.PI);
+    limb(-1.4 * k, -24 * k, -1.4 * k + l1 * 8 * k, -12.5 * k, -1.4 * k + l1 * 13 * k, -0.9 * k, 5.6 * k, "#3b2f24");
+    limb(1.6 * k, -24 * k, 1.6 * k + l2 * 8 * k, -12.5 * k, 1.6 * k + l2 * 13 * k, -0.9 * k, 5.4 * k, "#483a2c");
+    ctx.fillStyle = "#241c14";
+    ctx.beginPath();
+    ctx.ellipse(-1.4 * k + l1 * 13 * k, -1 * k, 4.6 * k, 1.7 * k, 0, 0, TAU);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(1.6 * k + l2 * 13 * k, -1 * k, 4.4 * k, 1.7 * k, 0, 0, TAU);
+    ctx.fill();
+
+    ctx.fillStyle = cloth2;
+    ctx.beginPath();
+    ctx.moveTo(-4.6 * k, -42 * k);
+    ctx.quadraticCurveTo(-10 * k - l2 * 3 * k, -28 * k, -8 * k + l2 * 4 * k, -12 * k);
+    ctx.quadraticCurveTo(1 * k, -9 * k, 7 * k + l2 * 3 * k, -14 * k);
+    ctx.quadraticCurveTo(9 * k, -30 * k, 5 * k, -42 * k);
+    ctx.closePath();
+    ctx.fill();
+
+    var tg = ctx.createLinearGradient(0, -41 * k, 0, -22 * k);
+    tg.addColorStop(0, shade(cloth, 1.16));
+    tg.addColorStop(1, shade(cloth, 0.76));
+    ctx.fillStyle = tg;
+    ctx.beginPath();
+    ctx.moveTo(-6.6 * k, -40 * k);
+    ctx.quadraticCurveTo(-8.2 * k, -30 * k, -6.2 * k, -21.5 * k);
+    ctx.lineTo(6.2 * k, -21.5 * k);
+    ctx.quadraticCurveTo(8.2 * k, -30 * k, 6.6 * k, -40 * k);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = "#4b3626";
+    ctx.fillRect(-6.6 * k, -25 * k, 13.2 * k, 2.8 * k);
+    ctx.fillStyle = "rgba(255,238,200,0.14)";
+    ctx.fillRect(-6.6 * k, -40 * k, 2.8 * k, 18.5 * k);
+
+    // Spear, carried forward and tipped slightly up.
+    ctx.strokeStyle = "#6b4d2c";
+    ctx.lineWidth = 2.4 * k;
+    ctx.beginPath();
+    ctx.moveTo(-9 * k + l2 * 5 * k, -30 * k);
+    ctx.lineTo(-27 * k, -48 * k);
+    ctx.stroke();
+    ctx.fillStyle = steel;
+    ctx.beginPath();
+    ctx.moveTo(-33.4 * k, -53.6 * k);
+    ctx.lineTo(-27.6 * k, -48.6 * k);
+    ctx.lineTo(-26.2 * k, -44.4 * k);
+    ctx.closePath();
+    ctx.fill();
+
+    // Shield on the trailing arm.
+    var sx = 9 * k + l1 * 4 * k, sy = -30 * k;
+    ctx.fillStyle = "#5a3a2a";
+    ctx.beginPath();
+    ctx.ellipse(sx, sy, 6.4 * k, 9.4 * k, 0.16, 0, TAU);
+    ctx.fill();
+    ctx.fillStyle = "rgba(0,0,0,0.22)";
+    ctx.beginPath();
+    ctx.ellipse(sx + 1.6 * k, sy + 1.6 * k, 6 * k, 8.6 * k, 0.16, 0, TAU);
+    ctx.fill();
+    ctx.fillStyle = "#8d949b";
+    ctx.beginPath();
+    ctx.arc(sx, sy, 1.9 * k, 0, TAU);
+    ctx.fill();
+    limb(2 * k, -39 * k, 6.4 * k + l1 * 4 * k, -34 * k, sx, sy, 4 * k, cloth, null);
+    limb(-2.4 * k, -39 * k, -8 * k - l2 * 5 * k, -35 * k, -9 * k + l2 * 5 * k, -30 * k, 4 * k, cloth, null);
+
+    ctx.fillStyle = skin;
+    ctx.fillRect(-1.6 * k, -43.5 * k, 3.2 * k, 3.4 * k);
+    ctx.beginPath();
+    ctx.ellipse(-0.8 * k, -46.6 * k, 4.1 * k, 4.9 * k, 0, 0, TAU);
+    ctx.fill();
+
+    var hg = ctx.createLinearGradient(0, -53 * k, 0, -44 * k);
+    hg.addColorStop(0, shade(steel, 1.24));
+    hg.addColorStop(1, shade(steel, 0.72));
+    ctx.fillStyle = hg;
+    ctx.beginPath();
+    ctx.ellipse(-0.4 * k, -47.6 * k, 5.4 * k, 5.6 * k, 0, Math.PI, TAU);
+    ctx.fill();
+    ctx.fillRect(-6 * k, -48.4 * k, 11.4 * k, 2 * k);
+    ctx.fillStyle = shade(steel, 0.86);
+    ctx.fillRect(-4.4 * k, -47 * k, 1.7 * k, 5.4 * k);
+    ctx.fillStyle = "rgba(255,246,220,0.5)";
+    ctx.beginPath();
+    ctx.ellipse(-2.6 * k, -50.6 * k, 2.6 * k, 1.4 * k, -0.4, 0, TAU);
+    ctx.fill();
+
+    ctx.strokeStyle = rim;
+    ctx.lineWidth = 1.3 * k;
+    ctx.beginPath();
+    ctx.moveTo(-6.6 * k, -39 * k);
+    ctx.quadraticCurveTo(-8.2 * k, -29.5 * k, -6.2 * k, -21.5 * k);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawWall() {
+    var top = wy(wallTop);
+    var g = wy(groundY);
+    var h = g - top;
+    ctx.fillStyle = ART.pWall;
+    ctx.fillRect(-24, top, W + 48, h + 24);
+    var sh = ctx.createLinearGradient(0, top, 0, top + 30 * SCALE);
+    sh.addColorStop(0, "rgba(8,8,12,0.5)");
+    sh.addColorStop(1, "rgba(8,8,12,0)");
+    ctx.fillStyle = sh;
+    ctx.fillRect(0, top, W, 30 * SCALE);
+    var ft = ctx.createLinearGradient(0, g - 46 * SCALE, 0, g);
+    ft.addColorStop(0, "rgba(8,8,12,0)");
+    ft.addColorStop(1, "rgba(8,8,12,0.48)");
+    ctx.fillStyle = ft;
+    ctx.fillRect(0, g - 46 * SCALE, W, 46 * SCALE);
+    ctx.fillStyle = "rgba(255,236,196,0.16)";
+    ctx.fillRect(0, top, W, Math.max(1, 2.4 * SCALE));
+    drawMerlons(-24, top, W + 48, "#8d8676", 30 * SCALE, 18 * SCALE, 15 * SCALE);
+  }
+
+  function drawTower(x, h, isEnemy) {
+    var X = wx(x), baseY = wy(wallTop);
+    var tw = 54 * SCALE, TH = h * SCALE;
+    var topY = baseY - TH;
+    var face = isEnemy ? "#a37b6d" : "#95a3ae";
+
+    ctx.fillStyle = isEnemy ? ART.pFoe : ART.pMine;
+    ctx.fillRect(X - tw / 2, topY, tw, TH + 8 * SCALE);
+
+    var sh = ctx.createLinearGradient(X - tw / 2, 0, X + tw / 2, 0);
+    sh.addColorStop(0, "rgba(0,0,0,0.44)");
+    sh.addColorStop(0.3, "rgba(0,0,0,0.08)");
+    sh.addColorStop(0.7, "rgba(0,0,0,0)");
+    sh.addColorStop(1, "rgba(0,0,0,0.36)");
+    ctx.fillStyle = sh;
+    ctx.fillRect(X - tw / 2, topY, tw, TH + 8 * SCALE);
+
+    var bo = ctx.createLinearGradient(0, baseY - TH * 0.5, 0, baseY);
+    bo.addColorStop(0, "rgba(255,176,96,0)");
+    bo.addColorStop(1, "rgba(255,176,96,0.2)");
+    ctx.fillStyle = bo;
+    ctx.fillRect(X - tw / 2, baseY - TH * 0.5, tw, TH * 0.5 + 8 * SCALE);
+
+    var lipY = baseY - TH * 0.42;
+    ctx.fillStyle = "rgba(255,240,206,0.14)";
+    ctx.fillRect(X - tw / 2 - 3 * SCALE, lipY, tw + 6 * SCALE, Math.max(1, 2.2 * SCALE));
+    ctx.fillStyle = "rgba(0,0,0,0.26)";
+    ctx.fillRect(X - tw / 2 - 3 * SCALE, lipY + 2.2 * SCALE, tw + 6 * SCALE, Math.max(1, 3 * SCALE));
+
+    var slitY = topY + TH * 0.6;
+    ctx.fillStyle = "rgba(10,9,8,0.72)";
+    ctx.fillRect(X - 1.6 * SCALE, slitY, 3.2 * SCALE, 11 * SCALE);
+    ctx.fillStyle = "rgba(255,226,170,0.12)";
+    ctx.fillRect(X - 1.6 * SCALE, slitY, 3.2 * SCALE, Math.max(1, 1.2 * SCALE));
+
+    var bw = tw - 13 * SCALE, bh = 25 * SCALE;
+    var bx = X - bw / 2, by = topY + TH * 0.24;
+    ctx.fillStyle = "rgba(0,0,0,0.32)";
+    ctx.fillRect(bx + 2 * SCALE, by + 2 * SCALE, bw, bh);
+    ctx.fillStyle = isEnemy ? "#c2453a" : "#5f9b46";
+    ctx.beginPath();
+    ctx.moveTo(bx, by);
+    ctx.lineTo(bx + bw, by);
+    ctx.lineTo(bx + bw, by + bh * 0.68);
+    for (var s2 = bw; s2 > 0; s2 -= bw / 4) {
+      var wv = Math.sin(clock * 2.4 + s2 * 0.06) * 2.4 * SCALE;
+      ctx.lineTo(bx + s2 - bw / 8, by + bh * 0.86 + wv);
+    }
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = "rgba(0,0,0,0.2)";
+    for (var f2 = 1; f2 < 4; f2++) {
+      ctx.fillRect(bx + f2 * bw / 4 - 0.9 * SCALE, by, 1.8 * SCALE, bh * 0.8);
+    }
+    ctx.fillStyle = "rgba(255,244,214,0.2)";
+    ctx.fillRect(bx, by, bw, Math.max(1, 1.6 * SCALE));
+    ctx.fillStyle = "rgba(255,240,206,0.7)";
+    ctx.beginPath();
+    ctx.moveTo(X, by + bh * 0.2);
+    ctx.lineTo(X + 5 * SCALE, by + bh * 0.4);
+    ctx.lineTo(X, by + bh * 0.6);
+    ctx.lineTo(X - 5 * SCALE, by + bh * 0.4);
+    ctx.closePath();
+    ctx.fill();
+
+    var mh = 12 * SCALE, pitch = tw / 3.4;
+    for (var i = 0; i < 4; i++) {
+      var mx = X - tw / 2 + 3 * SCALE + i * pitch;
+      var mw = Math.min(tw * 0.22, tw + 3 * SCALE - (mx - X + tw / 2));
+      if (mw < 2) break;
+      var mg = ctx.createLinearGradient(mx, topY - mh, mx, topY);
+      mg.addColorStop(0, shade(face, 1.2));
+      mg.addColorStop(1, shade(face, 0.84));
+      ctx.fillStyle = mg;
+      ctx.fillRect(mx, topY - mh, mw, mh);
+      ctx.fillStyle = "rgba(255,240,206,0.24)";
+      ctx.fillRect(mx, topY - mh, mw, Math.max(1, 1.8 * SCALE));
+      ctx.fillStyle = "rgba(0,0,0,0.3)";
+      ctx.fillRect(mx, topY - Math.max(1, 2 * SCALE), mw, Math.max(1, 2 * SCALE));
+    }
+  }
+
+  // World angles are y-up; the canvas is y-down, so convert at the call site.
+  function screenAim(x0, y0, x1, y1) { return Math.atan2(-(y1 - y0), x1 - x0); }
+
+  function drawFoe(f) {
+    var X = wx(f.x), Y = wy(f.y - 21);
+    castShadow(X, wy(wallTop + towerH) + SCALE, 17, 4.6, 0.34);
+    // Draws the bow back in the last stretch before it looses, which doubles as
+    // the tell the player aims against.
+    var tell = Math.max(0, Math.min(1, 1 - f.cool / 0.7));
+    ctx.save();
+    ctx.translate(X, Y);
+    ctx.scale(SCALE, SCALE);
+    figureArcher({
+      h: 42, ph: f.t * 2.2,
+      pull: tell * tell, nock: tell > 0.03,
+      aim: screenAim(f.x, f.y, gateX, groundY + 18),
+      skin: "#c08a5e", cloth: "#8c3229", cloth2: "#5e201a", trim: "#3a2a1c",
+      quiver: true, hurt: f.hurtT > 0
+    });
+    ctx.restore();
+  }
+
+  function drawRusher(r) {
+    var X = wx(r.x), Y = wy(groundY);
+    castShadow(X, Y + SCALE, 15, 4.2, 0.4);
+    ctx.save();
+    ctx.translate(X, Y);
+    ctx.scale(SCALE, SCALE);
+    figureRunner({ h: 78, wob: r.wob });
+    ctx.restore();
+  }
+
+  function drawArrows() {
+    for (var i = 0; i < st.arrowsIn.length; i++) {
+      var a = st.arrowsIn[i];
+      var ang = Math.atan2(a.vy, a.vx);
+      var X = wx(a.x), Y = wy(a.y);
+      var foe = !!a.foe;
+      var shaft = foe ? "#e8b0a4" : "#f2e6c6";
+      var head = foe ? "#d8564a" : "#d3dae0";
+      var vlen = Math.hypot(a.vx, a.vy) || 1;
+      var tx = a.vx / vlen, ty = -a.vy / vlen;
+      // Speed streak: short, and it only shows on the fast end of the meter.
+      var sp = Math.min(1, (vlen - 620) / 180);
+      if (sp > 0.02) {
+        ctx.save();
+        ctx.globalAlpha = 0.3 * sp;
+        ctx.strokeStyle = foe ? "#ffb4a6" : "#fdf6d8";
+        ctx.lineWidth = Math.max(1, (foe ? 2.4 : 2.8) * SCALE);
+        ctx.lineCap = "round";
+        for (var t2 = 1; t2 <= 3; t2++) {
+          var off = t2 * 9 * SCALE;
+          ctx.beginPath();
+          ctx.moveTo(X - tx * off, Y - ty * off);
+          ctx.lineTo(X - tx * (off + 26 * SCALE), Y - ty * (off + 26 * SCALE));
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+      ctx.save();
+      ctx.translate(X, Y);
+      ctx.rotate(-ang);
+      var L = 20 * SCALE;
+      ctx.strokeStyle = "rgba(0,0,0,0.3)";
+      ctx.lineWidth = 3.4 * SCALE;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(-L + 1.5 * SCALE, 1.5 * SCALE);
+      ctx.lineTo(L * 0.6 + 1.5 * SCALE, 1.5 * SCALE);
+      ctx.stroke();
+      ctx.strokeStyle = shaft;
+      ctx.lineWidth = 2.6 * SCALE;
+      ctx.beginPath();
+      ctx.moveTo(-L, 0);
+      ctx.lineTo(L * 0.6, 0);
+      ctx.stroke();
+      ctx.strokeStyle = "rgba(255,255,255,0.4)";
+      ctx.lineWidth = Math.max(0.6, 0.9 * SCALE);
+      ctx.beginPath();
+      ctx.moveTo(-L * 0.9, -0.8 * SCALE);
+      ctx.lineTo(L * 0.5, -0.8 * SCALE);
+      ctx.stroke();
+      var hg = ctx.createLinearGradient(0, -4 * SCALE, 0, 4 * SCALE);
+      hg.addColorStop(0, shade(head, 1.3));
+      hg.addColorStop(1, shade(head, 0.7));
+      ctx.fillStyle = hg;
+      ctx.beginPath();
+      ctx.moveTo(L + 2 * SCALE, 0);
+      ctx.lineTo(L * 0.55, -4 * SCALE);
+      ctx.lineTo(L * 0.55, 4 * SCALE);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = foe ? "#e8b7ae" : "#cbd3a4";
+      ctx.lineWidth = 2 * SCALE;
+      ctx.beginPath();
+      ctx.moveTo(-L * 0.5, 0);
+      ctx.lineTo(-L * 0.95, -4 * SCALE);
+      ctx.moveTo(-L * 0.5, 0);
+      ctx.lineTo(-L * 0.95, 4 * SCALE);
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  function drawPlayer() {
+    var X = wx(st.player.x), Y = wy(st.player.y);
+    var aiming = st.drawing && st.arrowsLeft > 0 && !st.over;
+    var has = st.arrowsLeft > 0 && !st.over;
+    var pull = aiming ? (power() - MIN_PWR) / (MAX_PWR - MIN_PWR) : 0;
+    // The figure rig is drawn facing -x, then mirrored here, so the aim angle
+    // has to be reflected across the y axis as well or the shot points backwards.
+    var aim = aiming && st.aimPt
+      ? Math.PI - screenAim(st.player.x, st.player.y, st.aimPt.x, st.aimPt.y)
+      : Math.PI + 0.42;
+    castShadow(X, wy(wallTop) + SCALE, 18, 5, 0.36);
+    ctx.save();
+    ctx.translate(X, Y);
+    ctx.scale(-SCALE, SCALE);
+    figureArcher({
+      h: 46, ph: clock * 0.7,
+      pull: pull, nock: has, aim: aim, qlean: 0.5,
+      skin: "#e2b98d", cloth: "#5f9b46", cloth2: "#3f6b2f", trim: "#4a3a22",
+      quiver: true, hurt: st.player.hurtT > 0
+    });
+    ctx.restore();
+  }
+
+  function drawParticles() {
+    for (var i = 0; i < st.parts.length; i++) {
+      var p = st.parts[i];
+      var a = Math.max(0, p.life / p.max);
+      ctx.globalAlpha = a;
+      ctx.fillStyle = p.col;
+      ctx.beginPath();
+      ctx.arc(wx(p.x), wy(p.y), p.r * a * SCALE + 0.5, 0, TAU);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    for (var o = 0; o < st.pops.length; o++) {
+      var pp = st.pops[o];
+      ctx.globalAlpha = Math.max(0, pp.life);
+      ctx.fillStyle = pp.col;
+      ctx.font = "800 " + Math.round(16 * SCALE) + "px system-ui";
+      ctx.textAlign = "center";
+      ctx.fillText(pp.text, wx(pp.x), wy(pp.y));
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  // ---------- Veil
+  function showVeil(title, body, btn, fn) {
+    document.getElementById("vTitle").textContent = title;
+    document.getElementById("vBody").textContent = body;
+    var b = document.getElementById("vBtn");
+    b.textContent = btn;
+    b.onclick = function () { hideVeil(); fn(); };
+    document.getElementById("veil").hidden = false;
+  }
+  function hideVeil() { document.getElementById("veil").hidden = true; }
+
+  // ---------- Input
+  function stagePoint(e) {
+    var r = cv.getBoundingClientRect();
+    return toWorld(e.clientX - r.left, e.clientY - r.top);
+  }
+
+  cv.addEventListener("pointerdown", function (e) {
+    cv.setPointerCapture && cv.setPointerCapture(e.pointerId);
+    e.preventDefault();
+    beginDraw(stagePoint(e));
+  });
+  cv.addEventListener("pointermove", function (e) {
+    if (st.drawing) { st.aimPt = stagePoint(e); }
+  });
+  window.addEventListener("pointerup", function () { release(); });
+  window.addEventListener("pointercancel", function () { st.drawing = false; });
+  cv.addEventListener("contextmenu", function (e) { e.preventDefault(); });
+
+  var pauseBtn = document.getElementById("bPause");
+
+  function setPaused(on) {
+    if (!st.started || st.over) return;
+    st.paused = on;
+    st.drawing = false;
+    pauseBtn.textContent = on ? "Resume" : "Pause";
+    pauseBtn.classList.toggle("on", on);
+    if (on) {
+      showVeil("Paused", "Take your time. The wave waits for you.", "Resume", function () { setPaused(false); });
+    }
+  }
+
+  pauseBtn.onclick = function () {
+    if (!st.started) return;
+    setPaused(!st.paused);
+  };
+
+  // Losing focus must not cost the player a hit.
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) setPaused(true);
+  });
+  window.addEventListener("blur", function () { setPaused(true); });
+
+  var sndBtn = document.getElementById("bSound");
+  function paintSnd() {
+    sndBtn.textContent = soundOn ? "Sound: On" : "Sound: Off";
+    sndBtn.classList.toggle("on", soundOn);
+  }
+  sndBtn.onclick = function () {
+    soundOn = !soundOn;
+    try { localStorage.setItem(SND_KEY, soundOn ? "on" : "off"); } catch (e) {}
+    paintSnd();
+  };
+  paintSnd();
+
+  // ---------- Loop
+  var last = 0;
+  function frame(t) {
+    var dt = last ? Math.min(0.05, (t - last) / 1000) : 0;
+    last = t;
+    clock += dt;
+    update(dt);
+    draw();
+    requestAnimationFrame(frame);
+  }
+
+  resize();
+  newGame();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 {
   "generated": "2026-09-02T12:00:00.000Z",
-  "total": 38,
+  "total": 39,
   "categories": 20,
   "categoriesMeta": [
     {
@@ -1258,6 +1258,37 @@
       ],
       "description": "Mallowmoss is a colouring page you fill in by tapping, not a puzzle you can lose. Four original characters are waiting: Pip the Bunny, Miso the Kitten, Ducky the Duck and Bobo the Frog. Pick a colour, tap a part, and it fills in - the counter at the top keeps track of how much you have done, so nothing gets missed by accident. Every character is built from separate pieces, and a few of them sit away from the body, which is where most people get stuck. Pip's tail is tucked behind one hip, Ducky has a tuft on top of his head, and Bobo has spots across his back. Switch to the brush when you want to add your own stripes or doodles; brush strokes are decoration only and never count towards the percentage, so you cannot accidentally block yourself from finishing. The sound is generated live rather than loaded from files, and each fill plays a little higher than the last, so a finished page sounds like it climbed. Undo steps back one action at a time and Reset wipes the page, so there is no wrong way to play. It works with a finger on a phone or a mouse on a desktop, and there is no score to beat and no timer running down.",
       "classic": "Colouring"
+    },
+    {
+      "id": "brackenquiver",
+      "slug": "brackenquiver",
+      "name": "Brackenquiver",
+      "category": "shooting",
+      "categories": [
+        "shooting",
+        "arcade",
+        "action"
+      ],
+      "file": "games/brackenquiver/index.html",
+      "src": "/games/brackenquiver/index.html",
+      "image": "/images/games/brackenquiver.svg",
+      "sizeKb": 58,
+      "rating": 4.8,
+      "plays": 0,
+      "year": 2026,
+      "tags": [
+        "exclusive",
+        "html5",
+        "archery",
+        "shooting",
+        "physics",
+        "castle",
+        "waves",
+        "strategy",
+        "single-player"
+      ],
+      "description": "Brackenquiver is a siege archery game fought between two bastions. You have a bow, a small quiver, and one enemy archer walking up and down the tower opposite you. Hold anywhere on the screen to draw the string - the dotted arc shows where the arrow will actually land, and it moves as the archer changes height, so you have to keep adjusting instead of aiming once and hoping. Release to loose. Arrows are the scarce part: a miss still costs you one, and there is no second chance at the same shot. While you are aiming, their archer shoots back on their own, and those arrows only ever reach the gate behind you, so the damage lands on your wall rather than on the archer you are trying to kill. Infantry also runs in from the right, and once a runner touches the gate it costs you a hit. You cannot wait that out, so a runner has to be dropped in the field first. Your gate takes five hits. Clear the archer off the wall and empty the field to move on, and each wave hands you a fresh quiver against a tougher opponent: quicker shots, less spread, and runners who arrive sooner. There are five waves, then the ridge is yours. The sound is generated in the browser rather than loaded from files, and the Sound button in the top bar mutes it and remembers the choice for next time. It works with a finger on a phone or a mouse on a desktop.",
+      "classic": "Shooting"
     }
   ]
 }
