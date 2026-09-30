@@ -192,7 +192,7 @@
   function toWorld(px, py) { return { x: px / SCALE, y: (H - py) / SCALE }; }
 
   // ---------- Layout
-  var groundY = 0, wallTop = 0, playerTowerX = 0, enemyTowerX = 0, y0 = 0, enemyHitR = 0, towerH = 0, gateX = 0;
+  var groundY = 0, wallTop = 0, playerTowerX = 0, enemyTowerX = 0, y0 = 0, enemyHitR = 0, towerH = 0, gateX = 0, gateY = 0, parapet = 0;
 
   function layout() {
     groundY = H / SCALE * 0.10;
@@ -203,6 +203,11 @@
     enemyTowerX = WORLD_W * 0.855;
     enemyHitR = 21;
     gateX = playerTowerX + 44;
+    // Merlon height, in world units. Both archers stand on top of this, and the
+    // enemy volley aims at the gate on the ground rather than at the player's
+    // height, so moving the archers up never breaks the incoming shots.
+    parapet = 12;
+    gateY = groundY + 34;
     // Sconces depend on the finished layout, so they are placed here rather
     // than in artInit, which resize() calls before the first layout().
     ART.torches = [];
@@ -225,11 +230,13 @@
       rushT: 0, shake: 0, banner: null, bannerT: 0, hitMark: 0
     };
     layout();
-    st.player.x = playerTowerX + 52;
-    st.player.y = y0;
-    st.enemy.x = enemyTowerX - 34;
-    st.enemy.y0 = wallTop + towerH + 17;
-    st.enemy.y1 = wallTop + towerH + 29;
+    // Both archers stand on their own tower roof, clear of the crenellations,
+    // so a figure is never half sunk into masonry.
+    st.player.x = playerTowerX;
+    st.player.y = wallTop + towerH + parapet;
+    st.enemy.x = enemyTowerX;
+    st.enemy.y0 = wallTop + towerH + parapet + 15;
+    st.enemy.y1 = wallTop + towerH + parapet + 27;
     st.enemy.y = st.enemy.y0;
     st.enemy.cool = 1.6;
     showVeil("Brackenquiver", "Hold anywhere to draw the bow. The dotted arc shows where the arrow will land. Release to loose.", "Start", function () {
@@ -402,7 +409,7 @@
     if (st.enemy.cool <= 0 && st.enemy.alive) {
       st.enemy.cool = st.enemy.gap * (0.8 + Math.random() * 0.4);
       var p = st.enemy.foePwr * (0.9 + Math.random() * 0.2);
-      var ta = shotAngle(st.enemy.x, st.enemy.y, gateX, st.player.y, p, G);
+      var ta = shotAngle(st.enemy.x, st.enemy.y, gateX, gateY, p, G);
       if (ta === null) ta = Math.PI / 2;
       // Most shots are aimed, so they land. A share of them are deliberate wides,
       // which keeps the threat readable instead of leaving it to raw chance.
@@ -1387,7 +1394,7 @@
 
   function drawFoe(f) {
     var X = wx(f.x), Y = wy(f.y - 21);
-    castShadow(X, wy(wallTop + towerH) + SCALE, 17, 4.6, 0.34);
+    castShadow(X, wy(wallTop + towerH + parapet) + SCALE, 17, 4.6, 0.34);
     // Draws the bow back in the last stretch before it looses, which doubles as
     // the tell the player aims against.
     var tell = Math.max(0, Math.min(1, 1 - f.cool / 0.7));
@@ -1496,7 +1503,7 @@
     var aim = aiming && st.aimPt
       ? Math.PI - screenAim(st.player.x, st.player.y, st.aimPt.x, st.aimPt.y)
       : Math.PI + 0.42;
-    castShadow(X, wy(wallTop) + SCALE, 18, 5, 0.36);
+    castShadow(X, wy(st.player.y) + SCALE, 18, 5, 0.36);
     ctx.save();
     ctx.translate(X, Y);
     ctx.scale(-SCALE, SCALE);
