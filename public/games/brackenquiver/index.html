@@ -57,7 +57,7 @@
   <div class="brand"><span class="dot"></span> Brackenquiver</div>
   <div class="hudset">
     <span class="chip" id="cWave">Wave <b>1</b></span>
-    <span class="chip" id="cArrow">Arrows <b>3</b></span>
+    <span class="chip" id="cArrow">Gate <b>5/5</b></span>
     <span class="chip" id="cScore">Score <b>0</b></span>
     <button id="bPause" title="Pause the run">Pause</button>
     <button id="bSound" title="Sound on or off">Sound: On</button>
@@ -94,11 +94,11 @@
   // once several of them share the wall: the volley rate stays close to the old
   // one-archer curve instead of multiplying by the archer count.
   var LEVELS = [
-    { foes: 1, quiver: 4, rushEvery: 9.5, firstRush: 9.0, rushBatch: 1, foePwr: 590, foeSpread: 0.16, foeGap: 3.4, foeMiss: 0.50 },
-    { foes: 2, quiver: 6, rushEvery: 8.5, firstRush: 7.5, rushBatch: 1, foePwr: 620, foeSpread: 0.13, foeGap: 5.6, foeMiss: 0.42 },
-    { foes: 3, quiver: 8, rushEvery: 7.2, firstRush: 6.5, rushBatch: 2, foePwr: 650, foeSpread: 0.11, foeGap: 7.8, foeMiss: 0.34 },
-    { foes: 4, quiver: 9, rushEvery: 6.2, firstRush: 5.5, rushBatch: 2, foePwr: 680, foeSpread: 0.09, foeGap: 9.2, foeMiss: 0.26 },
-    { foes: 5, quiver: 11, rushEvery: 5.4, firstRush: 5.0, rushBatch: 2, foePwr: 710, foeSpread: 0.07, foeGap: 10.0, foeMiss: 0.18 }
+    { foes: 1, rushEvery: 9.5, firstRush: 9.0, rushBatch: 1, foePwr: 590, foeSpread: 0.16, foeGap: 3.4, foeMiss: 0.50 },
+    { foes: 2, rushEvery: 8.5, firstRush: 7.5, rushBatch: 1, foePwr: 620, foeSpread: 0.13, foeGap: 5.6, foeMiss: 0.42 },
+    { foes: 3, rushEvery: 7.2, firstRush: 6.5, rushBatch: 2, foePwr: 650, foeSpread: 0.11, foeGap: 7.8, foeMiss: 0.34 },
+    { foes: 4, rushEvery: 6.2, firstRush: 5.5, rushBatch: 2, foePwr: 680, foeSpread: 0.09, foeGap: 9.2, foeMiss: 0.26 },
+    { foes: 5, rushEvery: 5.4, firstRush: 5.0, rushBatch: 2, foePwr: 710, foeSpread: 0.07, foeGap: 10.0, foeMiss: 0.18 }
   ];
 
   // ---------- Sound, generated so the page stays self-contained
@@ -161,7 +161,7 @@
   function sfxHit() { noise(0.07, 0.15, 900, 1.0); }
   function sfxKill() { blip(300, 0.22, "sawtooth", 0.11, 0, 90); noise(0.16, 0.13, 500, 0.8); }
   function sfxHurt() { blip(200, 0.2, "square", 0.11, 0, 70); }
-  function sfxEmpty() { blip(180, 0.08, "square", 0.07, 0); }
+  
   function sfxWin() {
     var n = [523.25, 659.25, 783.99, 1046.5, 1318.5];
     for (var i = 0; i < n.length; i++) blip(n[i], 0.3, "triangle", 0.15, i * 0.09);
@@ -238,7 +238,7 @@
   function newGame() {
     st = {
       wave: 0, score: 0, over: false, paused: false, started: false,
-      arrowsLeft: 0, drawing: false, drawT: 0,
+      drawing: false, drawT: 0,
       arrowsIn: [], rushers: [], foes: [], parts: [], pops: [],
       player: { x: 0, y: 0, hp: 5, maxhp: 5, hurtT: 0, drawFlash: 0 },
       rushT: 0, shake: 0, banner: null, bannerT: 0, hitMark: 0
@@ -258,7 +258,6 @@
   function startWave(i) {
     st.wave = i;
     var L = LEVELS[Math.min(i, LEVELS.length - 1)];
-    st.arrowsLeft = L.quiver;
     st.rushGap = L.rushEvery;
     st.rushBatch = L.rushBatch;
     st.rushT = L.firstRush;
@@ -314,11 +313,9 @@
   function release() {
     if (!st.drawing) return;
     st.drawing = false;
-    if (st.arrowsLeft <= 0) { sfxEmpty(); st.drawT = 0; return; }
     var a = aimAngle();
     var v = power();
     st.arrowsIn.push({ x: st.player.x, y: st.player.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, dead: false });
-    st.arrowsLeft--;
     st.player.drawFlash = 0.14;
     sfxShoot();
     st.drawT = 0;
@@ -555,7 +552,7 @@
   // ---------- Drawing
   function drawHud() {
     document.getElementById("cWave").innerHTML = "Wave <b>" + (st.wave + 1) + "</b>";
-    document.getElementById("cArrow").innerHTML = "Arrows <b>" + st.arrowsLeft + "</b>";
+    document.getElementById("cArrow").innerHTML = "Gate <b>" + st.player.hp + "/" + st.player.maxhp + "</b>";
     document.getElementById("cScore").innerHTML = "Score <b>" + st.score + "</b>";
   }
 
@@ -581,7 +578,7 @@
     drawArrows();
 
     // Aim preview and bow.
-    if (st.drawing && st.arrowsLeft > 0 && !st.over) {
+    if (st.drawing && !st.over) {
       var ang = aimAngle();
       var pw = power();
       var pts = predict(st.player.x, st.player.y, Math.cos(ang) * pw, Math.sin(ang) * pw, 3.2);
@@ -1544,8 +1541,8 @@
 
   function drawPlayer() {
     var X = wx(st.player.x), Y = wy(st.player.y);
-    var aiming = st.drawing && st.arrowsLeft > 0 && !st.over;
-    var has = st.arrowsLeft > 0 && !st.over;
+    var aiming = st.drawing && !st.over;
+    var has = !st.over;
     var pull = aiming ? (power() - MIN_PWR) / (MAX_PWR - MIN_PWR) : 0;
     // The figure rig is drawn facing -x, then mirrored here, so the aim angle
     // has to be reflected across the y axis as well or the shot points backwards.
