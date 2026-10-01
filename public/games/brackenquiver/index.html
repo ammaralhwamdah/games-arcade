@@ -90,12 +90,15 @@
   var MAX_PWR = 762;        // flat and fast, but harder to place
   var TAU = Math.PI * 2;
 
+  // Wave n fields n archers. foeGap is per archer, so it is deliberately wide
+  // once several of them share the wall: the volley rate stays close to the old
+  // one-archer curve instead of multiplying by the archer count.
   var LEVELS = [
-    { quiver: 4, rushEvery: 10.0, firstRush: 9.0, foePwr: 590, foeSpread: 0.16, foeGap: 3.4, foeMiss: 0.50 },
-    { quiver: 5, rushEvery: 9.0, firstRush: 7.5, foePwr: 620, foeSpread: 0.13, foeGap: 3.0, foeMiss: 0.42 },
-    { quiver: 6, rushEvery: 8.0, firstRush: 6.5, foePwr: 650, foeSpread: 0.11, foeGap: 2.6, foeMiss: 0.34 },
-    { quiver: 6, rushEvery: 7.0, firstRush: 5.5, foePwr: 680, foeSpread: 0.09, foeGap: 2.2, foeMiss: 0.26 },
-    { quiver: 7, rushEvery: 6.0, firstRush: 5.0, foePwr: 710, foeSpread: 0.07, foeGap: 1.9, foeMiss: 0.18 }
+    { foes: 1, quiver: 4, rushEvery: 9.5, firstRush: 9.0, rushBatch: 1, foePwr: 590, foeSpread: 0.16, foeGap: 3.4, foeMiss: 0.50 },
+    { foes: 2, quiver: 6, rushEvery: 8.5, firstRush: 7.5, rushBatch: 1, foePwr: 620, foeSpread: 0.13, foeGap: 5.6, foeMiss: 0.42 },
+    { foes: 3, quiver: 8, rushEvery: 7.2, firstRush: 6.5, rushBatch: 2, foePwr: 650, foeSpread: 0.11, foeGap: 7.8, foeMiss: 0.34 },
+    { foes: 4, quiver: 9, rushEvery: 6.2, firstRush: 5.5, rushBatch: 2, foePwr: 680, foeSpread: 0.09, foeGap: 9.2, foeMiss: 0.26 },
+    { foes: 5, quiver: 11, rushEvery: 5.4, firstRush: 5.0, rushBatch: 2, foePwr: 710, foeSpread: 0.07, foeGap: 10.0, foeMiss: 0.18 }
   ];
 
   // ---------- Sound, generated so the page stays self-contained
@@ -192,7 +195,7 @@
   function toWorld(px, py) { return { x: px / SCALE, y: (H - py) / SCALE }; }
 
   // ---------- Layout
-  var groundY = 0, wallTop = 0, playerTowerX = 0, enemyTowerX = 0, y0 = 0, enemyHitR = 0, towerH = 0, gateX = 0, gateY = 0, parapet = 0;
+  var groundY = 0, wallTop = 0, playerTowerX = 0, enemyTowerX = 0, y0 = 0, enemyHitR = 0, towerH = 0, gateX = 0, gateY = 0, parapet = 0, POSTS = [];
 
   function layout() {
     groundY = H / SCALE * 0.10;
@@ -215,6 +218,18 @@
     ART.torches.push({ x: playerTowerX - 38, y: wallTop - 10, tower: false });
     ART.torches.push({ x: playerTowerX, y: wallTop - towerH - 11, tower: true });
     ART.torches.push({ x: enemyTowerX, y: wallTop - towerH - 11, tower: true });
+
+    // Archer posts on the enemy wall. Post 0 is the roof of the tower; the rest
+    // stand on the wall walkway beside it, each with its own bob and reload, so
+    // a wave of three reads as one archer on the tower and two beside it.
+    var walkY = wallTop + 15;
+    POSTS = [
+      { x: enemyTowerX, y: wallTop + towerH + parapet + 6, kind: "roof" },
+      { x: enemyTowerX + 54, y: walkY, kind: "wall" },
+      { x: enemyTowerX + 96, y: walkY + 3, kind: "wall" },
+      { x: enemyTowerX - 54, y: walkY, kind: "wall" },
+      { x: enemyTowerX - 96, y: walkY + 3, kind: "wall" }
+    ];
   }
 
   // ---------- State
@@ -224,21 +239,15 @@
     st = {
       wave: 0, score: 0, over: false, paused: false, started: false,
       arrowsLeft: 0, drawing: false, drawT: 0,
-      arrowsIn: [], rushers: [], parts: [], pops: [],
+      arrowsIn: [], rushers: [], foes: [], parts: [], pops: [],
       player: { x: 0, y: 0, hp: 5, maxhp: 5, hurtT: 0, drawFlash: 0 },
-      enemy: { x: 0, y: 0, y0: 0, y1: 0, t: 0, gap: 2, cool: 0, hurtT: 0, alive: true },
       rushT: 0, shake: 0, banner: null, bannerT: 0, hitMark: 0
     };
     layout();
-    // Both archers stand on their own tower roof, clear of the crenellations,
-    // so a figure is never half sunk into masonry.
+    // The player archer stands on their own tower roof, clear of the
+    // crenellations, so a figure is never half sunk into masonry.
     st.player.x = playerTowerX;
     st.player.y = wallTop + towerH + parapet;
-    st.enemy.x = enemyTowerX;
-    st.enemy.y0 = wallTop + towerH + parapet + 15;
-    st.enemy.y1 = wallTop + towerH + parapet + 27;
-    st.enemy.y = st.enemy.y0;
-    st.enemy.cool = 1.6;
     showVeil("Brackenquiver", "Hold anywhere to draw the bow. The dotted arc shows where the arrow will land. Release to loose.", "Start", function () {
       st.started = true;
       st.paused = false;
@@ -250,16 +259,26 @@
     st.wave = i;
     var L = LEVELS[Math.min(i, LEVELS.length - 1)];
     st.arrowsLeft = L.quiver;
-    st.enemy.gap = L.foeGap;
-    st.enemy.foePwr = L.foePwr;
-    st.enemy.foeSpread = L.foeSpread;
-    st.enemy.foeMiss = L.foeMiss;
-    st.enemy.alive = true;
-    st.enemy.hurtT = 0;
     st.rushGap = L.rushEvery;
+    st.rushBatch = L.rushBatch;
     st.rushT = L.firstRush;
     st.rushers.length = 0;
-    banner("Wave " + (i + 1) + " of " + LEVELS.length, 1.5);
+    // Wave n fields n archers. The first archer takes the tower roof and the
+    // rest fill the wall posts beside it, each with its own bob and reload so
+    // they never volley in lockstep.
+    st.foes.length = 0;
+    for (var k = 0; k < L.foes; k++) {
+      var post = POSTS[Math.min(k, POSTS.length - 1)];
+      st.foes.push({
+        x: post.x, base: post.y, kind: post.kind,
+        y0: post.y + 15, y1: post.y + 27, y: post.y + 15,
+        t: k * 1.9, gap: L.foeGap * (0.72 + k * 0.16),
+        foePwr: L.foePwr, foeSpread: L.foeSpread, foeMiss: L.foeMiss,
+        cool: 1.5 + k * 1.1 + Math.random() * 0.8,
+        hurtT: 0, alive: true
+      });
+    }
+    banner("Wave " + (i + 1) + " of " + LEVELS.length + "  \u00b7  " + L.foes + (L.foes === 1 ? " archer" : " archers"), 1.5);
   }
 
   function banner(text, secs) { st.banner = text; st.bannerT = secs; }
@@ -321,19 +340,33 @@
   }
 
   // ---------- Enemies
+  // Returns the archer an arrow would hit, or null. Several archers can share
+  // the wall, so the nearest body within reach wins.
   function foeHit(f) {
-    if (!st.enemy.alive) return false;
-    return (f.x - st.enemy.x) * (f.x - st.enemy.x) + (f.y - st.enemy.y) * (f.y - st.enemy.y) <= enemyHitR * enemyHitR;
+    var best = null, bestD = Infinity;
+    for (var i = 0; i < st.foes.length; i++) {
+      var e = st.foes[i];
+      if (!e.alive) continue;
+      var dx = f.x - e.x, dy = f.y - e.y;
+      var d = dx * dx + dy * dy;
+      if (d <= enemyHitR * enemyHitR && d < bestD) { bestD = d; best = e; }
+    }
+    return best;
   }
 
-  function killFoe(f) {
-    if (!st.enemy.alive) return;
-    st.enemy.alive = false;
-    st.enemy.hurtT = 0.4;
+  function killFoe(e, f) {
+    if (!e.alive) return;
+    e.alive = false;
+    e.hurtT = 0.4;
     st.score += 100;
     burst(f.x, f.y, "#e2584a", 18);
-    pop(f.x, f.y + 30, "+100", "#ffd9a0");
+    pop(e.x, e.y + 30, "+100", "#ffd9a0");
     sfxKill();
+  }
+
+  function anyFoeAlive() {
+    for (var i = 0; i < st.foes.length; i++) if (st.foes[i].alive) return true;
+    return false;
   }
 
   function spawnRusher() {
@@ -366,7 +399,7 @@
       if (st.wave + 1 >= LEVELS.length) {
         showVeil("The field is yours", "Every bastion on the ridge has fallen. Final score " + st.score + ".", "Play again", newGame);
       } else {
-        showVeil("Wave " + (st.wave + 1) + " cleared", "Score so far " + st.score + ". The next wave brings a tougher archer and a faster rush.", "Next wave", function () {
+        showVeil("Wave " + (st.wave + 1) + " cleared", "Score so far " + st.score + ". The next wave fields more archers on the wall and a faster rush.", "Next wave", function () {
           hideVeil();
           st.over = false;
           startWave(st.wave + 1);
@@ -396,34 +429,43 @@
     st.shake = Math.max(0, st.shake - dt * 22);
     if (st.player.hurtT > 0) st.player.hurtT -= dt;
     if (st.player.drawFlash > 0) st.player.drawFlash -= dt;
-    if (st.enemy.hurtT > 0) st.enemy.hurtT -= dt;
     if (st.bannerT > 0) st.bannerT -= dt;
     if (st.hitMark > 0) st.hitMark -= dt;
 
     if (st.drawing) st.drawT = Math.min(AIM_TIME, st.drawT + dt);
 
-    // Enemy archers bob and loose on their own.
-    st.enemy.t += dt;
-    st.enemy.y = st.enemy.y0 + (st.enemy.y1 - st.enemy.y0) * (0.5 - 0.5 * Math.cos(st.enemy.t * 1.5));
-    st.enemy.cool -= dt;
-    if (st.enemy.cool <= 0 && st.enemy.alive) {
-      st.enemy.cool = st.enemy.gap * (0.8 + Math.random() * 0.4);
-      var p = st.enemy.foePwr * (0.9 + Math.random() * 0.2);
-      var ta = shotAngle(st.enemy.x, st.enemy.y, gateX, gateY, p, G);
-      if (ta === null) ta = Math.PI / 2;
-      // Most shots are aimed, so they land. A share of them are deliberate wides,
-      // which keeps the threat readable instead of leaving it to raw chance.
-      var jit;
-      if (Math.random() < st.enemy.foeMiss) jit = (Math.random() < 0.5 ? -1 : 1) * (0.6 + Math.random() * 0.45);
-      else jit = (Math.random() - 0.5) * st.enemy.foeSpread * 2;
-      st.arrowsIn.push({ x: st.enemy.x, y: st.enemy.y, vx: Math.cos(ta + jit) * p, vy: Math.sin(ta + jit) * p, foe: true, dead: false });
+    // Enemy archers bob and loose on their own. Each has its own phase and
+    // reload, so a crowded wall still fires as a spread-out group rather than a
+    // single synchronised volley.
+    for (var q = 0; q < st.foes.length; q++) {
+      var e = st.foes[q];
+      if (e.hurtT > 0) e.hurtT -= dt;
+      if (!e.alive) continue;
+      e.t += dt;
+      e.y = e.y0 + (e.y1 - e.y0) * (0.5 - 0.5 * Math.cos(e.t * 1.5));
+      e.cool -= dt;
+      if (e.cool <= 0) {
+        e.cool = e.gap * (0.8 + Math.random() * 0.4);
+        var p = e.foePwr * (0.9 + Math.random() * 0.2);
+        var ta = shotAngle(e.x, e.y, gateX, gateY, p, G);
+        if (ta === null) ta = Math.PI / 2;
+        // Most shots are aimed, so they land. A share of them are deliberate wides,
+        // which keeps the threat readable instead of leaving it to raw chance.
+        var jit;
+        if (Math.random() < e.foeMiss) jit = (Math.random() < 0.5 ? -1 : 1) * (0.6 + Math.random() * 0.45);
+        else jit = (Math.random() - 0.5) * e.foeSpread * 2;
+        st.arrowsIn.push({ x: e.x, y: e.y, vx: Math.cos(ta + jit) * p, vy: Math.sin(ta + jit) * p, foe: true, dead: false });
+      }
     }
 
-    // Melee rush.
+    // Melee rush. Later waves send a small batch at a time rather than one
+    // runner every few seconds, so the pressure creeps up.
     st.rushT -= dt;
     if (st.rushT <= 0) {
       st.rushT = st.rushGap;
-      if (st.enemy.alive) spawnRusher();
+      if (anyFoeAlive()) {
+        for (var rb = 0; rb < st.rushBatch; rb++) spawnRusher();
+      }
     }
     for (var i = 0; i < st.rushers.length; i++) {
       var r = st.rushers[i];
@@ -452,10 +494,13 @@
         if (a.x < -60 || a.x > WORLD_W + 60 || a.y > H / SCALE + 200) {
           st.arrowsIn.splice(k, 1); removed = true; break;
         }
-        // Own archers on the enemy tower.
-        if (!a.foe && foeHit(a)) {
-          killFoe(a); st.hitMark = 0.25;
-          st.arrowsIn.splice(k, 1); removed = true; break;
+        // Own archers on the enemy wall and tower.
+        if (!a.foe) {
+          var hitE = foeHit(a);
+          if (hitE) {
+            killFoe(hitE, a); st.hitMark = 0.25;
+            st.arrowsIn.splice(k, 1); removed = true; break;
+          }
         }
         // Rushing troops.
         if (!a.foe) {
@@ -483,10 +528,10 @@
     // Clean up spent arrows.
     for (var d = st.arrowsIn.length - 1; d >= 0; d--) if (st.arrowsIn[d].dead) st.arrowsIn.splice(d, 1);
 
-    // Wave cleared: the archer is down and no runner is left on the field.
+    // Wave cleared: every archer is down and no runner is left on the field.
     var live = 0;
     for (var r2 = 0; r2 < st.rushers.length; r2++) if (!st.rushers[r2].dead) live++;
-    if (!st.enemy.alive && live === 0) finish(true);
+    if (!anyFoeAlive() && live === 0) finish(true);
 
     // Particles and floating labels.
     for (var p = st.parts.length - 1; p >= 0; p--) {
@@ -527,9 +572,11 @@
     drawWall();
     drawTorches();
 
-    // Troops first so arrows read on top of the field.
+    // Troops first so arrows read on top of the field. Archers are drawn back
+    // to front so the ones lower on the wall sit in front of the tower.
     for (var i = 0; i < st.rushers.length; i++) if (!st.rushers[i].dead) drawRusher(st.rushers[i]);
-    if (st.enemy.alive) drawFoe(st.enemy);
+    var foeOrder = st.foes.slice().sort(function (a, b) { return a.y - b.y; });
+    for (i = 0; i < foeOrder.length; i++) if (foeOrder[i].alive) drawFoe(foeOrder[i]);
 
     drawArrows();
 
@@ -1394,7 +1441,9 @@
 
   function drawFoe(f) {
     var X = wx(f.x), Y = wy(f.y - 21);
-    castShadow(X, wy(wallTop + towerH + parapet) + SCALE, 17, 4.6, 0.34);
+    // The shadow sits on whatever the archer is standing on: the tower roof, or
+    // the wall walkway for the posts beside it.
+    castShadow(X, wy(f.base) + SCALE, f.kind === "roof" ? 17 : 15, 4.6, 0.34);
     // Draws the bow back in the last stretch before it looses, which doubles as
     // the tell the player aims against.
     var tell = Math.max(0, Math.min(1, 1 - f.cool / 0.7));
@@ -1402,9 +1451,9 @@
     ctx.translate(X, Y);
     ctx.scale(SCALE, SCALE);
     figureArcher({
-      h: 42, ph: f.t * 2.2,
+      h: 42, ph: f.t * 2.2 + (f.x % 7) * 0.4,
       pull: tell * tell, nock: tell > 0.03,
-      aim: screenAim(f.x, f.y, gateX, groundY + 18),
+      aim: screenAim(f.x, f.y, gateX, gateY),
       skin: "#c08a5e", cloth: "#8c3229", cloth2: "#5e201a", trim: "#3a2a1c",
       quiver: true, hurt: f.hurtT > 0
     });
