@@ -196,6 +196,12 @@
 
   // ---------- Layout
   var groundY = 0, wallTop = 0, playerTowerX = 0, enemyTowerX = 0, y0 = 0, enemyHitR = 0, towerH = 0, gateX = 0, gateY = 0, parapet = 0, POSTS = [];
+  // Radius around the player's torso that counts as being struck by an arrow.
+  var PLAYER_HIT_R = 15;
+
+  // Centre of the player's body in world units. The figure is drawn centred on
+  // this point, so an arrow has to reach the body and not merely fly past.
+  function playerBodyY() { return st.player.y - 20; }
 
   function layout() {
     groundY = H / SCALE * 0.10;
@@ -444,7 +450,9 @@
       if (e.cool <= 0) {
         e.cool = e.gap * (0.8 + Math.random() * 0.4);
         var p = e.foePwr * (0.9 + Math.random() * 0.2);
-        var ta = shotAngle(e.x, e.y, gateX, gateY, p, G);
+        // Aimed at the player's body on the tower roof, not at the gate below, so
+        // a hit is something you caused rather than something unavoidable.
+        var ta = shotAngle(e.x, e.y, st.player.x, playerBodyY(), p, G);
         if (ta === null) ta = Math.PI / 2;
         // Most shots are aimed, so they land. A share of them are deliberate wides,
         // which keeps the threat readable instead of leaving it to raw chance.
@@ -513,11 +521,17 @@
             }
           }
         }
-        // Enemy arrows can only hurt the gate area, never the tower archers.
-        if (a.foe && a.x <= gateX + 12 && a.x > gateX - 40) {
-          st.arrowsIn.splice(k, 1); removed = true;
-          hurtPlayer();
-          break;
+        // Enemy arrows only count as a hit when they actually strike the player.
+        // Passing the tower without touching the body is a miss, so a shot that
+        // flies over or falls short costs nothing.
+        if (a.foe) {
+          var dxp = a.x - st.player.x, dyp = a.y - playerBodyY();
+          if (dxp * dxp + dyp * dyp <= PLAYER_HIT_R * PLAYER_HIT_R) {
+            st.arrowsIn.splice(k, 1); removed = true;
+            burst(a.x, a.y, "#ff6a5a", 8);
+            hurtPlayer();
+            break;
+          }
         }
       }
     }
