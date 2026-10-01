@@ -82,12 +82,13 @@
   // cross ~654 units horizontally and climb ~95 more. That makes 625 u/s the
   // absolute floor for a reachable shot, hence MIN_PWR at 640: every point on
   // the power meter can actually reach the target. A full draw at 45 degrees
-  // flies ~1117 units, which is what makes the arc readable.
+  // flies ~1557 units, which is what makes the arc readable, and it gives the
+  // tallest possible lob for shots that need to come down onto a high target.
   var G = 520;              // gravity, world units/s^2
   var WORLD_W = 1000;       // fixed world width; height follows the aspect ratio
   var AIM_TIME = 1.0;       // seconds to reach full draw
   var MIN_PWR = 640;        // slowest draw that still clears the far tower
-  var MAX_PWR = 762;        // flat and fast, but harder to place
+  var MAX_PWR = 900;        // flat and fast, but harder to place
   var TAU = Math.PI * 2;
 
   // Wave n fields n archers. foeGap is per archer, so it is deliberately wide
@@ -595,7 +596,7 @@
     if (st.drawing && !st.over) {
       var ang = aimAngle();
       var pw = power();
-      var pts = predict(st.player.x, st.player.y, Math.cos(ang) * pw, Math.sin(ang) * pw, 3.2);
+      var pts = predict(st.player.x, st.player.y, Math.cos(ang) * pw, Math.sin(ang) * pw, 6.0);
       ctx.setLineDash([6, 9]);
       ctx.lineWidth = 2.2;
       ctx.strokeStyle = "rgba(230,245,210,0.75)";
