@@ -1472,7 +1472,7 @@ const content: Record<string, GameContent> = {
   "brackenquiver": {
     tips: [
       "Hold to draw, and keep watching the dotted arc while you hold. Every enemy archer walks up and down their own stretch of wall the whole time, so an arc that was lined up a second ago is no longer lined up now.",
-      "A miss still costs you an arrow. With only a few in the quiver, it is worth waiting for a moment when your target is near a stop in their walk rather than firing at the top of the movement.",
+      "You have unlimited arrows, so a miss costs you time rather than a resource. It is still worth waiting for a moment when your target is near a stop in their walk instead of firing at the top of the movement.",
       "Rushers do not stop at your wall, they cost you a hit the moment they reach the gate. If one is already past the halfway line, it is usually cheaper to take it down in the field than to let it arrive.",
       "There is no penalty for waiting. Enemies only shoot on their own timers, so standing still and letting them come to you costs you nothing except the runners you have to watch for.",
       "Do not hoard arrows for the last runner. Clearing the field is part of finishing the wave, and a wave with archers still alive can go badly if you spend the quiver on infantry instead.",
@@ -1498,8 +1498,8 @@ const content: Record<string, GameContent> = {
         a: "Two things. You have to shoot every archer off the enemy wall, and you have to stop every runner before it reaches your gate. The wave only ends when the last archer is down and the field is clear, so a runner still walking when you finish the archers will keep the round going.",
       },
       {
-        q: "What happens if I run out of arrows?",
-        a: "You cannot fire, but the wave is not over. The archers keep shooting and the runners keep coming, so a wave where you spent the whole quiver on misses will usually end with your gate falling. That is deliberate: it makes a wasted arrow feel like it mattered.",
+        q: "Do the arrows ever run out?",
+        a: "No, the quiver is unlimited and you can always draw and loose. What a miss costs you is time, and the enemy archers and runners are spending that same time on you. Firing at the top of an archer's walk cycle over and over will put arrows in the stonework while the gate chips away behind you.",
       },
       {
         q: "How do the runners work?",
