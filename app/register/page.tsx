@@ -1,18 +1,19 @@
 "use client";
 
-import { Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import AuthPanel from "@/components/AuthPanel";
-import { SITE_NAME } from "@/lib/site";
 
-function RegisterContent() {
-  const searchParams = useSearchParams();
-  const confirmed = searchParams.get("confirmed") === "1";
+export default function RegisterPage() {
+  const [confirmed, setConfirmed] = useState(false);
+
+  useEffect(() => {
+    setConfirmed(new URLSearchParams(window.location.search).get("confirmed") === "1");
+  }, []);
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-14 sm:px-6">
       <div className="mx-auto max-w-md text-center">
-        <div className="text-5xl" aria-hidden>⭐</div>
+        <div className="text-5xl" aria-hidden>✨</div>
         <h1 className="mt-4 text-3xl font-black text-white sm:text-4xl">Create Your Account</h1>
         <p className="mt-2 text-sm text-slate-400">
           Earn points and stars, and see your name on the global leaderboard.
@@ -30,10 +31,3 @@ function RegisterContent() {
   );
 }
 
-export default function RegisterPage() {
-  return (
-    <Suspense>
-      <RegisterContent />
-    </Suspense>
-  );
-}

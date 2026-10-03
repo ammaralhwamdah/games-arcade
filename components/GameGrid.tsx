@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import type { CategoryMeta, GameLite } from "@/lib/types";
 import { GAMES_PAGE_SIZE } from "@/lib/site";
 import { loadGames } from "@/lib/clientCatalog";
@@ -26,16 +26,23 @@ function GameGridInner({
   defaultCategory?: string;
 }) {
   const router = useRouter();
-  const params = useSearchParams();
-  const qParam = params.get("q") ?? "";
-  const catParam = params.get("category") ?? defaultCategory;
-  const sortParam = (params.get("sort") as SortKey) || "popular";
 
-  const [query, setQuery] = useState(qParam);
-  const [category, setCategory] = useState(catParam);
-  const [sort, setSort] = useState<SortKey>(sortParam);
+  const [query, setQuery] = useState("");
+  const [category, setCategory] = useState(defaultCategory);
+  const [sort, setSort] = useState<SortKey>("popular");
   const [visibleCount, setVisibleCount] = useState(GAMES_PAGE_SIZE);
   const [fullList, setFullList] = useState<GameLite[] | null>(null);
+
+  useEffect(() => {
+    const sp = new URLSearchParams(window.location.search);
+    const q = sp.get("q");
+    const cat = sp.get("category");
+    const s = sp.get("sort");
+    if (q) setQuery(q);
+    setCategory(cat ?? defaultCategory);
+    const match = SORTS.find((x) => x.key === s);
+    if (match) setSort(match.key);
+  }, [defaultCategory]);
 
   useEffect(() => {
     let mounted = true;
@@ -81,17 +88,14 @@ function GameGridInner({
 
   const updateUrl = useCallback(
     (next: { q?: string; category?: string; sort?: SortKey }) => {
-      const sp = new URLSearchParams(params.toString());
+      const sp = new URLSearchParams();
       if (next.q) sp.set("q", next.q);
-      else sp.delete("q");
       if (next.category) sp.set("category", next.category);
-      else sp.delete("category");
       if (next.sort && next.sort !== "popular") sp.set("sort", next.sort);
-      else sp.delete("sort");
       const qs = sp.toString();
       router.replace(qs ? `?${qs}` : window.location.pathname, { scroll: false });
     },
-    [router, params]
+    [router]
   );
 
   const resetPage = () => setVisibleCount(GAMES_PAGE_SIZE);
@@ -229,9 +233,5 @@ export default function GameGrid(props: {
   categories: CategoryMeta[];
   defaultCategory?: string;
 }) {
-  return (
-    <Suspense fallback={<div className="py-20 text-center text-slate-400">Loading games…</div>}>
-      <GameGridInner {...props} />
-    </Suspense>
-  );
+  return <GameGridInner {...props} />;
 }
