@@ -18,6 +18,7 @@ export default function GameFrame({ src, title, slug }: { src: string; title: st
   const lastLog = useRef(0);
   const isAdmin = isAdminUsername(session?.user?.user_metadata?.username ?? session?.user?.email ?? null);
   const canEarn = !!session && !isAdmin;
+  const accessToken = session?.access_token ?? null;
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | null = null;
@@ -57,16 +58,16 @@ export default function GameFrame({ src, title, slug }: { src: string; title: st
     const now = Date.now();
     if (now - lastLog.current < 300000) return;
     lastLog.current = now;
-    supabase
-      .from("play_events")
-      .insert({
-        user_id: session?.user?.id ?? null,
-        username: session?.user?.user_metadata?.username ?? null,
-        game_slug: slug,
-        game_title: title,
-      })
-      .then(() => {}, () => {});
-  }, [session, slug, title, canEarn]);
+    if (!accessToken) return;
+    fetch("/api/log-play", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ gameSlug: slug, gameTitle: title }),
+    }).then(() => {}, () => {});
+  }, [accessToken, slug, title, canEarn]);
 
   useEffect(() => {
     logPlay();

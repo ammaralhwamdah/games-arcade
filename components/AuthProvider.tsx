@@ -5,7 +5,6 @@ import type { ReactNode } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { getSupabase, SUPABASE_CONFIGURED } from "@/lib/supabase";
 import { usePoints } from "./PointsProvider";
-import { getLevel } from "@/lib/points";
 import { isAdminUsername } from "@/lib/admin-client";
 
 interface AuthResult {
@@ -66,31 +65,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
+  const setCloudPoints = useCallback(
+    (cloud: number) => {
+      if (cloud > pointsRef.current) addPoints(cloud - pointsRef.current);
+    },
+    [addPoints]
+  );
+
   const syncNow = useCallback(async () => {
     const supabase = getSupabase();
     if (!supabase || !session?.user) return;
-    const username = displayName(session.user) ?? "player";
-    if (isAdminUsername(username) || isAdminUsername(session.user.email)) return;
     setSyncing(true);
     try {
-      const username = displayName(session.user) ?? "player";
-      const { stars, name } = getLevel(pointsRef.current);
-      const { error } = await supabase.from("player_profiles").upsert(
-        {
-          user_id: session.user.id,
-          username,
-          points: pointsRef.current,
-          stars,
-          level_name: name,
-          updated_at: new Date().toISOString(),
+      const res = await fetch("/api/sync-points", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          authorization: `Bearer ${session.access_token}`,
         },
-        { onConflict: "user_id" }
-      );
-      if (error) console.error("supabase sync error:", error.message);
+        body: JSON.stringify({ localPoints: pointsRef.current }),
+      });
+      if (!res.ok) {
+        console.error("sync-points failed:", res.status);
+        return;
+      }
+      const data = (await res.json()) as { points?: number; clamped?: boolean };
+      if (data.clamped && typeof data.points === "number") {
+        setCloudPoints(data.points);
+      }
+    } catch {
+      /* offline sync is deferred to the next trigger */
     } finally {
       setSyncing(false);
     }
-  }, [session]);
+  }, [session, setCloudPoints]);
 
   useEffect(() => {
     if (!session?.user) return;
@@ -136,17 +144,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .eq("user_id", data.session.user.id)
         .maybeSingle();
       const cloudPoints = typeof profile?.points === "number" ? profile.points : 0;
-      const localPoints = pointsRef.current;
       if (!isAdminUsername(displayName(data.session.user)) && !isAdminUsername(data.session.user.email)) {
-        if (cloudPoints > localPoints) {
-          addPoints(cloudPoints - localPoints);
-        }
+        setCloudPoints(cloudPoints);
       }
       setSession(data.session);
       setTimeout(() => syncNow(), 300);
     }
     return {};
-  }, [addPoints, syncNow]);
+  }, [setCloudPoints, syncNow]);
 
   const signOut = useCallback(async () => {
     const supabase = getSupabase();

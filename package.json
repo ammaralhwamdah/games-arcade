@@ -11,6 +11,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
+    "typecheck:functions": "tsc --noEmit -p functions/tsconfig.json",
     "gen:min": "node scripts/gen-min.mjs",
     "fix:size": "node scripts/fix-sizekb.mjs",
     "verify:build": "node scripts/verify-build.mjs",
@@ -23,6 +24,7 @@
     "react-dom": "19.2.8"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261003.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

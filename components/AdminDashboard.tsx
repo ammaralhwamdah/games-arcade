@@ -145,14 +145,13 @@ export default function AdminDashboard({
     setDeletingId(id);
     setCommentError(null);
     try {
-      const supabase = getSupabase();
-      if (!supabase) {
-        setCommentError("Supabase not configured.");
-        return;
-      }
-      const { error: delErr } = await supabase.from("comments").delete().eq("id", id);
-      if (delErr) {
-        setCommentError(delErr.message ?? "Could not delete comment.");
+      const res = await fetch(`/api/admin/delete-comment?id=${encodeURIComponent(id)}`, {
+        method: "DELETE",
+        headers: { authorization: `Bearer ${session.access_token}` },
+      });
+      if (!res.ok) {
+        const err = (await res.json().catch(() => null)) as { error?: string } | null;
+        setCommentError(err?.error ?? "Could not delete comment.");
       } else {
         setComments((prev) => (prev ?? []).filter((c) => c.id !== id));
       }
