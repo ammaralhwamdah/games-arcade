@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Tank Blitz</title>
+<meta name="robots" content="noindex, nofollow" />
+<meta name="description" content="Tank Blitz - free online tank war game. Defend your base against waves of enemy tanks, break through brick walls and upgrade your cannon." />
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#0b0e14;font-family:'Trebuchet MS',Verdana,sans-serif;touch-action:none;user-select:none;-webkit-user-select:none}
+#stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+canvas{display:block;image-rendering:auto;box-shadow:0 0 40px rgba(0,0,0,.8)}
+.screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:20;background:radial-gradient(circle at 50% 40%,#16202e,#070a10 75%);padding:16px;text-align:center}
+.screen.hidden{display:none}
+h1{font-size:clamp(2rem,8vw,4.2rem);letter-spacing:.06em;color:#facc15;text-shadow:0 3px 0 #854d0e,0 0 30px rgba(250,204,21,.45);line-height:1}
+.tagline{margin-top:.6em;color:#7dd3fc;font-size:clamp(.7rem,2.4vw,1rem);letter-spacing:.28em;text-transform:uppercase}
+button.play{margin-top:1.6em;padding:14px 46px;font-family:inherit;font-size:clamp(1rem,3.4vw,1.4rem);font-weight:bold;letter-spacing:.14em;text-transform:uppercase;color:#0b0e14;background:linear-gradient(#fde047,#f59e0b);border:0;border-bottom:4px solid #92400e;border-radius:10px;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.5)}
+button.play:active{transform:translateY(2px);border-bottom-width:2px}
+.keys{margin-top:1.8em;color:#94a3b8;font-size:clamp(.6rem,2vw,.85rem);line-height:2}
+.keys b{color:#facc15}
+.hiscore{margin-top:1em;color:#fbbf24;font-size:clamp(.75rem,2.4vw,1rem);letter-spacing:.1em}
+#hud{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;justify-content:space-between;align-items:flex-start;padding:8px 10px;gap:8px;pointer-events:none;font-size:12px;line-height:1.5}
+#hud.hidden{display:none}
+#hud .box{background:rgba(8,12,20,.72);border:1px solid rgba(148,163,184,.25);border-radius:8px;padding:5px 9px;color:#cbd5e1}
+#hud .k{display:block;font-size:9px;letter-spacing:.14em;color:#64748b;text-transform:uppercase}
+#hud .v{font-weight:bold;color:#f8fafc;font-size:14px}
+#hud .v.gold{color:#fbbf24}
+#hud .right{display:flex;gap:6px;align-items:flex-start;pointer-events:auto}
+.iconbtn{width:30px;height:30px;border-radius:8px;border:1px solid rgba(148,163,184,.3);background:rgba(8,12,20,.72);color:#cbd5e1;font-size:14px;cursor:pointer;line-height:1}
+.iconbtn:hover{border-color:#facc15;color:#facc15}
+#pow{display:flex;gap:5px;margin-top:3px}
+.pw{font-size:9px;padding:1px 5px;border-radius:4px;font-weight:bold;letter-spacing:.06em}
+.pw.shield{background:#0369a1;color:#e0f2fe}
+.pw.rapid{background:#b45309;color:#fef3c7}
+.pw.star{background:#a16207;color:#fef08a}
+#over h2{font-size:clamp(1.6rem,6vw,3rem);color:#ef4444;text-shadow:0 3px 0 #7f1d1d;letter-spacing:.05em}
+#over p{margin-top:.7em;color:#cbd5e1;font-size:clamp(.8rem,2.6vw,1.1rem)}
+#over .gold{color:#fbbf24;font-weight:bold}
+#touch{position:fixed;inset:auto 0 0 0;height:150px;z-index:15;display:none;justify-content:space-between;align-items:flex-end;padding:0 14px 14px;pointer-events:none}
+@media (pointer:coarse){#touch{display:flex}}
+.pad{display:grid;grid-template-columns:52px 52px 52px;grid-template-rows:52px 52px;gap:5px;pointer-events:auto}
+.pad button{width:52px;height:52px;border-radius:12px;border:1px solid rgba(148,163,184,.35);background:rgba(15,23,42,.6);color:#cbd5e1;font-size:18px;cursor:pointer;touch-action:none}
+.pad button:active{background:rgba(250,204,21,.35);color:#0b0e14}
+.pad .sp{visibility:hidden}
+.fire{width:74px;height:74px;border-radius:50%;border:2px solid rgba(250,204,21,.6);background:rgba(250,204,21,.18);color:#facc15;font-weight:bold;letter-spacing:.08em;pointer-events:auto;cursor:pointer;touch-action:none}
+.fire:active{background:rgba(250,204,21,.45);color:#0b0e14}
+#paused h2{color:#38bdf8}
+</style>
+<!-- PlayKrux Analytics -->
+<script async src="/gtag.js?id=G-GR5DG65ZK7"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-GR5DG65ZK7');</script>
+<!-- /PlayKrux Analytics -->
+<!-- PlayKrux AdSense -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3801707354489723" crossorigin="anonymous"></script>
+<!-- /PlayKrux AdSense -->
+<!-- PlayKrux Funding Choices (Ad Blocking Recovery) -->
+<script async src="https://fundingchoicesmessages.google.com/i/pub-3801707354489723?ers=1"></script>
+<script>(function(){function signalGooglefcPresent(){if(!window.frames['googlefcPresent']){if(document.body){var iframe=document.createElement('iframe');iframe.style='width: 0; height: 0; border: none; z-index: -1000; left: -1000px; top: -1000px;';iframe.style.display='none';iframe.name='googlefcPresent';document.body.appendChild(iframe)}else{setTimeout(signalGooglefcPresent,0)}}}signalGooglefcPresent()})();</script>
+<!-- /PlayKrux Funding Choices -->
+</head>
+<body>
+<div class="seo-text" aria-hidden="true" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap">
+<h1>Tank Blitz - Free Online Tank War Game</h1>
+<p>Tank Blitz is a free browser tank war game where you defend the eagle base at the bottom of a walled arena against waves of enemy tanks. Drive with the arrow keys or WASD, rotate to face a target and fire with Space. Every brick wall can be shot apart, steel blocks stop ordinary shells, water and thick foliage break enemy line of sight, and a flashing carrier tank always drops a power-up when you destroy it - shields, rapid fire, heavy bombs, spare lives and cannon upgrades that let you punch through steel.</p>
+<p>Each wave sends faster scouts, tougher heavy tanks and carrier tanks that hunt you down, and every few waves the arena is rebuilt into a new battlefield with tighter corridors. Score points for every tank you scrap, keep your three lives, and do not let a single enemy shell touch the eagle. Play Tank Blitz for free at PlayKrux - no download, no registration, instant play on desktop and mobile.</p>
+</div>
+
+<div id="stage"></div>
+
+<div id="hud" class="hidden">
+  <div class="box"><span class="k">Score</span><span class="v gold" id="uiScore">0</span></div>
+  <div class="box"><span class="k">Wave</span><span class="v" id="uiWave">1</span></div>
+  <div class="box"><span class="k">Tanks</span><span class="v" id="uiLeft">0</span></div>
+  <div class="box"><span class="k">Lives</span><span class="v" id="uiLives">3</span><div id="pow"></div></div>
+  <div class="right">
+    <button class="iconbtn" id="btnPause" title="Pause (P)">II</button>
+    <button class="iconbtn" id="btnSound" title="Sound (M)">&#x1f50a;</button>
+  </div>
+</div>
+
+<div class="screen" id="menu">
+  <h1>TANK BLITZ</h1>
+  <div class="tagline">Hold the line</div>
+  <button class="play" id="btnPlay">Deploy</button>
+  <div class="hiscore" id="uiHigh"></div>
+  <div class="keys">
+    <b>ARROWS</b> or <b>WASD</b> drive &nbsp;&bull;&nbsp; <b>SPACE</b> fire<br>
+    <b>P</b> pause &nbsp;&bull;&nbsp; <b>M</b> sound &nbsp;&bull;&nbsp; mobile: pad + FIRE
+  </div>
+</div>
+
+<div class="screen hidden" id="paused">
+  <h2>PAUSED</h2>
+  <button class="play" id="btnResume">Resume</button>
+</div>
+
+<div class="screen hidden" id="over">
+  <h2 id="overTitle">BASE DESTROYED</h2>
+  <p id="overStats"></p>
+  <button class="play" id="btnAgain">Redeploy</button>
+</div>
+
+<div id="touch">
+  <div class="pad">
+    <span class="sp"></span><button data-k="up">&#9650;</button><span class="sp"></span>
+    <button data-k="left">&#9664;</button><button data-k="down">&#9660;</button><button data-k="right">&#9654;</button>
+  </div>
+  <button class="fire" id="btnFire">FIRE</button>
+</div>
+
+<script src="phaser.min.js"></script>
+<script src="game.js"></script>
+<script>
+(function(){
+  "use strict";
+  var hi = 0;
+  try { hi = parseInt(localStorage.getItem("tankBlitzHS") || "0", 10) || 0; } catch (e) {}
+  var lbl = document.getElementById("uiHigh");
+  if (lbl) lbl.textContent = hi > 0 ? "BEST SCORE: " + hi : "";
+
+  window.addEventListener("load", function () {
+    if (!window.TankBlitz) return;
+
+    var menu = document.getElementById("menu");
+    var over = document.getElementById("over");
+    var paused = document.getElementById("paused");
+    var hud = document.getElementById("hud");
+
+    function show(el, on) { el.classList[on ? "add" : "remove"]("hidden"); }
+
+    var playing = false;
+    var ply = function () {
+      if (!playing) return;
+      show(menu, false);
+      show(over, false);
+      show(hud, true);
+      window.TankBlitz.start();
+    };
+    var pendingStart = false;
+    window.TankBlitz.onReady = function () { if (pendingStart) ply(); };
+    if (window.TankBlitz.isReady()) window.TankBlitz.onReady();
+
+    document.getElementById("btnPlay").addEventListener("click", function () {
+      playing = true;
+      if (window.TankBlitz.isReady()) ply(); else pendingStart = true;
+    });
+    document.getElementById("btnAgain").addEventListener("click", function () {
+      playing = true;
+      if (window.TankBlitz.isReady()) ply(); else pendingStart = true;
+    });
+    document.getElementById("btnResume").addEventListener("click", function () {
+      show(paused, false);
+      window.TankBlitz.setPaused(false);
+    });
+    document.getElementById("btnPause").addEventListener("click", function () {
+      if (window.TankBlitz.isPaused()) { show(paused, false); window.TankBlitz.setPaused(false); }
+      else { show(paused, true); window.TankBlitz.setPaused(true); }
+    });
+    var snd = document.getElementById("btnSound");
+    snd.addEventListener("click", function () {
+      var on = window.TankBlitz.toggleSound();
+      snd.innerHTML = on ? "&#x1f50a;" : "&#x1f507;";
+    });
+
+    window.TankBlitz.onGameOver = function (score, wave) {
+      if (score > hi) {
+        hi = score;
+        try { localStorage.setItem("tankBlitzHS", String(hi)); } catch (e) {}
+        if (lbl) lbl.textContent = "BEST SCORE: " + hi;
+      }
+      document.getElementById("overStats").innerHTML =
+        "SCORE <span class=\"gold\">" + score + "</span> &nbsp;&bull;&nbsp; WAVE <span class=\"gold\">" + wave + "</span>";
+      show(hud, false);
+      show(over, true);
+    };
+    window.TankBlitz.onPauseChange = function (isPaused) { show(paused, isPaused); };
+  });
+
+  // mobile pad
+  var held = {};
+  function setKey(k, v) {
+    held[k] = v;
+    if (window.TankBlitz) window.TankBlitz.input[k] = v;
+  }
+  Array.prototype.forEach.call(document.querySelectorAll("#touch .pad button"), function (b) {
+    var k = b.getAttribute("data-k");
+    var on = function (e) { e.preventDefault(); setKey(k, true); };
+    var off = function (e) { e.preventDefault(); setKey(k, false); };
+    b.addEventListener("touchstart", on, { passive: false });
+    b.addEventListener("touchend", off, { passive: false });
+    b.addEventListener("touchcancel", off, { passive: false });
+    b.addEventListener("mousedown", on);
+    b.addEventListener("mouseup", off);
+    b.addEventListener("mouseleave", off);
+  });
+  var fire = document.getElementById("btnFire");
+  var fon = function (e) { e.preventDefault(); if (window.TankBlitz) window.TankBlitz.input.fire = true; };
+  var foff = function (e) { e.preventDefault(); if (window.TankBlitz) window.TankBlitz.input.fire = false; };
+  fire.addEventListener("touchstart", fon, { passive: false });
+  fire.addEventListener("touchend", foff, { passive: false });
+  fire.addEventListener("touchcancel", foff, { passive: false });
+  fire.addEventListener("mousedown", fon);
+  fire.addEventListener("mouseup", foff);
+  fire.addEventListener("mouseleave", foff);
+})();
+</script>
+<!-- Cloudflare Web Analytics -->
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "21ea0ba5a00d4b37a80448ef77e8cbc0"}'></script>
+<!-- End Cloudflare Web Analytics -->
+</body>
+</html>

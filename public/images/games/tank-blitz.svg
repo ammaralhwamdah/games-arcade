@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="384" viewBox="0 0 512 384">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0f3d2e"/>
+      <stop offset="1" stop-color="#0b1f14"/>
+    </linearGradient>
+    <linearGradient id="grass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1f7c4a"/>
+      <stop offset="1" stop-color="#145436"/>
+    </linearGradient>
+    <linearGradient id="player" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4fc3f7"/>
+      <stop offset="1" stop-color="#0f7baf"/>
+    </linearGradient>
+    <linearGradient id="enemy" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f87171"/>
+      <stop offset="1" stop-color="#b91c1c"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="384" fill="url(#bg)"/>
+  <rect y="220" width="512" height="164" fill="url(#grass)" opacity="0.95"/>
+  <g opacity="0.25" fill="#a3e635">
+    <circle cx="40" cy="250" r="6"/><circle cx="90" cy="260" r="4"/><circle cx="150" cy="248" r="5"/>
+    <circle cx="220" cy="258" r="4"/><circle cx="280" cy="246" r="6"/><circle cx="340" cy="256" r="4"/>
+    <circle cx="400" cy="250" r="5"/><circle cx="460" cy="258" r="4"/>
+  </g>
+  <rect x="40" y="180" width="48" height="48" rx="6" fill="#cbd5e1" stroke="#94a3b8" stroke-width="4"/>
+  <rect x="424" y="180" width="48" height="48" rx="6" fill="#a1a1aa" stroke="#71717a" stroke-width="4"/>
+  <rect x="232" y="300" width="48" height="40" rx="6" fill="#8d6e63" stroke="#5d4037" stroke-width="4"/>
+  <g transform="translate(232,240)">
+    <rect x="-14" y="-28" width="28" height="40" rx="6" fill="url(#player)" stroke="#0f7baf" stroke-width="4"/>
+    <rect x="-20" y="8" width="40" height="20" rx="6" fill="#0f7baf"/>
+    <rect x="-8" y="-40" width="16" height="14" rx="4" fill="#7dd3fc"/>
+    <circle cx="0" cy="18" r="4" fill="#1f2937"/>
+  </g>
+  <g transform="translate(340,200)" transform-origin="center">
+    <rect x="-12" y="-24" width="24" height="34" rx="5" fill="url(#enemy)" stroke="#b91c1c" stroke-width="3.5"/>
+    <rect x="-18" y="6" width="36" height="18" rx="5" fill="#b91c1c"/>
+    <rect x="-7" y="-34" width="14" height="12" rx="3" fill="#fca5a5"/>
+    <circle cx="0" cy="15" r="3.5" fill="#1f2937"/>
+  </g>
+  <g transform="translate(160,190)">
+    <rect x="-12" y="-22" width="24" height="32" rx="5" fill="#9ca3af" stroke="#6b7280" stroke-width="3.5"/>
+    <rect x="-16" y="6" width="32" height="16" rx="5" fill="#6b7280"/>
+    <rect x="-6" y="-30" width="12" height="10" rx="3" fill="#e5e7eb"/>
+    <circle cx="0" cy="14" r="3" fill="#1f2937"/>
+  </g>
+  <g transform="translate(256,320)">
+    <polygon points="-10,-10 0,-24 10,-10 6,0 -6,0" fill="#facc15"/>
+    <circle cx="0" cy="-4" r="4" fill="#fde68a"/>
+  </g>
+  <rect x="224" y="340" width="64" height="8" rx="4" fill="#1f2937" opacity="0.5"/>
+  <text x="256" y="48" font-family="Arial, sans-serif" font-size="38" font-weight="900" fill="#facc15" text-anchor="middle" letter-spacing="1">TANK BLITZ</text>
+  <text x="256" y="80" font-family="Arial, sans-serif" font-size="16" fill="#e2e8f0" text-anchor="middle" opacity="0.9">Top-Down Battle • Defend The Base</text>
+</svg>

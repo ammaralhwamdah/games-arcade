@@ -1,1294 +1,1320 @@
 {
-  "generated": "2026-09-02T12:00:00.000Z",
-  "total": 39,
-  "categories": 20,
-  "categoriesMeta": [
-    {
-      "slug": "arcade",
-      "name": "Arcade",
-      "emoji": "🕹️",
-      "color": "#f43f5e",
-      "description": "Fast, frantic, high-score chasing classics."
-    },
-    {
-      "slug": "puzzle",
-      "name": "Puzzle",
-      "emoji": "🧩",
-      "color": "#8b5cf6",
-      "description": "Brain-teasers, logic puzzles and word games."
-    },
-    {
-      "slug": "action",
-      "name": "Action",
-      "emoji": "💥",
-      "color": "#ef4444",
-      "description": "High-octane thrills and non-stop excitement."
-    },
-    {
-      "slug": "adventure",
-      "name": "Adventure",
-      "emoji": "🗺️",
-      "color": "#f59e0b",
-      "description": "Explore worlds, solve quests and discover stories."
-    },
-    {
-      "slug": "hypercasual",
-      "name": "Hypercasual",
-      "emoji": "⚡",
-      "color": "#06b6d4",
-      "description": "Instant pick-up-and-play games with one-tap fun."
-    },
-    {
-      "slug": "girls",
-      "name": "Girls",
-      "emoji": "👗",
-      "color": "#ec4899",
-      "description": "Dress-up, makeover, decoration and story games."
-    },
-    {
-      "slug": "clicker",
-      "name": "Clicker",
-      "emoji": "🖱️",
-      "color": "#14b8a6",
-      "description": "Tap, click and idle games that keep growing."
-    },
-    {
-      "slug": "3d",
-      "name": "3D",
-      "emoji": "🧊",
-      "color": "#3b82f6",
-      "description": "Stunning 3D games rendered right in your browser."
-    },
-    {
-      "slug": "racing",
-      "name": "Racing",
-      "emoji": "🏎️",
-      "color": "#ef4444",
-      "description": "Speed, drift and overtake on tracks everywhere."
-    },
-    {
-      "slug": "shooting",
-      "name": "Shooting",
-      "emoji": "🎯",
-      "color": "#22c55e",
-      "description": "Target practice, gunfights and precision action."
-    },
-    {
-      "slug": "boys",
-      "name": "Boys",
-      "emoji": "🤖",
-      "color": "#0ea5e9",
-      "description": "Cars, robots, monsters and epic boy-power games."
-    },
-    {
-      "slug": "sports",
-      "name": "Sports",
-      "emoji": "🏅",
-      "color": "#10b981",
-      "description": "Play ball — sports simulations and skill games."
-    },
-    {
-      "slug": "2-player",
-      "name": "2 Player",
-      "emoji": "👥",
-      "color": "#a855f7",
-      "description": "Head-to-head games you can share with a friend."
-    },
-    {
-      "slug": "cooking",
-      "name": "Cooking",
-      "emoji": "🍳",
-      "color": "#fb923c",
-      "description": "Whisk, chop and serve in delicious cooking games."
-    },
-    {
-      "slug": "bejeweled",
-      "name": "Bejeweled",
-      "emoji": "💎",
-      "color": "#22c55e",
-      "description": "Match-3 and gem-matching puzzlers."
-    },
-    {
-      "slug": "stickman",
-      "name": "Stickman",
-      "emoji": "🥢",
-      "color": "#64748b",
-      "description": "Stickman fighters, runners and hilarious slapstick."
-    },
-    {
-      "slug": "soccer",
-      "name": "Soccer",
-      "emoji": "⚽",
-      "color": "#16a34a",
-      "description": "Kick off, dribble and score footballing glory."
-    },
-    {
-      "slug": "strategy",
-      "name": "Strategy",
-      "emoji": "🧠",
-      "color": "#3b82f6",
-      "description": "Plan, build and outsmart your opponents in strategic battles."
-    },
-    {
-      "slug": "horror",
-      "name": "Horror",
-      "emoji": "👻",
-      "color": "#7f1d1d",
-      "description": "Dark, atmospheric and spine-chilling experiences."
-    },
-    {
-      "slug": "card",
-      "name": "Card",
-      "emoji": "🃏",
-      "color": "#e0b15c",
-      "description": "Card classics, solitaire and tabletop strategy."
-    }
-  ],
-  "featured": [
-    "glam-swap",
-    "sizzle-stack",
-    "hyperlane",
-    "twinlume",
-    "lumabloom",
-    "emberwood-dash",
-    "nebula-grinder",
-    "shardlume",
-    "veyras-legacy",
-    "astro-sabotage",
-    "underground-sprint",
-    "nano-serpent",
-    "aphelion-assault",
-    "nova-corsair",
-    "clash-of-orbs",
-    "nebula-bastion",
-    "pitch-battle",
-    "2048-fusion",
-    "dustveil-speedway",
-    "nexlume",
-    "kvaxor",
-    "mazewhisper",
-    "bishopspire",
-    "klondrake",
-    "style-salon",
-    "mech-mayhem",
-    "kitchen-rush",
-    "stick-dash",
-    "blorb-bonanza",
-    "voxel-voyage",
-    "gemfall-depths",
-    "racket-rumble",
-    "mallowmoss"
-  ],
-  "games": [
-    {
-      "id": "nebula-grinder",
-      "slug": "nebula-grinder",
-      "name": "Nebula Grinder",
-      "category": "clicker",
-      "categories": [
-        "clicker",
-        "hypercasual",
-        "arcade"
-      ],
-      "file": "games/nebula-grinder/index.html",
-      "src": "/games/nebula-grinder/index.html",
-      "image": "/images/games/nebula-grinder.svg",
-      "sizeKb": 25,
-      "rating": 4.8,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "exclusive",
-        "html5",
-        "clicker",
-        "idle",
-        "space",
-        "upgrades",
-        "single-player"
-      ],
-      "description": "Nebula Grinder is a clicker with a beating heart — the core asteroid drifts in, and you grind it into stardust one satisfying thunk at a time. Every tap feeds the machine: plasma picks that double your hit, auto-grinders that chew rock while you grab a coffee, drone swarms that stack the dust pouring in every second, and warp collectors that multiply the whole hoard. Watch for the golden asteroid — it fades fast and pays like a whole armada, so drop everything and grab it. Milestones chime, the shop keeps raising the stakes, and your best hoard stays saved forever. Original to PlayKrux and built from scratch — no ads, no timers, just rock, dust and the climb.",
-      "classic": "Idle Clicker"
-    },
-    {
-      "id": "shardlume",
-      "slug": "shardlume",
-      "name": "Shardlume",
-      "category": "bejeweled",
-      "categories": [
-        "bejeweled",
-        "puzzle",
-        "hypercasual"
-      ],
-      "file": "games/shardlume/index.html",
-      "src": "/games/shardlume/index.html",
-      "image": "/images/games/shardlume.svg",
-      "sizeKb": 19,
-      "rating": 4.8,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "exclusive",
-        "html5",
-        "match-3",
-        "puzzle",
-        "neon",
-        "single-player"
-      ],
-      "description": "Shardlume is a match-3 with a lightshow — sweep three or more glowing shards together and they shatter into a cascade that doubles the points every time it chains. Tap one shard, tap a neighbour to swap, and let the lumens fall where they may; the board reshuffles itself the moment no move is left, so the flow never dies. You get sixty seconds on the clock and a best score that never forgets a near-miss. Neon, fast and built from scratch for PlayKrux — all that is missing is you.",
-      "classic": "Match 3"
-    },
-    {
-      "id": "emberwood-dash",
-      "slug": "emberwood-dash",
-      "name": "Emberwood Dash",
-      "category": "3d",
-      "categories": [
-        "3d"
-      ],
-      "file": "games/emberwood-dash/index.html",
-      "src": "/games/emberwood-dash/index.html",
-      "image": "/images/games/emberwood-dash.svg",
-      "sizeKb": 35,
-      "rating": 4.9,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "original",
-        "html5",
-        "runner",
-        "forest",
-        "jump",
-        "endless"
-      ],
-      "description": "Dash through the Whispering Forest as Rusty the fox - leap over mossy logs, slide beneath low-hanging vines and race across splashing streams while golden acorns scatter across the sunlit path. Catch a glowing golden leaf to turn into an acorn magnet, and chase your best distance as the forest speeds up and melts into dusk. A hand-tuned endless runner with coyote-time jumps, short hops and milestone chimes.",
-      "classic": "Endless Runner"
-    },
-    {
-      "id": "veyras-legacy",
-      "slug": "veyras-legacy",
-      "name": "Veyra's Legacy",
-      "category": "adventure",
-      "categories": [
-        "adventure"
-      ],
-      "file": "games/veyras-legacy/index.html",
-      "src": "/games/veyras-legacy/index.html",
-      "image": "/images/games/veyras-legacy.svg",
-      "sizeKb": 33,
-      "rating": 4.9,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "original",
-        "html5",
-        "adventure",
-        "platformer",
-        "puzzle",
-        "co-op"
-      ],
-      "description": "Explore the Temple of Veyra with Lena and Rafiq. Small Lena climbs onto tall Rafiq's shoulders to reach high ledges, collect golden keys to open the ancient gate, and gather emeralds in this cooperative puzzle-platformer.",
-      "classic": "Platformer"
-    },
-    {
-      "id": "astro-sabotage",
-      "slug": "astro-sabotage",
-      "name": "Astro Sabotage",
-      "category": "arcade",
-      "categories": [
-        "arcade"
-      ],
-      "file": "games/astro-sabotage/index.html",
-      "src": "/games/astro-sabotage/index.html",
-      "image": "/images/games/astro-sabotage.svg",
-      "sizeKb": 26,
-      "rating": 4.9,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "original",
-        "html5",
-        "deduction",
-        "mystery",
-        "space"
-      ],
-      "description": "An impostor hides among the crew, sabotaging the ship. Watch the rooms, read the event log, and call a meeting to accuse the right crewmate before oxygen runs out.",
-      "classic": "Deduction"
-    },
-    {
-      "id": "nano-serpent",
-      "slug": "nano-serpent",
-      "name": "Nano Serpent",
-      "category": "arcade",
-      "categories": [
-        "arcade"
-      ],
-      "file": "games/nano-serpent/index.html",
-      "src": "/games/nano-serpent/index.html",
-      "image": "/images/games/nano-serpent.svg",
-      "sizeKb": 16,
-      "rating": 4.8,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "original",
-        "html5",
-        "classic",
-        "snake"
-      ],
-      "description": "A classic Snake game built in-house — zero ads, no tracking, pure gameplay. Eat the food, grow longer and avoid crashing into the walls or yourself.",
-      "classic": "Snake"
-    },
-    {
-      "id": "underground-sprint",
-      "slug": "underground-sprint",
-      "name": "Underground Sprint",
-      "category": "arcade",
-      "categories": [
-        "arcade"
-      ],
-      "file": "games/underground-sprint/index.html",
-      "src": "/games/underground-sprint/index.html",
-      "image": "/images/games/underground-sprint.svg",
-      "sizeKb": 28,
-      "rating": 4.7,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "original",
-        "html5",
-        "runner",
-        "endless",
-        "subway"
-      ],
-      "description": "An endless subway runner built in-house — zero ads, no tracking, pure gameplay. Switch lanes, jump over barriers, slide under signs and grab coins while the speed keeps rising.",
-      "classic": "Endless Runner"
-    },
-    {
-      "id": "aphelion-assault",
-      "slug": "aphelion-assault",
-      "name": "Aphelion Assault",
-      "category": "shooting",
-      "categories": [
-        "shooting",
-        "arcade",
-        "action"
-      ],
-      "file": "games/aphelion-assault/index.html",
-      "src": "/games/aphelion-assault/index.html",
-      "image": "/images/games/aphelion-assault.svg",
-      "sizeKb": 22,
-      "rating": 4.9,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "exclusive",
-        "html5",
-        "shooting",
-        "space",
-        "invaders",
-        "retro",
-        "arcade"
-      ],
-      "description": "Aphelion Assault drops you into a retro invasion that no one asked the galaxy about. Alien squadrons sweep down in tight formation, inching closer with every volley while you duck, weave and return fire from behind a patched-up shield. Clear one wave and the next comes back angrier, faster, twice as organised. Catch the mystery saucer for a fat bonus, stack your score, and hold the line until the sky is yours again.",
-      "classic": "Space Invaders"
-    },
-    {
-      "id": "nova-corsair",
-      "slug": "nova-corsair",
-      "name": "Nova Corsair",
-      "category": "arcade",
-      "categories": [
-        "arcade",
-        "shooting",
-        "action"
-      ],
-      "file": "games/nova-corsair/index.html",
-      "src": "/games/nova-corsair/index.html",
-      "image": "/images/games/nova-corsair.svg",
-      "sizeKb": 21,
-      "rating": 4.8,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "exclusive",
-        "html5",
-        "arcade",
-        "space",
-        "shooting",
-        "neon"
-      ],
-      "description": "Punch the throttle and take the Corsair into the neon frontier. Nova Corsair throws you through drifting asteroid fields and wave after wave of drone squadrons, every downed enemy bleeding power-ups you cannot afford to miss. Charge your cannon for a screen-clearing burst, then go toe-to-toe with a boss that arrives every fifth wave. Synthesised explosions, hot neon trails and a scoreboard that never forgets a comeback.",
-      "classic": "Space Shooter"
-    },
-    {
-      "id": "clash-of-orbs",
-      "slug": "clash-of-orbs",
-      "name": "Clash of Orbs",
-      "category": "hypercasual",
-      "categories": [
-        "hypercasual",
-        "arcade",
-        "action"
-      ],
-      "file": "games/clash-of-orbs/index.html",
-      "src": "/games/clash-of-orbs/index.html",
-      "image": "/images/games/clash-of-orbs.svg",
-      "sizeKb": 12,
-      "rating": 4.8,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "exclusive",
-        "html5",
-        "hypercasual",
-        "strategy",
-        "day-night",
-        "arcade"
-      ],
-      "description": "Two glowing sides fight for control of the same battlefield. Tap your half of the screen to launch an orb that rolls, bounces and flips every cell it touches to your colour — while the AI answers from the other side. It looks simple, it feels hypnotic, and it turns brutally competitive the second you glance at the percentage. First side to control 70% of the grid wins the clash.",
-      "classic": "Strategy"
-    },
-    {
-      "id": "nebula-bastion",
-      "slug": "nebula-bastion",
-      "name": "Nebula Bastion",
-      "category": "action",
-      "categories": [
-        "action",
-        "arcade"
-      ],
-      "file": "games/nebula-bastion/index.html",
-      "src": "/games/nebula-bastion/index.html",
-      "image": "/images/games/nebula-bastion.svg",
-      "sizeKb": 72,
-      "rating": 4.8,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "exclusive",
-        "html5",
-        "action",
-        "tower-defense",
-        "strategy",
-        "ages"
-      ],
-      "description": "A lone bastion floats at the edge of the nebula, and the swarm is coming. Nebula Bastion sends waves of invaders along a winding path while you build and upgrade three tower types to hold the line. Earn gold from every downed enemy, spend it on stronger weapons, and survive wave after wave as the horde gets bigger and meaner. Plan your towers, keep your lives safe, and prove the bastion was never meant to fall.",
-      "classic": "Tower Defense"
-    },
-    {
-      "id": "pitch-battle",
-      "slug": "pitch-battle",
-      "name": "Pitch Battle",
-      "category": "sports",
-      "categories": [
-        "sports",
-        "2-player",
-        "arcade",
-        "soccer"
-      ],
-      "file": "games/pitch-battle/index.html",
-      "src": "/games/pitch-battle/index.html",
-      "image": "/images/games/pitch-battle.svg",
-      "sizeKb": 21,
-      "rating": 4.8,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "exclusive",
-        "html5",
-        "sports",
-        "soccer",
-        "2-player",
-        "local-multiplayer",
-        "arcade"
-      ],
-      "description": "Two players, one pitch, zero mercy. Pitch Battle is a same-screen duel where you hold to dribble, release to shoot and crash into the carrier to tackle the ball away. Player 1 fights north with WASD while Player 2 defends south with the arrows — or drag your half of the screen on touch. First to five goals takes the match, and the net never forgets a trash-talker.",
-      "classic": "Soccer"
-    },
-    {
-      "id": "2048-fusion",
-      "slug": "2048-fusion",
-      "name": "2048 Fusion",
-      "category": "puzzle",
-      "categories": [
-        "puzzle",
-        "arcade",
-        "hypercasual"
-      ],
-      "file": "games/2048-fusion/index.html",
-      "src": "/games/2048-fusion/index.html",
-      "image": "/images/games/2048-fusion.svg",
-      "sizeKb": 20,
-      "rating": 4.7,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "exclusive",
-        "html5",
-        "puzzle",
-        "numbers",
-        "merging",
-        "math",
-        "logic",
-        "single-player"
-      ],
-      "description": "Slide, merge, repeat. 2048 is the classic number puzzle where every swipe shifts the whole board and matching tiles fuse into bigger ones. Chain merges to double your score, chase the legendary 2048 tile and keep going past it if you dare. Arrow keys or WASD on desktop, swipe anywhere on touch - one move at a time, no timer, no pressure.",
-      "classic": "2048"
-    },
-    {
-      "id": "dustveil-speedway",
-      "slug": "dustveil-speedway",
-      "name": "Dustveil Speedway",
-      "category": "racing",
-      "categories": [
-        "racing",
-        "arcade"
-      ],
-      "file": "games/dustveil-speedway/index.html",
-      "src": "/games/dustveil-speedway/index.html",
-      "image": "/images/games/dustveil-speedway.svg",
-      "sizeKb": 45,
-      "rating": 4.8,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "exclusive",
-        "html5",
-        "racing",
-        "cars",
-        "desert",
-        "arcade",
-        "single-player"
-      ],
-      "description": "Burn through the haze on a dust-choked desert circuit that never lets you rest. Thread three rivals through sweeping dunes, brake into the corners, hug the racing line and shave seconds off your lap as the sun sinks into the smog. Grip is everything here - kiss the sand and you bleed speed. Three laps, four cars, one rule: the dust settles for the fastest.",
-      "classic": "Racing"
-    },
-    {
-      "id": "nexlume",
-      "slug": "nexlume",
-      "name": "Nexlume",
-      "category": "puzzle",
-      "categories": [
-        "puzzle",
-        "arcade",
-        "hypercasual"
-      ],
-      "file": "games/nexlume/index.html",
-      "src": "/games/nexlume/index.html",
-      "image": "/images/games/nexlume.svg",
-      "sizeKb": 28,
-      "rating": 4.8,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "exclusive",
-        "html5",
-        "puzzle",
-        "logic",
-        "matching",
-        "grid",
-        "single-player"
-      ],
-      "description": "Nexlume is a slow-burning mind puzzle where you rotate glowing rows and columns to link matching orbs into soft constellations. Pick a shard, nudge its row or column, and watch three or more of the same hue bloom into light — each cascade kindling the board a little brighter. There is no clock chasing you and no scoreboard shouting at you, just you, the hum of the grid, and the quiet satisfaction of order rescued from chaos.",
-      "classic": "Logic Puzzle"
-    },
-    {
-      "id": "kvaxor",
-      "slug": "kvaxor",
-      "name": "Kvaxor",
-      "category": "strategy",
-      "categories": [
-        "strategy",
-        "2-player",
-        "puzzle"
-      ],
-      "file": "games/kvaxor/index.html",
-      "src": "/games/kvaxor/index.html",
-      "image": "/images/games/kvaxor.svg",
-      "sizeKb": 30,
-      "rating": 4.8,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "exclusive",
-        "html5",
-        "strategy",
-        "board",
-        "tic-tac-toe",
-        "5x5",
-        "two-player",
-        "ai"
-      ],
-      "description": "Kvaxor is tic-tac-toe stripped of its training wheels. The old three-in-a-row tricks mean nothing on this 5×5 grid: now you need four marks in a straight line to win, and a full five crowns the round with triple the points. Poison your rival's lines, bait their blocks and fight the CPU on three temperaments — or pass the screen to a friend and settle it like it's 1990. No downloads, no ads, no mercy.",
-      "classic": "Tic Tac Toe"
-    },
-    {
-      "id": "mazewhisper",
-      "slug": "mazewhisper",
-      "name": "Mazewhisper",
-      "category": "horror",
-      "categories": [
-        "horror",
-        "action"
-      ],
-      "file": "games/mazewhisper/index.html",
-      "src": "/games/mazewhisper/index.html",
-      "image": "/images/games/mazewhisper.svg",
-      "sizeKb": 71,
-      "rating": 4.8,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "exclusive",
-        "html5",
-        "horror",
-        "3d",
-        "survival",
-        "maze",
-        "first-person"
-      ],
-      "description": "Descend into the pitch-black depths with thirty rounds and the sound of something whispering your name. Mazewhisper is a first-person survival shooter through a procedurally generated maze where pale stalkers hunt you through the dark. Your lantern only lights the way — it does not scare them. Shoot to stagger them — every stalker falls to three rounds — and ration your ammo while you gather the three embers that wake the exit. Each ember you take calls another stalker down, and every run builds a different maze with its own layout, tunnels, and hiding places. First-aid kits patch you up and stray ammo boxes keep your revolver fed — you can take sixteen hits before you fall, but the deeper you go, the more of them hunt you through the dark. Real stereo dread: dripping stone, breathing tunnels, gunshots that echo off the walls, a heartbeat that quickens, and one very final scream. Choose your depth and try not to look away.",
-      "classic": "Horror Maze"
-    },
-    {
-      "id": "bishopspire",
-      "slug": "bishopspire",
-      "name": "Bishopspire",
-      "category": "strategy",
-      "categories": [
-        "strategy",
-        "board",
-        "2-player"
-      ],
-      "file": "games/bishopspire/index.html",
-      "src": "/games/bishopspire/index.html",
-      "image": "/images/games/bishopspire.svg",
-      "sizeKb": 42,
-      "rating": 4.8,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "exclusive",
-        "html5",
-        "strategy",
-        "board",
-        "chess",
-        "ai",
-        "two-player"
-      ],
-      "description": "Climb the royal tower of strategy. Bishopspire is full classical chess against an engine with a temper — castling, en passant, promotion and all — with three difficulty spirits that grow more savage the higher you climb. Casual plays loose and forgiving, Balanced thinks a little deeper, and Savage hunts you through your own moves. Sit on either colour, flip the board when the mood takes you, undo a blunder or two, and watch the captured pieces pile up on the scoreboard. When two humans want the same screen, Two Players mode settles it old-school. Promotion lets you choose your queen, rook, bishop or knight, and the game calls check, checkmate, stalemate, fifty-move draws, threefold repetition and insufficient material exactly when it should. Original and exclusive to PlayKrux, with the spire that does not forgive the careless.",
-      "classic": "Chess"
-    },
-    {
-      "id": "klondrake",
-      "slug": "klondrake",
-      "name": "Klondrake",
-      "category": "card",
-      "categories": [
-        "card",
-        "puzzle"
-      ],
-      "file": "games/klondrake/index.html",
-      "src": "/games/klondrake/index.html?v=10",
-      "image": "/images/games/klondrake.svg",
-      "sizeKb": 43,
-      "rating": 4.7,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "exclusive",
-        "html5",
-        "cards",
-        "solitaire",
-        "klondike",
-        "logic",
-        "single-player"
-      ],
-      "description": "Stack the drake's golden hoard. Klondrake is a full classical Klondike solitaire with a dragon's hoard of treasure piled on the table — build the four suits from Ace to King on the golden towers, untangle the seven tableaux in red-on-black descending order, and spend every draw from the lair's stockpile wisely. Casual mode draws one card at a time for a calm, winnable climb; Savage mode draws three and taxes your nerve with a redeal penalty. Click a card to pick it up, click a glowing spot to drop it, double-click to auto-play to the towers, and use the hint when the drake's eyes deceive you. Auto-place runs any eligible card home for you, undo forgives your mistakes, and the game scores every placement, reveal, and redeal before calling your hoard complete. Original and exclusive to PlayKrux — with a lair that does not forgive a wasted hand.",
-      "classic": "Klondike Solitaire"
-    },
-    {
-      "id": "style-salon",
-      "slug": "style-salon",
-      "name": "Style Salon",
-      "category": "girls",
-      "categories": [
-        "girls",
-        "hypercasual"
-      ],
-      "file": "games/style-salon/index.html",
-      "src": "/games/style-salon/index.html",
-      "image": "/images/games/style-salon.svg",
-      "sizeKb": 41,
-      "rating": 4.8,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "exclusive",
-        "html5",
-        "girls",
-        "dress-up",
-        "fashion",
-        "makeover",
-        "single-player"
-      ],
-      "description": "Style Salon puts a whole wardrobe at your fingertips — tap through hairstyles, tops, bottoms and accessories to build the perfect outfit on a rotating mannequin. Every combo you assemble earns style points, and the better the pieces match, the higher the multiplier climbs. Work through round after round, chase your best score, and prove you have the eye for fashion that nobody else can match. Original to PlayKrux, built from scratch — no ads, no timers, just you, the clothes, and the mirror.",
-      "classic": "Dress Up"
-    },
-    {
-      "id": "mech-mayhem",
-      "slug": "mech-mayhem",
-      "name": "Mech Mayhem",
-      "category": "boys",
-      "categories": [
-        "boys",
-        "action",
-        "shooting"
-      ],
-      "file": "games/mech-mayhem/index.html",
-      "src": "/games/mech-mayhem/index.html",
-      "image": "/images/games/mech-mayhem.svg",
-      "sizeKb": 28,
-      "rating": 4.9,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "exclusive",
-        "html5",
-        "boys",
-        "robots",
-        "battle",
-        "shooting",
-        "single-player"
-      ],
-      "description": "Mech Mayhem drops you into a neon arena with a cockpit, a cannon and a whole lot of hostile hardware headed your way. Move with WASD or the arrows, open fire with Space, and pick up the power-ups that fall from every robot you scrap — spread shots, shield boosts, rapid fire, all of it stacks. Each wave brings tighter formations, faster projectiles and nastier enemy types, and every fifth wave throws a heavy boss that demands every trick you have learned. Your health bar is the only thing between you and a system failure, so dodge clean, shoot straight and keep the streak alive. Original to PlayKrux — pure arcade mayhem, zero filler.",
-      "classic": "Shooting"
-    },
-    {
-      "id": "kitchen-rush",
-      "slug": "kitchen-rush",
-      "name": "Kitchen Rush",
-      "category": "cooking",
-      "categories": [
-        "cooking",
-        "hypercasual"
-      ],
-      "file": "games/kitchen-rush/index.html",
-      "src": "/games/kitchen-rush/index.html",
-      "image": "/images/games/kitchen-rush.svg",
-      "sizeKb": 31,
-      "rating": 4.8,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "exclusive",
-        "html5",
-        "cooking",
-        "time-management",
-        "food",
-        "casual",
-        "single-player"
-      ],
-      "description": "Kitchen Rush throws you behind the counter with a ticking clock and a queue of orders that does not care about your excuses. Read the recipe at the top, tap the ingredients in the exact order shown, and serve before the timer runs out — every correct dish racks up points, and consecutive perfects chain into combo multipliers that push your score skyward. Miss an ingredient and the combo resets, so accuracy beats speed when the orders start piling up. New recipes unlock as your level climbs: burgers, pizza, salad, sushi and more, each one faster and fussier than the last. Synthesised sizzles, dings and chops keep the pressure real — one wrong tap and the kitchen goes silent. Original to PlayKrux, built from scratch — no ads, no downloads, just cooking, clocks and chaos.",
-      "classic": "Time Management"
-    },
-    {
-      "id": "stick-dash",
-      "slug": "stick-dash",
-      "name": "Stick Dash",
-      "category": "stickman",
-      "categories": [
-        "stickman",
-        "arcade",
-        "hypercasual"
-      ],
-      "file": "games/stick-dash/index.html",
-      "src": "/games/stick-dash/index.html",
-      "image": "/images/games/stick-dash.svg",
-      "sizeKb": 26,
-      "rating": 4.7,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "exclusive",
-        "html5",
-        "stickman",
-        "runner",
-        "endless",
-        "jumping",
-        "single-player"
-      ],
-      "description": "Stick Dash is a neon-lit endless runner where a fearless stickman sprints forward and the world throws everything it has at him. Tap or press Space to jump — double-tap for a second lift — and swipe down or hit S to slide under the low obstacles. Coins litter the path and each one adds to your tally, but a single collision with a spike, laser or barrier ends the run and locks in your distance. The longer you survive, the faster the world moves and the tighter the gaps become, so read two obstacles ahead and time every input to the rhythm. Your best run is saved in your browser, and the retry button is always one tap away. Original to PlayKrux — pure reflexes, zero filler.",
-      "classic": "Endless Runner"
-    },
-    {
-      "id": "blorb-bonanza",
-      "slug": "blorb-bonanza",
-      "name": "Blorb Bonanza",
-      "category": "clicker",
-      "categories": [
-        "clicker",
-        "hypercasual",
-        "arcade"
-      ],
-      "file": "games/blorb-bonanza/index.html",
-      "src": "/games/blorb-bonanza/index.html",
-      "image": "/images/games/blorb-bonanza.svg",
-      "sizeKb": 28,
-      "rating": 4.7,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "exclusive",
-        "html5",
-        "clicker",
-        "idle",
-        "cute",
-        "upgrades",
-        "single-player"
-      ],
-      "description": "Meet the Blorb — a wobbly, grinning blob that lives to be tapped. Every click earns Blorb Bits, and the shop behind the pull-up handle sells upgrades that multiply your income: click power, auto-tappers, colour shifts, confetti bursts and more. Stack enough upgrades and the Blorb evolves — growing, shifting colours and showering the screen with particle confetti as the numbers climb higher. Milestones chime when you hit big targets and the shop keeps raising the stakes, turning a quiet click session into a snowball of idle income that grows while you watch. Your best haul is saved in your browser, so you can close the tab and come back to a new target to chase. Original to PlayKrux — zero ads, zero tracking, just blobs, bits and the climb.",
-      "classic": "Idle Clicker"
-    },
-    {
-      "id": "voxel-voyage",
-      "slug": "voxel-voyage",
-      "name": "Voxel Voyage",
-      "category": "3d",
-      "categories": [
-        "3d",
-        "arcade",
-        "hypercasual"
-      ],
-      "file": "games/voxel-voyage/index.html",
-      "src": "/games/voxel-voyage/index.html",
-      "image": "/images/games/voxel-voyage.svg",
-      "sizeKb": 25,
-      "rating": 4.8,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "exclusive",
-        "html5",
-        "3d",
-        "space",
-        "obstacles",
-        "endless",
-        "single-player"
-      ],
-      "description": "Voxel Voyage drops your ship into a neon corridor hurtling through deep space, and the only way out is forward. Steer with A and D on desktop or swipe on mobile, threading between voxel asteroids and barriers that spawn faster the deeper you fly. Energy orbs line the gaps — grab them for points and watch the speed climb as the corridor tightens and the neon walls blur past. Every metre is tracked, every collision ends the run, and your best distance sits at the top of the screen waiting to be beaten. The pseudo-3D perspective shifts as you move, giving each dodge a visceral sense of speed that a flat screen has no business delivering. Original to PlayKrux — zero ads, zero filler, just you, the void and the reflexes to cross it.",
-      "classic": "3D Racing"
-    },
-    {
-      "id": "gemfall-depths",
-      "slug": "gemfall-depths",
-      "name": "Gemfall Depths",
-      "category": "adventure",
-      "categories": [
-        "adventure",
-        "action",
-        "arcade"
-      ],
-      "file": "games/gemfall-depths/index.html",
-      "src": "/games/gemfall-depths/index.html",
-      "image": "/images/games/gemfall-depths.svg",
-      "sizeKb": 47,
-      "rating": 4.9,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "exclusive",
-        "html5",
-        "adventure",
-        "dungeon",
-        "roguelike",
-        "gems",
-        "single-player"
-      ],
-      "description": "Gemfall Depths is a procedurally generated dungeon that stretches twenty floors deep, and every floor is a fresh layout you have never seen before. Move with WASD or the arrow keys, attack with Space or a click, and fight your way through slimes, skeletons, bats and tougher enemies that get meaner the deeper you go. Gems, gold and treasure chests drop loot that keeps you alive, and each floor's exit is guarded by a boss that demands every trick you have learned so far. Health potions patch you up between fights, the sword upgrades stack, and the dungeon reshuffles every run so memorisation is not an option — only instinct, reflexes and a little luck stand between you and the bottom. Your best run is saved locally, and the retry button is always one tap away. Original to PlayKrux — zero ads, pure dungeon crawling.",
-      "classic": "Roguelike"
-    },
-    {
-      "id": "racket-rumble",
-      "slug": "racket-rumble",
-      "name": "Racket Rumble",
-      "category": "sports",
-      "categories": [
-        "sports",
-        "arcade",
-        "2-player"
-      ],
-      "file": "games/racket-rumble/index.html",
-      "src": "/games/racket-rumble/index.html",
-      "image": "/images/games/racket-rumble.svg",
-      "sizeKb": 22,
-      "rating": 4.8,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "exclusive",
-        "html5",
-        "sports",
-        "tennis",
-        "racket",
-        "competitive",
-        "single-player"
-      ],
-      "description": "Racket Rumble is a fast-paced tennis showdown where you control the racket with your mouse or finger and the ball does not care about your excuses. Move the racket to meet the ball, aim your returns past the AI opponent, and build long rallies that rack up the tension. Double-tap for a power smash — a heavier, faster shot that gives the AI less time to react — but mistime it and you leave the court wide open. First to seven points takes the set, and the match runs best-of-three, so a shaky start is not the end if you can hold your nerve. The ball arcs, the racket snaps, and every rally feels like a real point worth fighting for. Your best results are saved locally — original to PlayKrux, zero ads, just you, the racket and the baseline.",
-      "classic": "Tennis"
-    },
-    {
-      "id": "neon-circuit",
-      "slug": "neon-circuit",
-      "name": "Neon Circuit",
-      "category": "puzzle",
-      "categories": [
-        "puzzle",
-        "arcade"
-      ],
-      "file": "games/neon-circuit/index.html",
-      "src": "/games/neon-circuit/index.html",
-      "image": "/images/games/neon-circuit.svg",
-      "sizeKb": 17,
-      "rating": 4.9,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "exclusive",
-        "html5",
-        "puzzle",
-        "neon",
-        "circuit",
-        "cyberpunk",
-        "single-player"
-      ],
-      "description": "Neon Circuit is a glowing puzzle where you rotate tiles to connect a power source to every endpoint on the grid. Each tile carries a circuit pattern — straight, corner, T-junction or cross — and your job is to spin each one until the energy flows uninterrupted through the entire network. Tap a tile to rotate it ninety degrees, watch the neon light surge through connected paths, and keep going until the whole board pulses with power. The puzzles start gentle at three by three grids and scale up to five by five, introducing new circuit shapes and trickier layouts as you progress. A move counter tracks how efficient your solution is, so optimising your path is just as rewarding as finding one. The cyberpunk neon aesthetic makes every powered connection feel alive, and the Web Audio clicks and chimes give each rotation a satisfying snap. Progress saves locally, the level select screen tracks your unlocked stages, and the whole experience runs offline in your browser — original to PlayKrux, zero ads, pure neon problem-solving.",
-      "classic": "Circuit Puzzle"
-    },
-    {
-      "id": "twinlume",
-      "slug": "twinlume",
-      "name": "Twinlume",
-      "category": "puzzle",
-      "categories": [
-        "puzzle",
-        "hypercasual",
-        "2-player"
-      ],
-      "file": "games/twinlume/index.html",
-      "src": "/games/twinlume/index.html",
-      "image": "/images/games/twinlume.svg",
-      "sizeKb": 19,
-      "rating": 4.9,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "exclusive",
-        "html5",
-        "memory",
-        "puzzle",
-        "neon",
-        "match",
-        "single-player",
-        "kids"
-      ],
-      "description": "Twinlume is a neon memory puzzle where every pair has a twin. Glowing cards hide cryptic forms - stars, moons, hearts, bolts and more - and your job is to flip two that match to dissolve them in light. Tap any card to turn it over, build a mental map of every symbol you see, and clear the whole board in the fewest moves you can. Three grids keep the challenge rising: an easy three by four layout for warming up, a balanced four by four for a proper test of recall, and a brutal four by six board that will stretch your memory to its limit. Each puzzle tracks your time and your best score is saved in your browser, so every round hands you a glowing target to beat. The neon aesthetic makes each match feel like a small celebration, and the Web Audio chimes give every flip a satisfying snap. It runs offline, shows no ads and asks for nothing - original to PlayKrux, pure brain-brightening memory play.",
-      "classic": "Memory"
-    },
-    {
-      "id": "lumabloom",
-      "slug": "lumabloom",
-      "name": "LumaBloom",
-      "category": "puzzle",
-      "categories": [
-        "puzzle",
-        "hypercasual"
-      ],
-      "file": "games/lumabloom/index.html",
-      "src": "/games/lumabloom/index.html",
-      "image": "/images/games/lumabloom.svg",
-      "sizeKb": 18,
-      "rating": 4.9,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "exclusive",
-        "html5",
-        "puzzle",
-        "bloom",
-        "neon",
-        "flowers",
-        "link",
-        "single-player"
-      ],
-      "description": "LumaBloom is a glowing flower garden where matching seeds bloom into radiant petals. The grid is dotted with neon seed pods in a handful of colors, and your job is to tap two seeds of the same color that line up in a row or column to bloom a path of flowers between them. Every link spends a point of energy, but the blooms can chain - when a freshly bloomed flower touches another seed of the same color, it bursts and keeps the chain alive, turning one careful move into a whole cascade of blossoms. Three gardens raise the stakes: the Garden warms you up on a five by five bed, the Meadow adds an extra color and a bigger six by six plot, and Bloomfield packs a six by seven field full of tricky layouts and a hard target. Bloom enough flowers before your energy runs dry - spend energy wisely, plan every link, and chase a new best score saved right in your browser. The neon petals pulse, the Web Audio chimes celebrate every chain, and it all runs offline with zero ads - original to PlayKrux, pure radiant puzzle-growing fun.",
-      "classic": "Match 3"
-    },
-    {
-      "id": "hyperlane",
-      "slug": "hyperlane",
-      "name": "HyperLane",
-      "category": "racing",
-      "categories": [
-        "racing",
-        "arcade"
-      ],
-      "file": "games/hyperlane/index.html",
-      "src": "/games/hyperlane/index.html",
-      "image": "/images/games/hyperlane.svg",
-      "sizeKb": 15,
-      "rating": 4.8,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "exclusive",
-        "html5",
-        "racing",
-        "arcade",
-        "lane",
-        "neon",
-        "score",
-        "single-player"
-      ],
-      "description": "HyperLane is a blazing neon racing dash where your only rival is the open road. You pilot a glowing car across seven scrolling lanes, weaving through slower traffic, dodging at the last second, and skimming side by side with rivals before slicing past them. Every car you overtake banks points, and the coins scattered across the asphalt spike your score - but one brush with traffic and it is all over. The engine builds speed the longer you survive, so the road ahead gets tighter, faster, and far less forgiving. Tap any lane to dart sideways, or use the arrow keys and A / D to weave, and chase a personal best distance that stays saved right in your browser. The neon glow, the chime of each overtake, and the heart-stopping close calls make every run feel like a midnight race through a city of lights. Purely original to PlayKrux, entirely offline, and completely free - how far can you make it before the road takes you down?",
-      "classic": "Racing"
-    },
-    {
-      "id": "sizzle-stack",
-      "slug": "sizzle-stack",
-      "name": "Sizzle Stack",
-      "category": "cooking",
-      "categories": [
-        "cooking",
-        "food"
-      ],
-      "file": "games/sizzle-stack/index.html",
-      "src": "/games/sizzle-stack/index.html",
-      "image": "/images/games/sizzle-stack.svg",
-      "sizeKb": 14,
-      "rating": 4.8,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "exclusive",
-        "html5",
-        "cooking",
-        "food",
-        "burger",
-        "stacking",
-        "casual",
-        "single-player"
-      ],
-      "description": "Sizzle Stack puts you behind a sizzling burger grill with a stack of orders and a ticking clock. Each recipe on the screen shows the exact tower you need to build, and you tap the ingredients one at a time - bottom bun, patty, cheese, top bun - to pile up a perfect burger before the timer runs out. Every correct layer banks points, and building a full order in a clean run chains juicy combo multipliers that push your score skyward. Read the order carefully, because the burgers get taller as you go: classic cheeseburgers, clubs stacked with bacon and lettuce, and monstrous eight-tier towers that test your memory and your speed. The sizzle of the grill, the snap of each ingredient dropping into place, and the confetti of a perfectly finished order make every round feel like a rush-hour shift. Original to PlayKrux, fully offline, and completely free - stack the patties, feed the crowd, and chase a new high score saved right in your browser.",
-      "classic": "Burger Cooking"
-    },
-    {
-      "id": "glam-swap",
-      "slug": "glam-swap",
-      "name": "Glam Swap",
-      "category": "girls",
-      "categories": [
-        "girls",
-        "casual",
-        "dressup"
-      ],
-      "file": "games/glam-swap/index.html",
-      "src": "/games/glam-swap/index.html",
-      "image": "/images/games/glam-swap.svg",
-      "sizeKb": 14,
-      "rating": 4.8,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "exclusive",
-        "html5",
-        "girls",
-        "dressup",
-        "fashion",
-        "style",
-        "memory",
-        "single-player"
-      ],
-      "description": "Glam Swap is a playful fashion studio where you dress the model and chase a perfect style score. Four wardrobe racks line up across the screen - tops, bottoms, shoes and accessories - each holding five fresh pieces with their own colors and vibes. Tap a garment to swap it onto the model and instantly watch the score reel in: stick to a clean color story for a trend bonus, lock pieces that need a second look, and mix every category to chase the elusive perfect 100-point runway look. Experiment freely - every outfit you try reveals how close you are to catwalk gold, and the best style score stays saved in your browser for the next season. The neon palette, the soft shuffle of each swap, and the confetti burst when you hit a killer combo make every bra look like a personal runway moment. Original to PlayKrux, fully offline, and completely free - swap the wardrobe, perfect the look, and strut away with the crown.",
-      "classic": "Dress Up"
-    },
-    {
-      "id": "echo-hollow",
-      "slug": "echo-hollow",
-      "name": "Echo Hollow",
-      "category": "horror",
-      "categories": [
-        "horror",
-        "boys",
-        "action"
-      ],
-      "file": "games/echo-hollow/index.html",
-      "src": "/games/echo-hollow/index.html",
-      "image": "/images/games/echo-hollow.svg",
-      "sizeKb": 13,
-      "rating": 4.9,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "exclusive",
-        "html5",
-        "horror",
-        "dark",
-        "flashlight",
-        "atmospheric",
-        "single-player"
-      ],
-      "description": "Echo Hollow turns your screen into a hushed, pitch-black hollow where something is waiting just outside the light. You hold a lantern that follows your mouse or finger, and somewhere in the dark drift the faint amber eyes of the Whisper - you have to sweep your beam across the void to find it, then keep it pinned in the light long enough to banish it back into the shadows. Every captured Whisper tops up your battery and lets you climb another level, but the hollow siphons your lantern while it haunts, so you must hunt quickly and never let the glow die - if the battery empties in the dark, the Whisper takes you. The stereo hum, the faint creak, and the cold flicker of a failing lamp build a tension few browser games ever reach. Your deepest level stays saved in your browser. Original to PlayKrux and completely free - step into the dark and see how deep you can go.",
-      "classic": "Horror"
-    },
-    {
-      "id": "royal-21",
-      "slug": "royal-21",
-      "name": "Royal 21",
-      "category": "card",
-      "categories": [
-        "card",
-        "strategy",
-        "casino"
-      ],
-      "file": "games/royal-21/index.html",
-      "src": "/games/royal-21/index.html",
-      "image": "/images/games/royal-21.svg",
-      "sizeKb": 14,
-      "rating": 4.8,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "exclusive",
-        "html5",
-        "cards",
-        "blackjack",
-        "casino",
-        "strategy",
-        "single-player"
-      ],
-      "description": "Royal 21 is a stately game of blackjack at a banker's table. You start with a bankroll and place a bet each round - Hit when the hand is light, Stand when you trust it, let your Ace count as 1 or 11, and try to run your total to twenty-one without blasting past it. A natural blackjack wins the round outright, the dealer must hit until at least seventeen, and busting hands give up their stake while winning hands win double. Push your piles, read the flow of the deck, and rebuild when the table empties - every win builds the bank, every best balance stays saved in your browser. The clean felt, the soft snap of each dealt card, and the low clink of coin on polish make each hand feel like a serious stakes table. Original to PlayKrux, right down to the cards - no download, no age gate, just pure blackjack. Hit, stand, stay, and take the house.",
-      "classic": "Blackjack"
-    },
-    {
-      "id": "stickman-soccer",
-      "slug": "stickman-soccer",
-      "name": "Netbender",
-      "category": "soccer",
-      "categories": [
-        "soccer",
-        "sports",
-        "boys",
-        "2-player"
-      ],
-      "file": "games/stickman-soccer/index.html",
-      "src": "/games/stickman-soccer/index.html",
-      "image": "/images/games/stickman-soccer.svg",
-      "sizeKb": 23,
-      "rating": 4.9,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "exclusive",
-        "html5",
-        "stickman",
-        "soccer",
-        "football",
-        "penalty",
-        "2-player",
-        "local-multiplayer",
-        "sports"
-      ],
-      "description": "Netbender is a penalty duel in stick figures where the ball bends whichever way you pull. Drag across the screen, hold your angle, and let go — the kick arcs toward the corner you aimed at. Going high is flashy but tight; going low past the keeper's legs is safe but predictable. The keeper watches your drag line and dives the side it leans toward, so faking him out by switching direction at the last instant is the real game. You get five shots in Solo against a keeper that sharpens as the rounds tick by, or grab a friend for a proper head-to-head: one shoots while the other takes the gloves and dives with the arrow keys. The goal rings when a clean strike finds the net, the post stings when you miss by a whisker, and your best score stays saved in the browser. Runs offline, no ads, no sign-up — just the spot, the ball, and the keeper's patience running out.",
-      "classic": "Penalty Shootout"
-    },
-    {
-      "id": "glowtug",
-      "slug": "glowtug",
-      "name": "Glowtug",
-      "category": "arcade",
-      "categories": [
-        "arcade",
-        "casual",
-        "hypercasual",
-        "action"
-      ],
-      "file": "games/glowtug/index.html",
-      "src": "/games/glowtug/index.html",
-      "image": "/images/games/glowtug.svg",
-      "sizeKb": 19,
-      "rating": 4.7,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "exclusive",
-        "html5",
-        "reflex",
-        "tap",
-        "combo",
-        "fast-paced",
-        "single-player"
-      ],
-      "description": "Glowtug is a fast reflex game where glowing spores bloom across a dark forest floor and fade just as fast. Tap each one the moment it opens to catch it in time, because every clean catch in quick succession builds a combo that multiplies your score. Miss the window and the spore drifts away, tap bare ground and the streak breaks - so the difference between a good run and a great one comes down to your eyes and your timing.",
-      "classic": "Reflex Game"
-    },
-    {
-      "id": "mallowmoss",
-      "slug": "mallowmoss",
-      "name": "Mallowmoss",
-      "category": "girls",
-      "categories": [
-        "girls"
-      ],
-      "file": "games/mallowmoss/index.html",
-      "src": "/games/mallowmoss/index.html",
-      "image": "/images/games/mallowmoss.svg",
-      "sizeKb": 22,
-      "rating": 4.8,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "exclusive",
-        "html5",
-        "coloring",
-        "kids",
-        "drawing",
-        "cute",
-        "single-player"
-      ],
-      "description": "Mallowmoss is a colouring page you fill in by tapping, not a puzzle you can lose. Four original characters are waiting: Pip the Bunny, Miso the Kitten, Ducky the Duck and Bobo the Frog. Pick a colour, tap a part, and it fills in - the counter at the top keeps track of how much you have done, so nothing gets missed by accident. Every character is built from separate pieces, and a few of them sit away from the body, which is where most people get stuck. Pip's tail is tucked behind one hip, Ducky has a tuft on top of his head, and Bobo has spots across his back. Switch to the brush when you want to add your own stripes or doodles; brush strokes are decoration only and never count towards the percentage, so you cannot accidentally block yourself from finishing. The sound is generated live rather than loaded from files, and each fill plays a little higher than the last, so a finished page sounds like it climbed. Undo steps back one action at a time and Reset wipes the page, so there is no wrong way to play. It works with a finger on a phone or a mouse on a desktop, and there is no score to beat and no timer running down.",
-      "classic": "Colouring"
-    },
-    {
-      "id": "brackenquiver",
-      "slug": "brackenquiver",
-      "name": "Brackenquiver",
-      "category": "shooting",
-      "categories": [
-        "shooting",
-        "arcade",
-        "action"
-      ],
-      "file": "games/brackenquiver/index.html",
-      "src": "/games/brackenquiver/index.html",
-      "image": "/images/games/brackenquiver.svg",
-      "sizeKb": 61,
-      "rating": 4.8,
-      "plays": 0,
-      "year": 2026,
-      "tags": [
-        "exclusive",
-        "html5",
-        "archery",
-        "shooting",
-        "physics",
-        "castle",
-        "waves",
-        "strategy",
-        "single-player"
-      ],
-      "description": "Brackenquiver is a siege archery game fought between two bastions. You have a bow and a small quiver, and the wall opposite you fills up with enemy archers as the waves go on. The first wave is a single archer standing on the tower roof. The second adds one more on the wall beside it. The third puts one on the roof and two flanking the tower, and by the fifth there are five of them spread along the battlements. Every archer walks up and down its own stretch of stone and reloads on its own count, so a crowded wall fires as a spread-out group rather than a single synchronised volley. Hold anywhere on the screen to draw the string - the dotted arc shows where the arrow will actually land, and it moves as your target changes height, so you have to keep adjusting instead of aiming once and hoping. Release to loose. Your arrows are unlimited, so the pressure comes entirely from the clock: a miss costs you the time it took to draw again, and every second you spend lining up is a second the enemy archers and runners are using. While you are aiming, the enemy archers shoot back on their own, and those arrows only ever reach the gate behind you, so the damage lands on your wall rather than on the archer you are trying to kill. Infantry also runs in from the right, and later waves send them in pairs rather than one at a time. Once a runner touches the gate it costs you a hit, so a runner has to be dropped in the field first. Your gate takes five hits. Clear every archer off the wall and empty the field to move on, and each wave brings a tougher opponent: more archers, quicker shots, less spread, and runners who arrive sooner. There are five waves, then the ridge is yours. The sound is generated in the browser rather than loaded from files, and the Sound button in the top bar mutes it and remembers the choice for next time. It works with a finger on a phone or a mouse on a desktop.",
-      "classic": "Shooting"
-    }
-  ]
+    "generated":  "2026-09-02T12:00:00.000Z",
+    "total":  40,
+    "categories":  20,
+    "categoriesMeta":  [
+                           {
+                               "slug":  "arcade",
+                               "name":  "Arcade",
+                               "emoji":  "ًں•¹ï¸ڈ",
+                               "color":  "#f43f5e",
+                               "description":  "Fast, frantic, high-score chasing classics."
+                           },
+                           {
+                               "slug":  "puzzle",
+                               "name":  "Puzzle",
+                               "emoji":  "ًں§©",
+                               "color":  "#8b5cf6",
+                               "description":  "Brain-teasers, logic puzzles and word games."
+                           },
+                           {
+                               "slug":  "action",
+                               "name":  "Action",
+                               "emoji":  "ًں’¥",
+                               "color":  "#ef4444",
+                               "description":  "High-octane thrills and non-stop excitement."
+                           },
+                           {
+                               "slug":  "adventure",
+                               "name":  "Adventure",
+                               "emoji":  "ًں—؛ï¸ڈ",
+                               "color":  "#f59e0b",
+                               "description":  "Explore worlds, solve quests and discover stories."
+                           },
+                           {
+                               "slug":  "hypercasual",
+                               "name":  "Hypercasual",
+                               "emoji":  "âڑ،",
+                               "color":  "#06b6d4",
+                               "description":  "Instant pick-up-and-play games with one-tap fun."
+                           },
+                           {
+                               "slug":  "girls",
+                               "name":  "Girls",
+                               "emoji":  "ًں‘—",
+                               "color":  "#ec4899",
+                               "description":  "Dress-up, makeover, decoration and story games."
+                           },
+                           {
+                               "slug":  "clicker",
+                               "name":  "Clicker",
+                               "emoji":  "ًں–±ï¸ڈ",
+                               "color":  "#14b8a6",
+                               "description":  "Tap, click and idle games that keep growing."
+                           },
+                           {
+                               "slug":  "3d",
+                               "name":  "3D",
+                               "emoji":  "ًں§ٹ",
+                               "color":  "#3b82f6",
+                               "description":  "Stunning 3D games rendered right in your browser."
+                           },
+                           {
+                               "slug":  "racing",
+                               "name":  "Racing",
+                               "emoji":  "ًںڈژï¸ڈ",
+                               "color":  "#ef4444",
+                               "description":  "Speed, drift and overtake on tracks everywhere."
+                           },
+                           {
+                               "slug":  "shooting",
+                               "name":  "Shooting",
+                               "emoji":  "ًںژ¯",
+                               "color":  "#22c55e",
+                               "description":  "Target practice, gunfights and precision action."
+                           },
+                           {
+                               "slug":  "boys",
+                               "name":  "Boys",
+                               "emoji":  "ًں¤–",
+                               "color":  "#0ea5e9",
+                               "description":  "Cars, robots, monsters and epic boy-power games."
+                           },
+                           {
+                               "slug":  "sports",
+                               "name":  "Sports",
+                               "emoji":  "ًںڈ…",
+                               "color":  "#10b981",
+                               "description":  "Play ball â€” sports simulations and skill games."
+                           },
+                           {
+                               "slug":  "2-player",
+                               "name":  "2 Player",
+                               "emoji":  "ًں‘¥",
+                               "color":  "#a855f7",
+                               "description":  "Head-to-head games you can share with a friend."
+                           },
+                           {
+                               "slug":  "cooking",
+                               "name":  "Cooking",
+                               "emoji":  "ًںچ³",
+                               "color":  "#fb923c",
+                               "description":  "Whisk, chop and serve in delicious cooking games."
+                           },
+                           {
+                               "slug":  "bejeweled",
+                               "name":  "Bejeweled",
+                               "emoji":  "ًں’ژ",
+                               "color":  "#22c55e",
+                               "description":  "Match-3 and gem-matching puzzlers."
+                           },
+                           {
+                               "slug":  "stickman",
+                               "name":  "Stickman",
+                               "emoji":  "ًں¥¢",
+                               "color":  "#64748b",
+                               "description":  "Stickman fighters, runners and hilarious slapstick."
+                           },
+                           {
+                               "slug":  "soccer",
+                               "name":  "Soccer",
+                               "emoji":  "âڑ½",
+                               "color":  "#16a34a",
+                               "description":  "Kick off, dribble and score footballing glory."
+                           },
+                           {
+                               "slug":  "strategy",
+                               "name":  "Strategy",
+                               "emoji":  "ًں§ ",
+                               "color":  "#3b82f6",
+                               "description":  "Plan, build and outsmart your opponents in strategic battles."
+                           },
+                           {
+                               "slug":  "horror",
+                               "name":  "Horror",
+                               "emoji":  "ًں‘»",
+                               "color":  "#7f1d1d",
+                               "description":  "Dark, atmospheric and spine-chilling experiences."
+                           },
+                           {
+                               "slug":  "card",
+                               "name":  "Card",
+                               "emoji":  "ًںƒڈ",
+                               "color":  "#e0b15c",
+                               "description":  "Card classics, solitaire and tabletop strategy."
+                           }
+                       ],
+    "featured":  [
+                     "glam-swap",
+                     "sizzle-stack",
+                     "hyperlane",
+                     "twinlume",
+                     "lumabloom",
+                     "emberwood-dash",
+                     "nebula-grinder",
+                     "shardlume",
+                     "veyras-legacy",
+                     "astro-sabotage",
+                     "underground-sprint",
+                     "nano-serpent",
+                     "aphelion-assault",
+                     "nova-corsair",
+                     "clash-of-orbs",
+                     "nebula-bastion",
+                     "pitch-battle",
+                     "2048-fusion",
+                     "dustveil-speedway",
+                     "nexlume",
+                     "kvaxor",
+                     "mazewhisper",
+                     "bishopspire",
+                     "klondrake",
+                     "style-salon",
+                     "mech-mayhem",
+                     "kitchen-rush",
+                     "stick-dash",
+                     "blorb-bonanza",
+                     "voxel-voyage",
+                     "gemfall-depths",
+                     "racket-rumble",
+                     "mallowmoss",
+                     "tank-blitz"
+                 ],
+    "games":  [
+                  {
+                      "id":  "nebula-grinder",
+                      "slug":  "nebula-grinder",
+                      "name":  "Nebula Grinder",
+                      "category":  "clicker",
+                      "categories":  [
+                                         "clicker",
+                                         "hypercasual",
+                                         "arcade"
+                                     ],
+                      "file":  "games/nebula-grinder/index.html",
+                      "src":  "/games/nebula-grinder/index.html",
+                      "image":  "/images/games/nebula-grinder.svg",
+                      "sizeKb":  25,
+                      "rating":  4.8,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "exclusive",
+                                   "html5",
+                                   "clicker",
+                                   "idle",
+                                   "space",
+                                   "upgrades",
+                                   "single-player"
+                               ],
+                      "description":  "Nebula Grinder is a clicker with a beating heart â€” the core asteroid drifts in, and you grind it into stardust one satisfying thunk at a time. Every tap feeds the machine: plasma picks that double your hit, auto-grinders that chew rock while you grab a coffee, drone swarms that stack the dust pouring in every second, and warp collectors that multiply the whole hoard. Watch for the golden asteroid â€” it fades fast and pays like a whole armada, so drop everything and grab it. Milestones chime, the shop keeps raising the stakes, and your best hoard stays saved forever. Original to PlayKrux and built from scratch â€” no ads, no timers, just rock, dust and the climb.",
+                      "classic":  "Idle Clicker"
+                  },
+                  {
+                      "id":  "shardlume",
+                      "slug":  "shardlume",
+                      "name":  "Shardlume",
+                      "category":  "bejeweled",
+                      "categories":  [
+                                         "bejeweled",
+                                         "puzzle",
+                                         "hypercasual"
+                                     ],
+                      "file":  "games/shardlume/index.html",
+                      "src":  "/games/shardlume/index.html",
+                      "image":  "/images/games/shardlume.svg",
+                      "sizeKb":  19,
+                      "rating":  4.8,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "exclusive",
+                                   "html5",
+                                   "match-3",
+                                   "puzzle",
+                                   "neon",
+                                   "single-player"
+                               ],
+                      "description":  "Shardlume is a match-3 with a lightshow â€” sweep three or more glowing shards together and they shatter into a cascade that doubles the points every time it chains. Tap one shard, tap a neighbour to swap, and let the lumens fall where they may; the board reshuffles itself the moment no move is left, so the flow never dies. You get sixty seconds on the clock and a best score that never forgets a near-miss. Neon, fast and built from scratch for PlayKrux â€” all that is missing is you.",
+                      "classic":  "Match 3"
+                  },
+                  {
+                      "id":  "emberwood-dash",
+                      "slug":  "emberwood-dash",
+                      "name":  "Emberwood Dash",
+                      "category":  "3d",
+                      "categories":  [
+                                         "3d"
+                                     ],
+                      "file":  "games/emberwood-dash/index.html",
+                      "src":  "/games/emberwood-dash/index.html",
+                      "image":  "/images/games/emberwood-dash.svg",
+                      "sizeKb":  35,
+                      "rating":  4.9,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "original",
+                                   "html5",
+                                   "runner",
+                                   "forest",
+                                   "jump",
+                                   "endless"
+                               ],
+                      "description":  "Dash through the Whispering Forest as Rusty the fox - leap over mossy logs, slide beneath low-hanging vines and race across splashing streams while golden acorns scatter across the sunlit path. Catch a glowing golden leaf to turn into an acorn magnet, and chase your best distance as the forest speeds up and melts into dusk. A hand-tuned endless runner with coyote-time jumps, short hops and milestone chimes.",
+                      "classic":  "Endless Runner"
+                  },
+                  {
+                      "id":  "veyras-legacy",
+                      "slug":  "veyras-legacy",
+                      "name":  "Veyra\u0027s Legacy",
+                      "category":  "adventure",
+                      "categories":  [
+                                         "adventure"
+                                     ],
+                      "file":  "games/veyras-legacy/index.html",
+                      "src":  "/games/veyras-legacy/index.html",
+                      "image":  "/images/games/veyras-legacy.svg",
+                      "sizeKb":  33,
+                      "rating":  4.9,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "original",
+                                   "html5",
+                                   "adventure",
+                                   "platformer",
+                                   "puzzle",
+                                   "co-op"
+                               ],
+                      "description":  "Explore the Temple of Veyra with Lena and Rafiq. Small Lena climbs onto tall Rafiq\u0027s shoulders to reach high ledges, collect golden keys to open the ancient gate, and gather emeralds in this cooperative puzzle-platformer.",
+                      "classic":  "Platformer"
+                  },
+                  {
+                      "id":  "astro-sabotage",
+                      "slug":  "astro-sabotage",
+                      "name":  "Astro Sabotage",
+                      "category":  "arcade",
+                      "categories":  [
+                                         "arcade"
+                                     ],
+                      "file":  "games/astro-sabotage/index.html",
+                      "src":  "/games/astro-sabotage/index.html",
+                      "image":  "/images/games/astro-sabotage.svg",
+                      "sizeKb":  26,
+                      "rating":  4.9,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "original",
+                                   "html5",
+                                   "deduction",
+                                   "mystery",
+                                   "space"
+                               ],
+                      "description":  "An impostor hides among the crew, sabotaging the ship. Watch the rooms, read the event log, and call a meeting to accuse the right crewmate before oxygen runs out.",
+                      "classic":  "Deduction"
+                  },
+                  {
+                      "id":  "nano-serpent",
+                      "slug":  "nano-serpent",
+                      "name":  "Nano Serpent",
+                      "category":  "arcade",
+                      "categories":  [
+                                         "arcade"
+                                     ],
+                      "file":  "games/nano-serpent/index.html",
+                      "src":  "/games/nano-serpent/index.html",
+                      "image":  "/images/games/nano-serpent.svg",
+                      "sizeKb":  16,
+                      "rating":  4.8,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "original",
+                                   "html5",
+                                   "classic",
+                                   "snake"
+                               ],
+                      "description":  "A classic Snake game built in-house â€” zero ads, no tracking, pure gameplay. Eat the food, grow longer and avoid crashing into the walls or yourself.",
+                      "classic":  "Snake"
+                  },
+                  {
+                      "id":  "underground-sprint",
+                      "slug":  "underground-sprint",
+                      "name":  "Underground Sprint",
+                      "category":  "arcade",
+                      "categories":  [
+                                         "arcade"
+                                     ],
+                      "file":  "games/underground-sprint/index.html",
+                      "src":  "/games/underground-sprint/index.html",
+                      "image":  "/images/games/underground-sprint.svg",
+                      "sizeKb":  28,
+                      "rating":  4.7,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "original",
+                                   "html5",
+                                   "runner",
+                                   "endless",
+                                   "subway"
+                               ],
+                      "description":  "An endless subway runner built in-house â€” zero ads, no tracking, pure gameplay. Switch lanes, jump over barriers, slide under signs and grab coins while the speed keeps rising.",
+                      "classic":  "Endless Runner"
+                  },
+                  {
+                      "id":  "aphelion-assault",
+                      "slug":  "aphelion-assault",
+                      "name":  "Aphelion Assault",
+                      "category":  "shooting",
+                      "categories":  [
+                                         "shooting",
+                                         "arcade",
+                                         "action"
+                                     ],
+                      "file":  "games/aphelion-assault/index.html",
+                      "src":  "/games/aphelion-assault/index.html",
+                      "image":  "/images/games/aphelion-assault.svg",
+                      "sizeKb":  22,
+                      "rating":  4.9,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "exclusive",
+                                   "html5",
+                                   "shooting",
+                                   "space",
+                                   "invaders",
+                                   "retro",
+                                   "arcade"
+                               ],
+                      "description":  "Aphelion Assault drops you into a retro invasion that no one asked the galaxy about. Alien squadrons sweep down in tight formation, inching closer with every volley while you duck, weave and return fire from behind a patched-up shield. Clear one wave and the next comes back angrier, faster, twice as organised. Catch the mystery saucer for a fat bonus, stack your score, and hold the line until the sky is yours again.",
+                      "classic":  "Space Invaders"
+                  },
+                  {
+                      "id":  "nova-corsair",
+                      "slug":  "nova-corsair",
+                      "name":  "Nova Corsair",
+                      "category":  "arcade",
+                      "categories":  [
+                                         "arcade",
+                                         "shooting",
+                                         "action"
+                                     ],
+                      "file":  "games/nova-corsair/index.html",
+                      "src":  "/games/nova-corsair/index.html",
+                      "image":  "/images/games/nova-corsair.svg",
+                      "sizeKb":  21,
+                      "rating":  4.8,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "exclusive",
+                                   "html5",
+                                   "arcade",
+                                   "space",
+                                   "shooting",
+                                   "neon"
+                               ],
+                      "description":  "Punch the throttle and take the Corsair into the neon frontier. Nova Corsair throws you through drifting asteroid fields and wave after wave of drone squadrons, every downed enemy bleeding power-ups you cannot afford to miss. Charge your cannon for a screen-clearing burst, then go toe-to-toe with a boss that arrives every fifth wave. Synthesised explosions, hot neon trails and a scoreboard that never forgets a comeback.",
+                      "classic":  "Space Shooter"
+                  },
+                  {
+                      "id":  "clash-of-orbs",
+                      "slug":  "clash-of-orbs",
+                      "name":  "Clash of Orbs",
+                      "category":  "hypercasual",
+                      "categories":  [
+                                         "hypercasual",
+                                         "arcade",
+                                         "action"
+                                     ],
+                      "file":  "games/clash-of-orbs/index.html",
+                      "src":  "/games/clash-of-orbs/index.html",
+                      "image":  "/images/games/clash-of-orbs.svg",
+                      "sizeKb":  12,
+                      "rating":  4.8,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "exclusive",
+                                   "html5",
+                                   "hypercasual",
+                                   "strategy",
+                                   "day-night",
+                                   "arcade"
+                               ],
+                      "description":  "Two glowing sides fight for control of the same battlefield. Tap your half of the screen to launch an orb that rolls, bounces and flips every cell it touches to your colour â€” while the AI answers from the other side. It looks simple, it feels hypnotic, and it turns brutally competitive the second you glance at the percentage. First side to control 70% of the grid wins the clash.",
+                      "classic":  "Strategy"
+                  },
+                  {
+                      "id":  "nebula-bastion",
+                      "slug":  "nebula-bastion",
+                      "name":  "Nebula Bastion",
+                      "category":  "action",
+                      "categories":  [
+                                         "action",
+                                         "arcade"
+                                     ],
+                      "file":  "games/nebula-bastion/index.html",
+                      "src":  "/games/nebula-bastion/index.html",
+                      "image":  "/images/games/nebula-bastion.svg",
+                      "sizeKb":  72,
+                      "rating":  4.8,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "exclusive",
+                                   "html5",
+                                   "action",
+                                   "tower-defense",
+                                   "strategy",
+                                   "ages"
+                               ],
+                      "description":  "A lone bastion floats at the edge of the nebula, and the swarm is coming. Nebula Bastion sends waves of invaders along a winding path while you build and upgrade three tower types to hold the line. Earn gold from every downed enemy, spend it on stronger weapons, and survive wave after wave as the horde gets bigger and meaner. Plan your towers, keep your lives safe, and prove the bastion was never meant to fall.",
+                      "classic":  "Tower Defense"
+                  },
+                  {
+                      "id":  "pitch-battle",
+                      "slug":  "pitch-battle",
+                      "name":  "Pitch Battle",
+                      "category":  "sports",
+                      "categories":  [
+                                         "sports",
+                                         "2-player",
+                                         "arcade",
+                                         "soccer"
+                                     ],
+                      "file":  "games/pitch-battle/index.html",
+                      "src":  "/games/pitch-battle/index.html",
+                      "image":  "/images/games/pitch-battle.svg",
+                      "sizeKb":  21,
+                      "rating":  4.8,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "exclusive",
+                                   "html5",
+                                   "sports",
+                                   "soccer",
+                                   "2-player",
+                                   "local-multiplayer",
+                                   "arcade"
+                               ],
+                      "description":  "Two players, one pitch, zero mercy. Pitch Battle is a same-screen duel where you hold to dribble, release to shoot and crash into the carrier to tackle the ball away. Player 1 fights north with WASD while Player 2 defends south with the arrows â€” or drag your half of the screen on touch. First to five goals takes the match, and the net never forgets a trash-talker.",
+                      "classic":  "Soccer"
+                  },
+                  {
+                      "id":  "2048-fusion",
+                      "slug":  "2048-fusion",
+                      "name":  "2048 Fusion",
+                      "category":  "puzzle",
+                      "categories":  [
+                                         "puzzle",
+                                         "arcade",
+                                         "hypercasual"
+                                     ],
+                      "file":  "games/2048-fusion/index.html",
+                      "src":  "/games/2048-fusion/index.html",
+                      "image":  "/images/games/2048-fusion.svg",
+                      "sizeKb":  20,
+                      "rating":  4.7,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "exclusive",
+                                   "html5",
+                                   "puzzle",
+                                   "numbers",
+                                   "merging",
+                                   "math",
+                                   "logic",
+                                   "single-player"
+                               ],
+                      "description":  "Slide, merge, repeat. 2048 is the classic number puzzle where every swipe shifts the whole board and matching tiles fuse into bigger ones. Chain merges to double your score, chase the legendary 2048 tile and keep going past it if you dare. Arrow keys or WASD on desktop, swipe anywhere on touch - one move at a time, no timer, no pressure.",
+                      "classic":  "2048"
+                  },
+                  {
+                      "id":  "dustveil-speedway",
+                      "slug":  "dustveil-speedway",
+                      "name":  "Dustveil Speedway",
+                      "category":  "racing",
+                      "categories":  [
+                                         "racing",
+                                         "arcade"
+                                     ],
+                      "file":  "games/dustveil-speedway/index.html",
+                      "src":  "/games/dustveil-speedway/index.html",
+                      "image":  "/images/games/dustveil-speedway.svg",
+                      "sizeKb":  45,
+                      "rating":  4.8,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "exclusive",
+                                   "html5",
+                                   "racing",
+                                   "cars",
+                                   "desert",
+                                   "arcade",
+                                   "single-player"
+                               ],
+                      "description":  "Burn through the haze on a dust-choked desert circuit that never lets you rest. Thread three rivals through sweeping dunes, brake into the corners, hug the racing line and shave seconds off your lap as the sun sinks into the smog. Grip is everything here - kiss the sand and you bleed speed. Three laps, four cars, one rule: the dust settles for the fastest.",
+                      "classic":  "Racing"
+                  },
+                  {
+                      "id":  "nexlume",
+                      "slug":  "nexlume",
+                      "name":  "Nexlume",
+                      "category":  "puzzle",
+                      "categories":  [
+                                         "puzzle",
+                                         "arcade",
+                                         "hypercasual"
+                                     ],
+                      "file":  "games/nexlume/index.html",
+                      "src":  "/games/nexlume/index.html",
+                      "image":  "/images/games/nexlume.svg",
+                      "sizeKb":  28,
+                      "rating":  4.8,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "exclusive",
+                                   "html5",
+                                   "puzzle",
+                                   "logic",
+                                   "matching",
+                                   "grid",
+                                   "single-player"
+                               ],
+                      "description":  "Nexlume is a slow-burning mind puzzle where you rotate glowing rows and columns to link matching orbs into soft constellations. Pick a shard, nudge its row or column, and watch three or more of the same hue bloom into light â€” each cascade kindling the board a little brighter. There is no clock chasing you and no scoreboard shouting at you, just you, the hum of the grid, and the quiet satisfaction of order rescued from chaos.",
+                      "classic":  "Logic Puzzle"
+                  },
+                  {
+                      "id":  "kvaxor",
+                      "slug":  "kvaxor",
+                      "name":  "Kvaxor",
+                      "category":  "strategy",
+                      "categories":  [
+                                         "strategy",
+                                         "2-player",
+                                         "puzzle"
+                                     ],
+                      "file":  "games/kvaxor/index.html",
+                      "src":  "/games/kvaxor/index.html",
+                      "image":  "/images/games/kvaxor.svg",
+                      "sizeKb":  30,
+                      "rating":  4.8,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "exclusive",
+                                   "html5",
+                                   "strategy",
+                                   "board",
+                                   "tic-tac-toe",
+                                   "5x5",
+                                   "two-player",
+                                   "ai"
+                               ],
+                      "description":  "Kvaxor is tic-tac-toe stripped of its training wheels. The old three-in-a-row tricks mean nothing on this 5أ—5 grid: now you need four marks in a straight line to win, and a full five crowns the round with triple the points. Poison your rival\u0027s lines, bait their blocks and fight the CPU on three temperaments â€” or pass the screen to a friend and settle it like it\u0027s 1990. No downloads, no ads, no mercy.",
+                      "classic":  "Tic Tac Toe"
+                  },
+                  {
+                      "id":  "mazewhisper",
+                      "slug":  "mazewhisper",
+                      "name":  "Mazewhisper",
+                      "category":  "horror",
+                      "categories":  [
+                                         "horror",
+                                         "action"
+                                     ],
+                      "file":  "games/mazewhisper/index.html",
+                      "src":  "/games/mazewhisper/index.html",
+                      "image":  "/images/games/mazewhisper.svg",
+                      "sizeKb":  71,
+                      "rating":  4.8,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "exclusive",
+                                   "html5",
+                                   "horror",
+                                   "3d",
+                                   "survival",
+                                   "maze",
+                                   "first-person"
+                               ],
+                      "description":  "Descend into the pitch-black depths with thirty rounds and the sound of something whispering your name. Mazewhisper is a first-person survival shooter through a procedurally generated maze where pale stalkers hunt you through the dark. Your lantern only lights the way â€” it does not scare them. Shoot to stagger them â€” every stalker falls to three rounds â€” and ration your ammo while you gather the three embers that wake the exit. Each ember you take calls another stalker down, and every run builds a different maze with its own layout, tunnels, and hiding places. First-aid kits patch you up and stray ammo boxes keep your revolver fed â€” you can take sixteen hits before you fall, but the deeper you go, the more of them hunt you through the dark. Real stereo dread: dripping stone, breathing tunnels, gunshots that echo off the walls, a heartbeat that quickens, and one very final scream. Choose your depth and try not to look away.",
+                      "classic":  "Horror Maze"
+                  },
+                  {
+                      "id":  "bishopspire",
+                      "slug":  "bishopspire",
+                      "name":  "Bishopspire",
+                      "category":  "strategy",
+                      "categories":  [
+                                         "strategy",
+                                         "board",
+                                         "2-player"
+                                     ],
+                      "file":  "games/bishopspire/index.html",
+                      "src":  "/games/bishopspire/index.html",
+                      "image":  "/images/games/bishopspire.svg",
+                      "sizeKb":  42,
+                      "rating":  4.8,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "exclusive",
+                                   "html5",
+                                   "strategy",
+                                   "board",
+                                   "chess",
+                                   "ai",
+                                   "two-player"
+                               ],
+                      "description":  "Climb the royal tower of strategy. Bishopspire is full classical chess against an engine with a temper â€” castling, en passant, promotion and all â€” with three difficulty spirits that grow more savage the higher you climb. Casual plays loose and forgiving, Balanced thinks a little deeper, and Savage hunts you through your own moves. Sit on either colour, flip the board when the mood takes you, undo a blunder or two, and watch the captured pieces pile up on the scoreboard. When two humans want the same screen, Two Players mode settles it old-school. Promotion lets you choose your queen, rook, bishop or knight, and the game calls check, checkmate, stalemate, fifty-move draws, threefold repetition and insufficient material exactly when it should. Original and exclusive to PlayKrux, with the spire that does not forgive the careless.",
+                      "classic":  "Chess"
+                  },
+                  {
+                      "id":  "klondrake",
+                      "slug":  "klondrake",
+                      "name":  "Klondrake",
+                      "category":  "card",
+                      "categories":  [
+                                         "card",
+                                         "puzzle"
+                                     ],
+                      "file":  "games/klondrake/index.html",
+                      "src":  "/games/klondrake/index.html?v=10",
+                      "image":  "/images/games/klondrake.svg",
+                      "sizeKb":  43,
+                      "rating":  4.7,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "exclusive",
+                                   "html5",
+                                   "cards",
+                                   "solitaire",
+                                   "klondike",
+                                   "logic",
+                                   "single-player"
+                               ],
+                      "description":  "Stack the drake\u0027s golden hoard. Klondrake is a full classical Klondike solitaire with a dragon\u0027s hoard of treasure piled on the table â€” build the four suits from Ace to King on the golden towers, untangle the seven tableaux in red-on-black descending order, and spend every draw from the lair\u0027s stockpile wisely. Casual mode draws one card at a time for a calm, winnable climb; Savage mode draws three and taxes your nerve with a redeal penalty. Click a card to pick it up, click a glowing spot to drop it, double-click to auto-play to the towers, and use the hint when the drake\u0027s eyes deceive you. Auto-place runs any eligible card home for you, undo forgives your mistakes, and the game scores every placement, reveal, and redeal before calling your hoard complete. Original and exclusive to PlayKrux â€” with a lair that does not forgive a wasted hand.",
+                      "classic":  "Klondike Solitaire"
+                  },
+                  {
+                      "id":  "style-salon",
+                      "slug":  "style-salon",
+                      "name":  "Style Salon",
+                      "category":  "girls",
+                      "categories":  [
+                                         "girls",
+                                         "hypercasual"
+                                     ],
+                      "file":  "games/style-salon/index.html",
+                      "src":  "/games/style-salon/index.html",
+                      "image":  "/images/games/style-salon.svg",
+                      "sizeKb":  41,
+                      "rating":  4.8,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "exclusive",
+                                   "html5",
+                                   "girls",
+                                   "dress-up",
+                                   "fashion",
+                                   "makeover",
+                                   "single-player"
+                               ],
+                      "description":  "Style Salon puts a whole wardrobe at your fingertips â€” tap through hairstyles, tops, bottoms and accessories to build the perfect outfit on a rotating mannequin. Every combo you assemble earns style points, and the better the pieces match, the higher the multiplier climbs. Work through round after round, chase your best score, and prove you have the eye for fashion that nobody else can match. Original to PlayKrux, built from scratch â€” no ads, no timers, just you, the clothes, and the mirror.",
+                      "classic":  "Dress Up"
+                  },
+                  {
+                      "id":  "mech-mayhem",
+                      "slug":  "mech-mayhem",
+                      "name":  "Mech Mayhem",
+                      "category":  "boys",
+                      "categories":  [
+                                         "boys",
+                                         "action",
+                                         "shooting"
+                                     ],
+                      "file":  "games/mech-mayhem/index.html",
+                      "src":  "/games/mech-mayhem/index.html",
+                      "image":  "/images/games/mech-mayhem.svg",
+                      "sizeKb":  28,
+                      "rating":  4.9,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "exclusive",
+                                   "html5",
+                                   "boys",
+                                   "robots",
+                                   "battle",
+                                   "shooting",
+                                   "single-player"
+                               ],
+                      "description":  "Mech Mayhem drops you into a neon arena with a cockpit, a cannon and a whole lot of hostile hardware headed your way. Move with WASD or the arrows, open fire with Space, and pick up the power-ups that fall from every robot you scrap â€” spread shots, shield boosts, rapid fire, all of it stacks. Each wave brings tighter formations, faster projectiles and nastier enemy types, and every fifth wave throws a heavy boss that demands every trick you have learned. Your health bar is the only thing between you and a system failure, so dodge clean, shoot straight and keep the streak alive. Original to PlayKrux â€” pure arcade mayhem, zero filler.",
+                      "classic":  "Shooting"
+                  },
+                  {
+                      "id":  "kitchen-rush",
+                      "slug":  "kitchen-rush",
+                      "name":  "Kitchen Rush",
+                      "category":  "cooking",
+                      "categories":  [
+                                         "cooking",
+                                         "hypercasual"
+                                     ],
+                      "file":  "games/kitchen-rush/index.html",
+                      "src":  "/games/kitchen-rush/index.html",
+                      "image":  "/images/games/kitchen-rush.svg",
+                      "sizeKb":  31,
+                      "rating":  4.8,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "exclusive",
+                                   "html5",
+                                   "cooking",
+                                   "time-management",
+                                   "food",
+                                   "casual",
+                                   "single-player"
+                               ],
+                      "description":  "Kitchen Rush throws you behind the counter with a ticking clock and a queue of orders that does not care about your excuses. Read the recipe at the top, tap the ingredients in the exact order shown, and serve before the timer runs out â€” every correct dish racks up points, and consecutive perfects chain into combo multipliers that push your score skyward. Miss an ingredient and the combo resets, so accuracy beats speed when the orders start piling up. New recipes unlock as your level climbs: burgers, pizza, salad, sushi and more, each one faster and fussier than the last. Synthesised sizzles, dings and chops keep the pressure real â€” one wrong tap and the kitchen goes silent. Original to PlayKrux, built from scratch â€” no ads, no downloads, just cooking, clocks and chaos.",
+                      "classic":  "Time Management"
+                  },
+                  {
+                      "id":  "stick-dash",
+                      "slug":  "stick-dash",
+                      "name":  "Stick Dash",
+                      "category":  "stickman",
+                      "categories":  [
+                                         "stickman",
+                                         "arcade",
+                                         "hypercasual"
+                                     ],
+                      "file":  "games/stick-dash/index.html",
+                      "src":  "/games/stick-dash/index.html",
+                      "image":  "/images/games/stick-dash.svg",
+                      "sizeKb":  26,
+                      "rating":  4.7,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "exclusive",
+                                   "html5",
+                                   "stickman",
+                                   "runner",
+                                   "endless",
+                                   "jumping",
+                                   "single-player"
+                               ],
+                      "description":  "Stick Dash is a neon-lit endless runner where a fearless stickman sprints forward and the world throws everything it has at him. Tap or press Space to jump â€” double-tap for a second lift â€” and swipe down or hit S to slide under the low obstacles. Coins litter the path and each one adds to your tally, but a single collision with a spike, laser or barrier ends the run and locks in your distance. The longer you survive, the faster the world moves and the tighter the gaps become, so read two obstacles ahead and time every input to the rhythm. Your best run is saved in your browser, and the retry button is always one tap away. Original to PlayKrux â€” pure reflexes, zero filler.",
+                      "classic":  "Endless Runner"
+                  },
+                  {
+                      "id":  "blorb-bonanza",
+                      "slug":  "blorb-bonanza",
+                      "name":  "Blorb Bonanza",
+                      "category":  "clicker",
+                      "categories":  [
+                                         "clicker",
+                                         "hypercasual",
+                                         "arcade"
+                                     ],
+                      "file":  "games/blorb-bonanza/index.html",
+                      "src":  "/games/blorb-bonanza/index.html",
+                      "image":  "/images/games/blorb-bonanza.svg",
+                      "sizeKb":  28,
+                      "rating":  4.7,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "exclusive",
+                                   "html5",
+                                   "clicker",
+                                   "idle",
+                                   "cute",
+                                   "upgrades",
+                                   "single-player"
+                               ],
+                      "description":  "Meet the Blorb â€” a wobbly, grinning blob that lives to be tapped. Every click earns Blorb Bits, and the shop behind the pull-up handle sells upgrades that multiply your income: click power, auto-tappers, colour shifts, confetti bursts and more. Stack enough upgrades and the Blorb evolves â€” growing, shifting colours and showering the screen with particle confetti as the numbers climb higher. Milestones chime when you hit big targets and the shop keeps raising the stakes, turning a quiet click session into a snowball of idle income that grows while you watch. Your best haul is saved in your browser, so you can close the tab and come back to a new target to chase. Original to PlayKrux â€” zero ads, zero tracking, just blobs, bits and the climb.",
+                      "classic":  "Idle Clicker"
+                  },
+                  {
+                      "id":  "voxel-voyage",
+                      "slug":  "voxel-voyage",
+                      "name":  "Voxel Voyage",
+                      "category":  "3d",
+                      "categories":  [
+                                         "3d",
+                                         "arcade",
+                                         "hypercasual"
+                                     ],
+                      "file":  "games/voxel-voyage/index.html",
+                      "src":  "/games/voxel-voyage/index.html",
+                      "image":  "/images/games/voxel-voyage.svg",
+                      "sizeKb":  25,
+                      "rating":  4.8,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "exclusive",
+                                   "html5",
+                                   "3d",
+                                   "space",
+                                   "obstacles",
+                                   "endless",
+                                   "single-player"
+                               ],
+                      "description":  "Voxel Voyage drops your ship into a neon corridor hurtling through deep space, and the only way out is forward. Steer with A and D on desktop or swipe on mobile, threading between voxel asteroids and barriers that spawn faster the deeper you fly. Energy orbs line the gaps â€” grab them for points and watch the speed climb as the corridor tightens and the neon walls blur past. Every metre is tracked, every collision ends the run, and your best distance sits at the top of the screen waiting to be beaten. The pseudo-3D perspective shifts as you move, giving each dodge a visceral sense of speed that a flat screen has no business delivering. Original to PlayKrux â€” zero ads, zero filler, just you, the void and the reflexes to cross it.",
+                      "classic":  "3D Racing"
+                  },
+                  {
+                      "id":  "gemfall-depths",
+                      "slug":  "gemfall-depths",
+                      "name":  "Gemfall Depths",
+                      "category":  "adventure",
+                      "categories":  [
+                                         "adventure",
+                                         "action",
+                                         "arcade"
+                                     ],
+                      "file":  "games/gemfall-depths/index.html",
+                      "src":  "/games/gemfall-depths/index.html",
+                      "image":  "/images/games/gemfall-depths.svg",
+                      "sizeKb":  47,
+                      "rating":  4.9,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "exclusive",
+                                   "html5",
+                                   "adventure",
+                                   "dungeon",
+                                   "roguelike",
+                                   "gems",
+                                   "single-player"
+                               ],
+                      "description":  "Gemfall Depths is a procedurally generated dungeon that stretches twenty floors deep, and every floor is a fresh layout you have never seen before. Move with WASD or the arrow keys, attack with Space or a click, and fight your way through slimes, skeletons, bats and tougher enemies that get meaner the deeper you go. Gems, gold and treasure chests drop loot that keeps you alive, and each floor\u0027s exit is guarded by a boss that demands every trick you have learned so far. Health potions patch you up between fights, the sword upgrades stack, and the dungeon reshuffles every run so memorisation is not an option â€” only instinct, reflexes and a little luck stand between you and the bottom. Your best run is saved locally, and the retry button is always one tap away. Original to PlayKrux â€” zero ads, pure dungeon crawling.",
+                      "classic":  "Roguelike"
+                  },
+                  {
+                      "id":  "racket-rumble",
+                      "slug":  "racket-rumble",
+                      "name":  "Racket Rumble",
+                      "category":  "sports",
+                      "categories":  [
+                                         "sports",
+                                         "arcade",
+                                         "2-player"
+                                     ],
+                      "file":  "games/racket-rumble/index.html",
+                      "src":  "/games/racket-rumble/index.html",
+                      "image":  "/images/games/racket-rumble.svg",
+                      "sizeKb":  22,
+                      "rating":  4.8,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "exclusive",
+                                   "html5",
+                                   "sports",
+                                   "tennis",
+                                   "racket",
+                                   "competitive",
+                                   "single-player"
+                               ],
+                      "description":  "Racket Rumble is a fast-paced tennis showdown where you control the racket with your mouse or finger and the ball does not care about your excuses. Move the racket to meet the ball, aim your returns past the AI opponent, and build long rallies that rack up the tension. Double-tap for a power smash â€” a heavier, faster shot that gives the AI less time to react â€” but mistime it and you leave the court wide open. First to seven points takes the set, and the match runs best-of-three, so a shaky start is not the end if you can hold your nerve. The ball arcs, the racket snaps, and every rally feels like a real point worth fighting for. Your best results are saved locally â€” original to PlayKrux, zero ads, just you, the racket and the baseline.",
+                      "classic":  "Tennis"
+                  },
+                  {
+                      "id":  "neon-circuit",
+                      "slug":  "neon-circuit",
+                      "name":  "Neon Circuit",
+                      "category":  "puzzle",
+                      "categories":  [
+                                         "puzzle",
+                                         "arcade"
+                                     ],
+                      "file":  "games/neon-circuit/index.html",
+                      "src":  "/games/neon-circuit/index.html",
+                      "image":  "/images/games/neon-circuit.svg",
+                      "sizeKb":  17,
+                      "rating":  4.9,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "exclusive",
+                                   "html5",
+                                   "puzzle",
+                                   "neon",
+                                   "circuit",
+                                   "cyberpunk",
+                                   "single-player"
+                               ],
+                      "description":  "Neon Circuit is a glowing puzzle where you rotate tiles to connect a power source to every endpoint on the grid. Each tile carries a circuit pattern â€” straight, corner, T-junction or cross â€” and your job is to spin each one until the energy flows uninterrupted through the entire network. Tap a tile to rotate it ninety degrees, watch the neon light surge through connected paths, and keep going until the whole board pulses with power. The puzzles start gentle at three by three grids and scale up to five by five, introducing new circuit shapes and trickier layouts as you progress. A move counter tracks how efficient your solution is, so optimising your path is just as rewarding as finding one. The cyberpunk neon aesthetic makes every powered connection feel alive, and the Web Audio clicks and chimes give each rotation a satisfying snap. Progress saves locally, the level select screen tracks your unlocked stages, and the whole experience runs offline in your browser â€” original to PlayKrux, zero ads, pure neon problem-solving.",
+                      "classic":  "Circuit Puzzle"
+                  },
+                  {
+                      "id":  "twinlume",
+                      "slug":  "twinlume",
+                      "name":  "Twinlume",
+                      "category":  "puzzle",
+                      "categories":  [
+                                         "puzzle",
+                                         "hypercasual",
+                                         "2-player"
+                                     ],
+                      "file":  "games/twinlume/index.html",
+                      "src":  "/games/twinlume/index.html",
+                      "image":  "/images/games/twinlume.svg",
+                      "sizeKb":  19,
+                      "rating":  4.9,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "exclusive",
+                                   "html5",
+                                   "memory",
+                                   "puzzle",
+                                   "neon",
+                                   "match",
+                                   "single-player",
+                                   "kids"
+                               ],
+                      "description":  "Twinlume is a neon memory puzzle where every pair has a twin. Glowing cards hide cryptic forms - stars, moons, hearts, bolts and more - and your job is to flip two that match to dissolve them in light. Tap any card to turn it over, build a mental map of every symbol you see, and clear the whole board in the fewest moves you can. Three grids keep the challenge rising: an easy three by four layout for warming up, a balanced four by four for a proper test of recall, and a brutal four by six board that will stretch your memory to its limit. Each puzzle tracks your time and your best score is saved in your browser, so every round hands you a glowing target to beat. The neon aesthetic makes each match feel like a small celebration, and the Web Audio chimes give every flip a satisfying snap. It runs offline, shows no ads and asks for nothing - original to PlayKrux, pure brain-brightening memory play.",
+                      "classic":  "Memory"
+                  },
+                  {
+                      "id":  "lumabloom",
+                      "slug":  "lumabloom",
+                      "name":  "LumaBloom",
+                      "category":  "puzzle",
+                      "categories":  [
+                                         "puzzle",
+                                         "hypercasual"
+                                     ],
+                      "file":  "games/lumabloom/index.html",
+                      "src":  "/games/lumabloom/index.html",
+                      "image":  "/images/games/lumabloom.svg",
+                      "sizeKb":  18,
+                      "rating":  4.9,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "exclusive",
+                                   "html5",
+                                   "puzzle",
+                                   "bloom",
+                                   "neon",
+                                   "flowers",
+                                   "link",
+                                   "single-player"
+                               ],
+                      "description":  "LumaBloom is a glowing flower garden where matching seeds bloom into radiant petals. The grid is dotted with neon seed pods in a handful of colors, and your job is to tap two seeds of the same color that line up in a row or column to bloom a path of flowers between them. Every link spends a point of energy, but the blooms can chain - when a freshly bloomed flower touches another seed of the same color, it bursts and keeps the chain alive, turning one careful move into a whole cascade of blossoms. Three gardens raise the stakes: the Garden warms you up on a five by five bed, the Meadow adds an extra color and a bigger six by six plot, and Bloomfield packs a six by seven field full of tricky layouts and a hard target. Bloom enough flowers before your energy runs dry - spend energy wisely, plan every link, and chase a new best score saved right in your browser. The neon petals pulse, the Web Audio chimes celebrate every chain, and it all runs offline with zero ads - original to PlayKrux, pure radiant puzzle-growing fun.",
+                      "classic":  "Match 3"
+                  },
+                  {
+                      "id":  "hyperlane",
+                      "slug":  "hyperlane",
+                      "name":  "HyperLane",
+                      "category":  "racing",
+                      "categories":  [
+                                         "racing",
+                                         "arcade"
+                                     ],
+                      "file":  "games/hyperlane/index.html",
+                      "src":  "/games/hyperlane/index.html",
+                      "image":  "/images/games/hyperlane.svg",
+                      "sizeKb":  15,
+                      "rating":  4.8,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "exclusive",
+                                   "html5",
+                                   "racing",
+                                   "arcade",
+                                   "lane",
+                                   "neon",
+                                   "score",
+                                   "single-player"
+                               ],
+                      "description":  "HyperLane is a blazing neon racing dash where your only rival is the open road. You pilot a glowing car across seven scrolling lanes, weaving through slower traffic, dodging at the last second, and skimming side by side with rivals before slicing past them. Every car you overtake banks points, and the coins scattered across the asphalt spike your score - but one brush with traffic and it is all over. The engine builds speed the longer you survive, so the road ahead gets tighter, faster, and far less forgiving. Tap any lane to dart sideways, or use the arrow keys and A / D to weave, and chase a personal best distance that stays saved right in your browser. The neon glow, the chime of each overtake, and the heart-stopping close calls make every run feel like a midnight race through a city of lights. Purely original to PlayKrux, entirely offline, and completely free - how far can you make it before the road takes you down?",
+                      "classic":  "Racing"
+                  },
+                  {
+                      "id":  "sizzle-stack",
+                      "slug":  "sizzle-stack",
+                      "name":  "Sizzle Stack",
+                      "category":  "cooking",
+                      "categories":  [
+                                         "cooking",
+                                         "food"
+                                     ],
+                      "file":  "games/sizzle-stack/index.html",
+                      "src":  "/games/sizzle-stack/index.html",
+                      "image":  "/images/games/sizzle-stack.svg",
+                      "sizeKb":  14,
+                      "rating":  4.8,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "exclusive",
+                                   "html5",
+                                   "cooking",
+                                   "food",
+                                   "burger",
+                                   "stacking",
+                                   "casual",
+                                   "single-player"
+                               ],
+                      "description":  "Sizzle Stack puts you behind a sizzling burger grill with a stack of orders and a ticking clock. Each recipe on the screen shows the exact tower you need to build, and you tap the ingredients one at a time - bottom bun, patty, cheese, top bun - to pile up a perfect burger before the timer runs out. Every correct layer banks points, and building a full order in a clean run chains juicy combo multipliers that push your score skyward. Read the order carefully, because the burgers get taller as you go: classic cheeseburgers, clubs stacked with bacon and lettuce, and monstrous eight-tier towers that test your memory and your speed. The sizzle of the grill, the snap of each ingredient dropping into place, and the confetti of a perfectly finished order make every round feel like a rush-hour shift. Original to PlayKrux, fully offline, and completely free - stack the patties, feed the crowd, and chase a new high score saved right in your browser.",
+                      "classic":  "Burger Cooking"
+                  },
+                  {
+                      "id":  "glam-swap",
+                      "slug":  "glam-swap",
+                      "name":  "Glam Swap",
+                      "category":  "girls",
+                      "categories":  [
+                                         "girls",
+                                         "casual",
+                                         "dressup"
+                                     ],
+                      "file":  "games/glam-swap/index.html",
+                      "src":  "/games/glam-swap/index.html",
+                      "image":  "/images/games/glam-swap.svg",
+                      "sizeKb":  14,
+                      "rating":  4.8,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "exclusive",
+                                   "html5",
+                                   "girls",
+                                   "dressup",
+                                   "fashion",
+                                   "style",
+                                   "memory",
+                                   "single-player"
+                               ],
+                      "description":  "Glam Swap is a playful fashion studio where you dress the model and chase a perfect style score. Four wardrobe racks line up across the screen - tops, bottoms, shoes and accessories - each holding five fresh pieces with their own colors and vibes. Tap a garment to swap it onto the model and instantly watch the score reel in: stick to a clean color story for a trend bonus, lock pieces that need a second look, and mix every category to chase the elusive perfect 100-point runway look. Experiment freely - every outfit you try reveals how close you are to catwalk gold, and the best style score stays saved in your browser for the next season. The neon palette, the soft shuffle of each swap, and the confetti burst when you hit a killer combo make every bra look like a personal runway moment. Original to PlayKrux, fully offline, and completely free - swap the wardrobe, perfect the look, and strut away with the crown.",
+                      "classic":  "Dress Up"
+                  },
+                  {
+                      "id":  "echo-hollow",
+                      "slug":  "echo-hollow",
+                      "name":  "Echo Hollow",
+                      "category":  "horror",
+                      "categories":  [
+                                         "horror",
+                                         "boys",
+                                         "action"
+                                     ],
+                      "file":  "games/echo-hollow/index.html",
+                      "src":  "/games/echo-hollow/index.html",
+                      "image":  "/images/games/echo-hollow.svg",
+                      "sizeKb":  13,
+                      "rating":  4.9,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "exclusive",
+                                   "html5",
+                                   "horror",
+                                   "dark",
+                                   "flashlight",
+                                   "atmospheric",
+                                   "single-player"
+                               ],
+                      "description":  "Echo Hollow turns your screen into a hushed, pitch-black hollow where something is waiting just outside the light. You hold a lantern that follows your mouse or finger, and somewhere in the dark drift the faint amber eyes of the Whisper - you have to sweep your beam across the void to find it, then keep it pinned in the light long enough to banish it back into the shadows. Every captured Whisper tops up your battery and lets you climb another level, but the hollow siphons your lantern while it haunts, so you must hunt quickly and never let the glow die - if the battery empties in the dark, the Whisper takes you. The stereo hum, the faint creak, and the cold flicker of a failing lamp build a tension few browser games ever reach. Your deepest level stays saved in your browser. Original to PlayKrux and completely free - step into the dark and see how deep you can go.",
+                      "classic":  "Horror"
+                  },
+                  {
+                      "id":  "royal-21",
+                      "slug":  "royal-21",
+                      "name":  "Royal 21",
+                      "category":  "card",
+                      "categories":  [
+                                         "card",
+                                         "strategy",
+                                         "casino"
+                                     ],
+                      "file":  "games/royal-21/index.html",
+                      "src":  "/games/royal-21/index.html",
+                      "image":  "/images/games/royal-21.svg",
+                      "sizeKb":  14,
+                      "rating":  4.8,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "exclusive",
+                                   "html5",
+                                   "cards",
+                                   "blackjack",
+                                   "casino",
+                                   "strategy",
+                                   "single-player"
+                               ],
+                      "description":  "Royal 21 is a stately game of blackjack at a banker\u0027s table. You start with a bankroll and place a bet each round - Hit when the hand is light, Stand when you trust it, let your Ace count as 1 or 11, and try to run your total to twenty-one without blasting past it. A natural blackjack wins the round outright, the dealer must hit until at least seventeen, and busting hands give up their stake while winning hands win double. Push your piles, read the flow of the deck, and rebuild when the table empties - every win builds the bank, every best balance stays saved in your browser. The clean felt, the soft snap of each dealt card, and the low clink of coin on polish make each hand feel like a serious stakes table. Original to PlayKrux, right down to the cards - no download, no age gate, just pure blackjack. Hit, stand, stay, and take the house.",
+                      "classic":  "Blackjack"
+                  },
+                  {
+                      "id":  "stickman-soccer",
+                      "slug":  "stickman-soccer",
+                      "name":  "Netbender",
+                      "category":  "soccer",
+                      "categories":  [
+                                         "soccer",
+                                         "sports",
+                                         "boys",
+                                         "2-player"
+                                     ],
+                      "file":  "games/stickman-soccer/index.html",
+                      "src":  "/games/stickman-soccer/index.html",
+                      "image":  "/images/games/stickman-soccer.svg",
+                      "sizeKb":  23,
+                      "rating":  4.9,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "exclusive",
+                                   "html5",
+                                   "stickman",
+                                   "soccer",
+                                   "football",
+                                   "penalty",
+                                   "2-player",
+                                   "local-multiplayer",
+                                   "sports"
+                               ],
+                      "description":  "Netbender is a penalty duel in stick figures where the ball bends whichever way you pull. Drag across the screen, hold your angle, and let go â€” the kick arcs toward the corner you aimed at. Going high is flashy but tight; going low past the keeper\u0027s legs is safe but predictable. The keeper watches your drag line and dives the side it leans toward, so faking him out by switching direction at the last instant is the real game. You get five shots in Solo against a keeper that sharpens as the rounds tick by, or grab a friend for a proper head-to-head: one shoots while the other takes the gloves and dives with the arrow keys. The goal rings when a clean strike finds the net, the post stings when you miss by a whisker, and your best score stays saved in the browser. Runs offline, no ads, no sign-up â€” just the spot, the ball, and the keeper\u0027s patience running out.",
+                      "classic":  "Penalty Shootout"
+                  },
+                  {
+                      "id":  "glowtug",
+                      "slug":  "glowtug",
+                      "name":  "Glowtug",
+                      "category":  "arcade",
+                      "categories":  [
+                                         "arcade",
+                                         "casual",
+                                         "hypercasual",
+                                         "action"
+                                     ],
+                      "file":  "games/glowtug/index.html",
+                      "src":  "/games/glowtug/index.html",
+                      "image":  "/images/games/glowtug.svg",
+                      "sizeKb":  19,
+                      "rating":  4.7,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "exclusive",
+                                   "html5",
+                                   "reflex",
+                                   "tap",
+                                   "combo",
+                                   "fast-paced",
+                                   "single-player"
+                               ],
+                      "description":  "Glowtug is a fast reflex game where glowing spores bloom across a dark forest floor and fade just as fast. Tap each one the moment it opens to catch it in time, because every clean catch in quick succession builds a combo that multiplies your score. Miss the window and the spore drifts away, tap bare ground and the streak breaks - so the difference between a good run and a great one comes down to your eyes and your timing.",
+                      "classic":  "Reflex Game"
+                  },
+                  {
+                      "id":  "mallowmoss",
+                      "slug":  "mallowmoss",
+                      "name":  "Mallowmoss",
+                      "category":  "girls",
+                      "categories":  [
+                                         "girls"
+                                     ],
+                      "file":  "games/mallowmoss/index.html",
+                      "src":  "/games/mallowmoss/index.html",
+                      "image":  "/images/games/mallowmoss.svg",
+                      "sizeKb":  22,
+                      "rating":  4.8,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "exclusive",
+                                   "html5",
+                                   "coloring",
+                                   "kids",
+                                   "drawing",
+                                   "cute",
+                                   "single-player"
+                               ],
+                      "description":  "Mallowmoss is a colouring page you fill in by tapping, not a puzzle you can lose. Four original characters are waiting: Pip the Bunny, Miso the Kitten, Ducky the Duck and Bobo the Frog. Pick a colour, tap a part, and it fills in - the counter at the top keeps track of how much you have done, so nothing gets missed by accident. Every character is built from separate pieces, and a few of them sit away from the body, which is where most people get stuck. Pip\u0027s tail is tucked behind one hip, Ducky has a tuft on top of his head, and Bobo has spots across his back. Switch to the brush when you want to add your own stripes or doodles; brush strokes are decoration only and never count towards the percentage, so you cannot accidentally block yourself from finishing. The sound is generated live rather than loaded from files, and each fill plays a little higher than the last, so a finished page sounds like it climbed. Undo steps back one action at a time and Reset wipes the page, so there is no wrong way to play. It works with a finger on a phone or a mouse on a desktop, and there is no score to beat and no timer running down.",
+                      "classic":  "Colouring"
+                  },
+                  {
+                      "id":  "brackenquiver",
+                      "slug":  "brackenquiver",
+                      "name":  "Brackenquiver",
+                      "category":  "shooting",
+                      "categories":  [
+                                         "shooting",
+                                         "arcade",
+                                         "action"
+                                     ],
+                      "file":  "games/brackenquiver/index.html",
+                      "src":  "/games/brackenquiver/index.html",
+                      "image":  "/images/games/brackenquiver.svg",
+                      "sizeKb":  61,
+                      "rating":  4.8,
+                      "plays":  0,
+                      "year":  2026,
+                      "tags":  [
+                                   "exclusive",
+                                   "html5",
+                                   "archery",
+                                   "shooting",
+                                   "physics",
+                                   "castle",
+                                   "waves",
+                                   "strategy",
+                                   "single-player"
+                               ],
+                      "description":  "Brackenquiver is a siege archery game fought between two bastions. You have a bow and a small quiver, and the wall opposite you fills up with enemy archers as the waves go on. The first wave is a single archer standing on the tower roof. The second adds one more on the wall beside it. The third puts one on the roof and two flanking the tower, and by the fifth there are five of them spread along the battlements. Every archer walks up and down its own stretch of stone and reloads on its own count, so a crowded wall fires as a spread-out group rather than a single synchronised volley. Hold anywhere on the screen to draw the string - the dotted arc shows where the arrow will actually land, and it moves as your target changes height, so you have to keep adjusting instead of aiming once and hoping. Release to loose. Your arrows are unlimited, so the pressure comes entirely from the clock: a miss costs you the time it took to draw again, and every second you spend lining up is a second the enemy archers and runners are using. While you are aiming, the enemy archers shoot back on their own, and those arrows only ever reach the gate behind you, so the damage lands on your wall rather than on the archer you are trying to kill. Infantry also runs in from the right, and later waves send them in pairs rather than one at a time. Once a runner touches the gate it costs you a hit, so a runner has to be dropped in the field first. Your gate takes five hits. Clear every archer off the wall and empty the field to move on, and each wave brings a tougher opponent: more archers, quicker shots, less spread, and runners who arrive sooner. There are five waves, then the ridge is yours. The sound is generated in the browser rather than loaded from files, and the Sound button in the top bar mutes it and remembers the choice for next time. It works with a finger on a phone or a mouse on a desktop.",
+                      "classic":  "Shooting"
+                  },
+                  {
+                      "slug":  "tank-blitz",
+                      "name":  "Tank Blitz",
+                      "description":  "Tank Blitz is a fast top-down tank battle. Command your tank, blast through brick walls, dodge enemy fire, and defend your base against waves of enemy tanks. Collect power-ups for shields, rapid fire, cannon upgrades and bombs.",
+                      "category":  "action",
+                      "categories":  [
+                                         "action",
+                                         "arcade",
+                                         "shooter"
+                                     ],
+                      "tags":  [
+                                   "tank",
+                                   "battle",
+                                   "top-down",
+                                   "arcade",
+                                   "action",
+                                   "html5"
+                               ],
+                      "year":  2026,
+                      "sizeKb":  1205,
+                      "rating":  4.8,
+                      "plays":  0,
+                      "src":  "/games/tank-blitz/index.html",
+                      "image":  "/images/games/tank-blitz.svg"
+                  }
+              ]
 }

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>harness</title></head>
+<body>
+<div id="stage"></div>
+<pre id="out">PENDING</pre>
+<script>
+window.__errs = [];
+window.onerror = function (m, s, l, c) { window.__errs.push("onerror: " + m + " @" + l + ":" + c); };
+window.addEventListener("unhandledrejection", function (e) { window.__errs.push("rejection: " + e.reason); });
+(function () {
+  var ce = console.error;
+  console.error = function () { window.__errs.push("console.error: " + Array.prototype.join.call(arguments, " ")); ce.apply(console, arguments); };
+  var cw = console.warn;
+  console.warn = function () { window.__errs.push("console.warn: " + Array.prototype.join.call(arguments, " ")); cw.apply(console, arguments); };
+})();
+</script>
+<script src="phaser.min.js"></script>
+<script>
+(function () {
+  var RealGame = Phaser.Game;
+  var Wrapped = function (cfg) {
+    var g = new RealGame(cfg);
+    window.__game = g;
+    return g;
+  };
+  Wrapped.prototype = RealGame.prototype;
+  for (var k in RealGame) Wrapped[k] = RealGame[k];
+  Phaser.Game = Wrapped;
+  window.__loadErrors = [];
+  window.__loadCompletes = [];
+  var origBoot = Phaser.Game.prototype.boot;
+  Phaser.Game.prototype.boot = function () {
+    var self = this;
+    if (this.events && this.events.on) {
+      this.events.on("loaderror", function (f) { window.__loadErrors.push(String(f && f.key) + "|" + String(f && f.src)); });
+      this.events.on("complete", function () { window.__loadCompletes.push("complete"); });
+      this.events.on("progress", function (v) { window.__loadCompletes.push("progress:" + v); });
+      this.events.on("ready", function () { window.__loadCompletes.push("ready"); });
+    }
+    return origBoot.apply(this, arguments);
+  };
+})();
+</script>
+<script src="game.js"></script>
+<script>
+window.addEventListener("load", function () {
+  if (!window.TankBlitz) { document.getElementById("out").textContent = JSON.stringify({ fail: "TankBlitz missing", errs: window.__errs }, null, 1); return; }
+  window.TankBlitz.ready = false;
+  window.TankBlitz.onReady = function () { window.__readyFired = true; };
+  var report = function () {
+    var r = { errs: window.__errs, ready: window.TankBlitz.isReady(), readyFired: !!window.__readyFired };
+    try {
+      var game = window.__game;
+      r.textureKeys = game ? game.textures.getTextureKeys() : null;
+      r.existsGround = game ? game.textures.exists("ground") : null;
+      r.existsTank = game ? game.textures.exists("tank-player") : null;
+      r.cacheImages = game ? game.cache.image.getKeys() : null;
+      r.preloadRan = window.__preloadRan || 0;
+      r.loadErrors = window.__loadErrors || null;
+      r.loadCompletes = window.__loadCompletes || null;
+      r.loaderProp = game ? (game.load ? "game.load" : (game.loader ? "game.loader" : "none")) : null;
+      r.locHref = location.href;
+      var canvases = document.querySelectorAll("canvas");
+      r.canvas = [];
+      for (var i = 0; i < canvases.length; i++) r.canvas.push({ w: canvases[i].width, h: canvases[i].height, cssW: canvases[i].style.width, cssH: canvases[i].style.height });
+      var scene = window.__scene || (window.__game && window.__game.scene.getScene("battle"));
+      if (scene) {
+        r.gridLen = scene.grid ? scene.grid.length : null;
+        r.tileSpriteCount = scene.tileSprites ? scene.tileSprites.filter(function (x) { return !!x; }).length : null;
+        r.tanks = scene.tanks ? scene.tanks.length : null;
+        r.player = scene.player ? { x: Math.round(scene.player.x), y: Math.round(scene.player.y), hp: scene.player.hp } : null;
+        r.stageName = scene.stageName;
+        r.wave = scene.wave;
+        r.state = scene.state;
+        r.sceneTextKeys = scene.textures.getTextureKeys();
+      }
+    } catch (e) { r.probeError = String(e); }
+    document.getElementById("out").textContent = "RESULT" + JSON.stringify(r, null, 1);
+  };
+  setTimeout(function () {
+    try { window.TankBlitz.start(); } catch (e) { window.__errs.push("start: " + e); }
+    setTimeout(report, 2500);
+  }, 1200);
+});
+</script>
+</body>
+</html>
